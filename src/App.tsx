@@ -1,9 +1,9 @@
-import OrderPage from "@/pages/Order/OrderPage";
+import AppRouter from '@/router/AppRouter';
 
 function App() {
   return (
     <>
-      <OrderPage />
+      <AppRouter />
     </>
   );
 }

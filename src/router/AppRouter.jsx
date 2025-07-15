@@ -1,7 +1,9 @@
 import React from 'react';
 
+import DashboardPage from '@/pages/Dashboard/DashboardPage';
+
 const AppRouter = () => {
-    return <div>AppRouter</div>;
+  return <DashboardPage />;
 };
 
 export default AppRouter;

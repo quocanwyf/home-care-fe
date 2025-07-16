@@ -1,7 +1,11 @@
-import MainLayout from '@/components/layout/MainLayout';
+import { useToast } from '../../hooks/useToast';
 
 const DashboardPage = () => {
-  return <MainLayout />;
+  const { showSuccess } = useToast();
+  return (
+    <button className="h-full w-full" onClick={() => showSuccess('cccc')}>
+      ccccc
+    </button>
+  );
 };
-
 export default DashboardPage;

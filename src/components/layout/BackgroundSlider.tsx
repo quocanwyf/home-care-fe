@@ -11,15 +11,16 @@ export default function AutoSlider({ className }: { className?: string }) {
   return (
     <Swiper
       modules={[Autoplay]}
-      autoplay={{ delay: 3000, disableOnInteraction: true }}
+      autoplay={{ delay: 5000, disableOnInteraction: true }}
       loop
+      speed={1300}
     >
       {SLIDER_CONSTANTS.map((slide) => (
         <SwiperSlide key={slide.id}>
           <img
             src={slide.image}
             alt={slide.title}
-            className={`w-full h-[36vh] object-cover ${className}`}
+            className={`h-[36vh] w-full object-cover ${className}`}
           />
         </SwiperSlide>
       ))}

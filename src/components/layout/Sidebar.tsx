@@ -1,41 +1,70 @@
+import { useLocation, useNavigate } from 'react-router-dom';
+
 import { MENU_ITEMS } from '@/constants/mock-data-sidebar';
 
+import GradientText from '../common/GradientText';
+
 export default function Sidebar() {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const handleMenuClick = (path: string, label: string) => {
+    if (label === 'Log out') {
+      return;
+    }
+    navigate(path);
+  };
+
+  const isActiveItem = (path: string) => {
+    return location.pathname === path;
+  };
+
   return (
-    <div className=" max-h-screen h-full w-full bg-background-second border-border-primary shadow-md rounded-4xl ">
-      <div className="  flex items-center justify-center gap-2 p-4">
-        <div className="rounded-full w-10 h-10 bg-overlay-slider items-center  flex">
+    <div className="bg-background-second border-border-primary h-full max-h-screen w-full overflow-y-auto rounded-2xl shadow-md">
+      <div className="flex items-center justify-center gap-2 p-4">
+        <div className="bg-overlay-slider flex h-10 w-10 items-center rounded-full">
           <img
             src="/icon-image/shell.png"
             alt="Logo"
-            className="w-4 h-4 object-cover mx-auto rounded-full"
+            className="mx-auto h-4 w-4 rounded-full object-cover"
           />
         </div>
-        <span className=" font-bold text-text-primary">HOME CARE</span>
-        <span className="bg-gradient-to-b  from-text-linear1 via-text-linear2 to-text-linear3 text-transparent bg-clip-text">
-          <span className="font-bold ">- ADMIN</span>
-        </span>
+        <span className="text-text-primary font-bold">HOME CARE</span>
+        <GradientText content="- ADMIN" />
       </div>
 
-      <div className="border-b border-border-primary mx-4 mb-4" />
+      <div className="border-border-primary mx-4 mb-4 border-b-3" />
 
       <nav>
         {MENU_ITEMS.map((item, idx) => (
           <div key={idx}>
             {item.children ? (
-              <div className=" text-text-primary font-bold flex justify-center mr-10 my-2">
+              <div className="text-text-primary my-2 mr-10 flex justify-center font-bold">
                 {item.label}
               </div>
             ) : (
-              <div className=" group flex items-center gap-4 cursor-pointer p-4 pl-8 rounded-xl mx-4 transition-all duration-500 ease-in-out hover:bg-tab-hover ">
+              <div
+                className={`group mx-4 my-1 flex cursor-pointer items-center gap-4 rounded-xl p-3 pl-8 transition-all duration-500 ease-in-out ${
+                  isActiveItem(item.path)
+                    ? 'bg-tab-hover text-text-secondary font-semibold'
+                    : 'hover:bg-tab-hover'
+                }`}
+                onClick={() => handleMenuClick(item.path, item.label)}
+              >
                 {item.icon && (
                   <img
                     src={item?.icon}
                     alt={item?.label}
-                    className="w-4 h-4 object-cover"
+                    className="h-4 w-4 object-cover"
                   />
                 )}
-                <span className=" text-text-primary group-hover:text-text-secondary group-hover:font-semibold ">
+                <span
+                  className={`${
+                    isActiveItem(item.path)
+                      ? 'text-text-secondary font-semibold'
+                      : 'text-text-primary group-hover:text-text-secondary group-hover:font-semibold'
+                  }`}
+                >
                   {item.label}
                 </span>
               </div>
@@ -45,16 +74,27 @@ export default function Sidebar() {
                 {item.children.map((child, i) => (
                   <div
                     key={i}
-                    className="group flex items-center gap-4 pl-8 cursor-pointer p-4 rounded-xl mx-4 transition-all duration-500 ease-in-out hover:bg-tab-hover "
+                    className={`group mx-4 my-1 flex cursor-pointer items-center gap-4 rounded-xl p-3 pl-8 transition-all duration-500 ease-in-out ${
+                      isActiveItem(child.path)
+                        ? 'bg-tab-hover text-text-secondary font-semibold'
+                        : 'hover:bg-tab-hover'
+                    }`}
+                    onClick={() => handleMenuClick(child.path, child.label)}
                   >
                     {child.icon && (
                       <img
                         src={child?.icon}
                         alt={child?.label}
-                        className="w-4 h-4 object-cover"
+                        className="h-4 w-4 object-cover"
                       />
                     )}
-                    <span className="text-base group-hover:text-text-secondary group-hover:font-semibold text-text-primary ">
+                    <span
+                      className={`text-base ${
+                        isActiveItem(child.path)
+                          ? 'text-text-secondary font-semibold'
+                          : 'text-text-primary group-hover:text-text-secondary group-hover:font-semibold'
+                      }`}
+                    >
                       {child.label}
                     </span>
                   </div>
@@ -64,18 +104,6 @@ export default function Sidebar() {
           </div>
         ))}
       </nav>
-      <div className="flex justify-center items-center">
-        <div className="absolute bottom-8 group  flex items-center  gap-4 cursor-pointer  rounded-2xl mr-10 p-4 transition-all duration-500 ease-in-out hover:bg-tab-hover">
-          <img
-            src={'/icon-image/log-out.png'}
-            alt={'Log out'}
-            className="w-4 h-4 object-cover"
-          />
-          <span className=" text-base group-hover:text-red-500 group-hover:font-semibold text-text-primary  ">
-            Log out
-          </span>
-        </div>
-      </div>
     </div>
   );
 }

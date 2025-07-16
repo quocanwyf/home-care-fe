@@ -1,5 +1,3 @@
-import path from 'path';
-
 export type MenuItem = {
   label: string;
   path: string;
@@ -11,7 +9,7 @@ export const MENU_ITEMS = [
   {
     label: 'Dashboard',
     icon: '/icon-image/chart-column-decreasing.png',
-    path: '/',
+    path: '/dashboard',
   },
   {
     label: 'Orders',
@@ -22,12 +20,12 @@ export const MENU_ITEMS = [
     label: 'Human Resources',
     path: '/hr',
     children: [
-      { label: 'Maids', icon: '/icon-image/user.png', path: '/hr/maids' },
-      { label: 'Staffs', icon: '/icon-image/users.png', path: '/hr/staffs' },
+      { label: 'Maids', icon: '/icon-image/user.png', path: '/maids' },
+      { label: 'Staffs', icon: '/icon-image/users.png', path: '/staffs' },
       {
         label: 'Customers',
         icon: '/icon-image/users-round.png',
-        path: '/hr/customers',
+        path: '/customers',
       },
     ],
   },
@@ -48,5 +46,10 @@ export const MENU_ITEMS = [
       },
       { label: 'System', icon: 'icon-image/settings.png', path: '/system' },
     ],
+  },
+  {
+    label: 'Log out',
+    path: '/logout',
+    icon: '/icon-image/log-out.png',
   },
 ];

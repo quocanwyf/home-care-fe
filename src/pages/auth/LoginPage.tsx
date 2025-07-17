@@ -1,5 +1,9 @@
 import GradientText from '@/components/common/GradientText';
+import Logo from '@/components/common/Logo';
 import Overlay from '@/components/common/Overlay';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 
 import BackGroundImageLogin from '../../components/auth/BackGroundImageLogin';
 
@@ -9,40 +13,47 @@ const LoginPage = () => {
       <BackGroundImageLogin />
       <Overlay className="h-full opacity-50" />
       <div className="absolute inset-0 z-20 mx-6 my-4 flex items-center justify-center">
-        <div className="w-full max-w-md rounded-2xl bg-white p-8 shadow-lg">
-          <GradientText content="LOGIN" className="flex justify-center" />
+        <div className="w-full max-w-sm rounded-2xl bg-white p-8 shadow-lg">
+          <GradientText
+            content="LOGIN"
+            className="flex justify-center text-xl"
+          />
           <GradientText
             content="Enter your email and password to login"
             className="flex justify-center text-sm"
           />
-          <form className="mt-6">
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700">
-                Email
-              </label>
-              <input
-                type="email"
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                placeholder="Enter your email"
+          <div className="mt-6 flex flex-wrap items-center gap-6 md:flex-row">
+            <div className="grid w-full max-w-sm items-center gap-3">
+              <Label htmlFor="id">Identifier </Label>
+              <Input
+                type="text"
+                id="id"
+                placeholder="Enter your ID"
+                className="border-border-primary shadow-md"
               />
             </div>
-            <div className="mb-6">
-              <label className="block text-sm font-medium text-gray-700">
-                Password
-              </label>
-              <input
+            <div className="grid w-full max-w-sm items-center gap-3">
+              <Label htmlFor="password">Password</Label>
+              <Input
                 type="password"
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                id="password"
                 placeholder="Enter your password"
+                className="border-border-primary shadow-md"
               />
             </div>
-            <button
-              type="submit"
-              className="w-full rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none"
-            >
+            <Button className="mx-auto cursor-pointer transition duration-500 ease-in-out hover:scale-105">
               Login
-            </button>
-          </form>
+            </Button>
+          </div>
+          <div className="mt-12 -mb-4 flex items-center justify-center gap-2">
+            <Logo classNameImg="h-2 w-2" />
+            <div className="animate__animated animate__bounce animate__infinite animate__slow mt-1">
+              <span className="text-text-primary text-sm font-bold">
+                HOME CARE
+              </span>
+              <GradientText classNameSpan="text-sm" content="- ADMIN" />
+            </div>
+          </div>
         </div>
       </div>
     </div>

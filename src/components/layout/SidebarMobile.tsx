@@ -1,6 +1,8 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 
-import { MENU_ITEMS } from '@/constants/mock-data-sidebar';
+import { MENU_ITEMS } from '@/constants/mock-data/mock-data-sidebar';
+
+import Logo from '../common/Logo';
 
 const SidebarMobile = ({
   onMobileSidebarOpen,
@@ -29,13 +31,7 @@ const SidebarMobile = ({
       {onMobileSidebarOpen && (
         <div className="bg-background-second border-border-primary h-full max-h-screen w-full overflow-y-auto rounded-2xl shadow-md">
           <div className="flex items-center justify-center gap-2 px-4 py-3">
-            <div className="bg-overlay-slider flex h-10 w-10 items-center rounded-full">
-              <img
-                src="/icon-image/shell.png"
-                alt="Logo"
-                className="mx-auto h-4 w-4 rounded-full object-cover"
-              />
-            </div>
+            <Logo />
             <span className="text-text-primary font-bold">HOME CARE</span>
             <span className="from-text-linear1 via-text-linear2 to-text-linear3 bg-gradient-to-b bg-clip-text text-transparent">
               <span className="font-bold">- ADMIN</span>

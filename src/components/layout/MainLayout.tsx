@@ -4,7 +4,7 @@ import { Outlet, useLocation } from 'react-router-dom';
 
 import Overlay from '@/components/common/Overlay';
 import BackgroundSlider from '@/components/layout/BackgroundSlider';
-import { ROUTE_TITLES } from '@/constants/route-titles';
+import { ROUTE_TITLES } from '@/constants/route-titles/route-titles';
 
 import Header from './Header';
 import Sidebar from './Sidebar';

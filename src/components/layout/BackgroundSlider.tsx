@@ -5,7 +5,7 @@ import 'swiper/css/pagination';
 import { Autoplay } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
 
-import { SLIDER_CONSTANTS } from '@/constants/mock-data-slider';
+import { SLIDER_CONSTANTS } from '@/constants/mock-data/mock-data-slider';
 
 export default function AutoSlider({ className }: { className?: string }) {
   return (

@@ -1,8 +1,9 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 
-import { MENU_ITEMS } from '@/constants/mock-data-sidebar';
+import { MENU_ITEMS } from '@/constants/mock-data/mock-data-sidebar';
 
 import GradientText from '../common/GradientText';
+import Logo from '../common/Logo';
 
 export default function Sidebar() {
   const navigate = useNavigate();
@@ -22,13 +23,7 @@ export default function Sidebar() {
   return (
     <div className="bg-background-second border-border-primary h-full max-h-screen w-full overflow-y-auto rounded-2xl shadow-md">
       <div className="flex items-center justify-center gap-2 p-4">
-        <div className="bg-overlay-slider flex h-10 w-10 items-center rounded-full">
-          <img
-            src="/icon-image/shell.png"
-            alt="Logo"
-            className="mx-auto h-4 w-4 rounded-full object-cover"
-          />
-        </div>
+        <Logo />
         <span className="text-text-primary font-bold">HOME CARE</span>
         <GradientText content="- ADMIN" />
       </div>

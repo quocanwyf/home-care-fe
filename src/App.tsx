@@ -1,3 +1,5 @@
+import 'animate.css';
+
 import ConfigToaster from './config/ConfigToaster';
 import AppRouter from './router/AppRouter';
 

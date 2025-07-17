@@ -4,7 +4,7 @@ const BackGroundImageLogin = () => {
       <div className="mr-40 ml-40 flex justify-between">
         <div className="h-[220px] w-[400px]">
           <img
-            src="/public/bg-imgage/photo-9.png"
+            src="/bg-imgage/photo-9.png"
             alt="Service 1"
             className="h-full w-full object-cover"
           />{' '}
@@ -12,7 +12,7 @@ const BackGroundImageLogin = () => {
         <div className="h-[220px] w-[500px]">
           {' '}
           <img
-            src="/public/bg-imgage/photo-4.png"
+            src="/bg-imgage/photo-4.png"
             alt="Service 1"
             className="h-full w-full object-cover"
           />{' '}
@@ -22,14 +22,14 @@ const BackGroundImageLogin = () => {
         <div className="h-[220px] w-[500px]">
           {' '}
           <img
-            src="/public/bg-imgage/photo-3.png"
+            src="/bg-imgage/photo-3.png"
             alt="Service 1"
             className="h-full w-full object-cover"
           />{' '}
         </div>
         <div className="h-[220px] w-[400px]">
           <img
-            src="/public/bg-imgage/photo-1.png"
+            src="/bg-imgage/photo-1.png"
             alt="Service 1"
             className="h-full w-full object-cover"
           />{' '}

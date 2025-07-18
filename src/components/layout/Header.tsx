@@ -22,7 +22,12 @@ const Header = ({
           onOpenMenuClick={onOpenMenuClick}
           onMobileSidebarOpen={onMobileSidebarOpen}
         />
-        <Icon className="transition-transform duration-300 ease-in-out hover:scale-120" />
+        <Icon
+          src="/icon-image/avatar-1.png"
+          alt="avatar"
+          className="transition-transform duration-300 ease-in-out hover:scale-120"
+          contentTooltip="User Avatar"
+        />
 
         <NotificationBell
           count={5}
@@ -33,6 +38,7 @@ const Header = ({
           src="/icon-image/sun-moon.png"
           alt="Toggle dark mode"
           className="transition-transform duration-300 ease-in-out hover:scale-110"
+          contentTooltip="Toggle dark mode"
         />
       </div>
     </header>

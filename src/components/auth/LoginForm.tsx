@@ -1,31 +1,56 @@
+import { useAppNavigate } from '@/hooks/useAppNavigate';
+
+import GradientText from '../common/GradientText';
+import Logo from '../common/Logo';
+import { Button } from '../ui/button';
+import { Input } from '../ui/input';
+import { Label } from '../ui/label';
+
 const LoginForm = () => {
+  const navigateTo = useAppNavigate<{ from: string }>();
+  const handleSuccess = () => {
+    navigateTo('/dashboard', {
+      state: { from: 'login' },
+      toast: { type: 'success', message: 'Login successful!' },
+      delay: 700,
+    });
+  };
   return (
-    <form className="mt-6">
-      <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700">Email</label>
-        <input
-          type="email"
-          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-          placeholder="Enter your email"
-        />
+    <>
+      <div className="mt-6 flex flex-wrap items-center gap-6 md:flex-row">
+        <div className="grid w-full max-w-sm items-center gap-3">
+          <Label htmlFor="id">Identifier </Label>
+          <Input
+            type="text"
+            id="id"
+            placeholder="Enter your ID"
+            className="border-border-primary shadow-md"
+          />
+        </div>
+        <div className="grid w-full max-w-sm items-center gap-3">
+          <Label htmlFor="password">Password</Label>
+          <Input
+            type="password"
+            id="password"
+            placeholder="Enter your password"
+            className="border-border-primary shadow-md"
+          />
+        </div>
+        <Button
+          onClick={handleSuccess}
+          className="mx-auto w-1/3 cursor-pointer transition duration-500 ease-in-out hover:scale-105"
+        >
+          Login
+        </Button>
       </div>
-      <div className="mb-6">
-        <label className="block text-sm font-medium text-gray-700">
-          Password
-        </label>
-        <input
-          type="password"
-          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-          placeholder="Enter your password"
-        />
+      <div className="mt-12 -mb-4 flex items-center justify-center gap-2">
+        <Logo classNameImg="h-2 w-2" />
+        <div className="animate__animated animate__bounce animate__infinite animate__slow mt-1">
+          <span className="text-text-primary text-sm font-bold">HOME CARE</span>
+          <GradientText classNameSpan="text-sm" content="- ADMIN" />
+        </div>
       </div>
-      <button
-        type="submit"
-        className="w-full rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none"
-      >
-        Login
-      </button>
-    </form>
+    </>
   );
 };
 

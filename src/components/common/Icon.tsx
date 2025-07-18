@@ -1,17 +1,23 @@
-const AvatarMenu = ({
-  src = '/icon-image/avatar-1.png',
-  alt = 'avatar',
+import TooltipInfo from './TooltipInfo';
+
+const Icon = ({
+  src = '',
+  alt = '',
   className,
+  contentTooltip = '',
 }: {
   src?: string;
   alt?: string;
   className?: string;
+  contentTooltip?: string;
 }) => {
   return (
-    <div className={`relative h-8 w-8 cursor-pointer ${className}`}>
-      <img src={src} alt={alt} />
-    </div>
+    <TooltipInfo content={contentTooltip}>
+      <div className={`relative h-8 w-8 cursor-pointer ${className}`}>
+        <img src={src} alt={alt} />
+      </div>
+    </TooltipInfo>
   );
 };
 
-export default AvatarMenu;
+export default Icon;

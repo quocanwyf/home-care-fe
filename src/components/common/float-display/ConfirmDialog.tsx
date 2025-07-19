@@ -81,7 +81,7 @@ export default function ConfirmDialog({
             </DialogDescription>
           )}
         </DialogHeader>
-        <DialogFooter className="flex items-center !justify-between gap-4">
+        <DialogFooter className="flex items-center !justify-between gap-2">
           <Button
             variant="outline"
             onClick={() => onOpenChange(false)}

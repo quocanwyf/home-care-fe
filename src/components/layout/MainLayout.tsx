@@ -50,7 +50,7 @@ const MainLayout = () => {
             onMobileSidebarOpen={isMobileSidebarOpen}
             title={currentTitle}
           />
-          <div className="bg-background-second h-full w-full rounded-2xl p-6 shadow-md">
+          <div className="bg-background-second h-full w-full rounded-2xl px-4 shadow-md">
             <Outlet />
           </div>
         </div>

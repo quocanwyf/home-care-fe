@@ -6,7 +6,6 @@ import Overlay from '@/components/common/primitives/Overlay';
 import BackgroundSlider from '@/components/layout/BackgroundSlider';
 import { ROUTE_TITLES } from '@/constants/route-titles/route-titles';
 
-import Footer from './Footer';
 import Header from './Header';
 import Sidebar from './Sidebar';
 import SidebarMobile from './SidebarMobile';
@@ -52,9 +51,6 @@ const MainLayout = () => {
             title={currentTitle}
           />
           <Outlet />
-          <div className="my-4">
-            <Footer />
-          </div>
         </div>
       </div>
     </div>

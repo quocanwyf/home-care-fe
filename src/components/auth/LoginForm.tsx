@@ -24,7 +24,7 @@ const LoginForm = () => {
             type="text"
             id="id"
             placeholder="Enter your ID"
-            className="border-border-primary shadow-md"
+            className="focus:border-border-primary/50 shadow-sm"
           />
         </div>
         <div className="grid w-full max-w-sm items-center gap-3">
@@ -33,7 +33,7 @@ const LoginForm = () => {
             type="password"
             id="password"
             placeholder="Enter your password"
-            className="border-border-primary shadow-md"
+            className="focus:border-border-primary/50 shadow-sm"
           />
         </div>
         <Button

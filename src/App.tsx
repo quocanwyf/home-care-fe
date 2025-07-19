@@ -1,9 +1,17 @@
-import OrderPage from "@/pages/Order/OrderPage";
+import 'animate.css';
+
+import { TooltipProvider } from '@radix-ui/react-tooltip';
+
+import ConfigToaster from './config/ConfigToaster';
+import AppRouter from './router/AppRouter';
 
 function App() {
   return (
     <>
-      <OrderPage />
+      <TooltipProvider delayDuration={400} skipDelayDuration={100}>
+        <AppRouter />
+      </TooltipProvider>
+      <ConfigToaster />
     </>
   );
 }

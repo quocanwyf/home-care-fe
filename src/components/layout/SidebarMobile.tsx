@@ -1,0 +1,118 @@
+import { useLocation, useNavigate } from 'react-router-dom';
+
+import { MENU_ITEMS } from '@/constants/mock-data/mock-data-sidebar';
+
+import Logo from '../common/icons/Logo';
+
+const SidebarMobile = ({
+  onMobileSidebarOpen,
+  onOpenMenu,
+}: {
+  onMobileSidebarOpen: boolean;
+  onOpenMenu: () => void;
+}) => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const handleMenuClick = (path: string, label: string) => {
+    if (label === 'Log out') {
+      return;
+    }
+    navigate(path);
+    onOpenMenu();
+  };
+
+  const isActiveItem = (path: string) => {
+    return location.pathname === path;
+  };
+
+  return (
+    <>
+      {onMobileSidebarOpen && (
+        <div className="bg-background-second border-border-primary h-full max-h-screen w-full overflow-y-auto rounded-2xl shadow-md">
+          <div className="flex items-center justify-center gap-2 px-4 py-3">
+            <Logo />
+            <span className="text-text-primary font-bold">HOME CARE</span>
+            <span className="from-text-linear1 via-text-linear2 to-text-linear3 bg-gradient-to-b bg-clip-text text-transparent">
+              <span className="font-bold">- ADMIN</span>
+            </span>
+          </div>
+
+          <div className="border-border-primary mx-4 mb-2 border-b-3" />
+
+          <nav>
+            {MENU_ITEMS.map((item, idx) => (
+              <div key={idx}>
+                {item.children ? (
+                  <div className="text-text-primary my-2 mr-10 flex justify-center font-bold">
+                    {item.label}
+                  </div>
+                ) : (
+                  <div
+                    className={`group mx-4 flex cursor-pointer items-center gap-4 rounded-xl p-4 pl-8 transition-all duration-500 ease-in-out ${
+                      isActiveItem(item.path)
+                        ? 'bg-tab-hover text-text-secondary font-semibold'
+                        : 'hover:bg-tab-hover'
+                    }`}
+                    onClick={() => handleMenuClick(item.path, item.label)}
+                  >
+                    {item.icon && (
+                      <img
+                        src={item?.icon}
+                        alt={item?.label}
+                        className="h-4 w-4 object-cover"
+                      />
+                    )}
+                    <span
+                      className={`${
+                        isActiveItem(item.path)
+                          ? 'text-text-secondary font-semibold'
+                          : 'text-text-primary group-hover:text-text-secondary group-hover:font-semibold'
+                      }`}
+                    >
+                      {item.label}
+                    </span>
+                  </div>
+                )}
+                {item.children && (
+                  <div>
+                    {item.children.map((child, i) => (
+                      <div
+                        key={i}
+                        className={`group mx-4 flex cursor-pointer items-center gap-4 rounded-xl p-4 pl-8 transition-all duration-500 ease-in-out ${
+                          isActiveItem(child.path)
+                            ? 'bg-tab-hover text-text-secondary font-semibold'
+                            : 'hover:bg-tab-hover'
+                        }`}
+                        onClick={() => handleMenuClick(child.path, child.label)}
+                      >
+                        {child.icon && (
+                          <img
+                            src={child?.icon}
+                            alt={child?.label}
+                            className="h-4 w-4 object-cover"
+                          />
+                        )}
+                        <span
+                          className={`text-base ${
+                            isActiveItem(child.path)
+                              ? 'text-text-secondary font-semibold'
+                              : 'text-text-primary group-hover:text-text-secondary group-hover:font-semibold'
+                          }`}
+                        >
+                          {child.label}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            ))}
+          </nav>
+        </div>
+      )}
+    </>
+  );
+};
+
+export default SidebarMobile;

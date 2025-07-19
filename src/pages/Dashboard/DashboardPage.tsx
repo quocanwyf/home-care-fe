@@ -1,6 +1,5 @@
 import { useState } from 'react';
 
-import StatusOrdersBadge from '@/components/common/badge/StatusOrdersBadge';
 import ConfirmDialog from '@/components/common/float-display/ConfirmDialog';
 import { Button } from '@/components/ui/button';
 
@@ -12,7 +11,7 @@ const DashboardPage = () => {
   };
   return (
     <>
-      <div className="scrollbar-w-2 scrollbar scrollbar-thumb-slate-700 scrollbar-track-slate-300 overflow-y-scroll">
+      <div className="scrollbar-w-2">
         <ConfirmDialog
           open={open}
           onOpenChange={setOpen}
@@ -24,13 +23,12 @@ const DashboardPage = () => {
           icon
         >
           <Button
-            className="cursor-pointer rounded px-4 py-2 text-white"
+            className="cursor-pointer px-4 py-2 text-white"
             onClick={() => setOpen(true)}
           >
             Thêm mục
           </Button>
         </ConfirmDialog>
-        <StatusOrdersBadge status="Pending" />
       </div>
     </>
   );

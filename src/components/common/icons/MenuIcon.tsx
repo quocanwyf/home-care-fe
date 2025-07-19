@@ -1,6 +1,6 @@
 import { AlignRight, Menu } from 'lucide-react';
 
-import TooltipInfo from './TooltipInfo';
+import TooltipInfo from '@/components/common/primitives/TooltipInfo';
 
 const MenuIcon = ({
   onOpenMenuClick,

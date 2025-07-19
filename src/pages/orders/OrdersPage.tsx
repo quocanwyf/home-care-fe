@@ -1,16 +1,28 @@
-import { AppTable } from '@/components/common/AppTable';
+import DataTable from '@/components/common/table/DataTable';
+import TableActions from '@/components/common/table/TableActions';
 import { ORDER_COLUMN } from '@/constants/column-table/order-column';
 import { data } from '@/constants/mock-data/mock-data-order-table';
+import type { Order } from '@/types/table/order-type';
 
 const OrdersPage = () => {
-  const dataOrder = data;
+  const ordersData: Order[] = data;
+
+  // Thêm actions vào dữ liệu
+  const ordersWithActions = ordersData.map((order) => ({
+    ...order,
+    actions: <TableActions row={order} />,
+  }));
+
   return (
-    <div className="flex min-h-screen flex-col p-4">
-      <h1 className="mb-4 text-lg font-bold">Order Table</h1>
-      <AppTable data={dataOrder} columns={ORDER_COLUMN} />
-      <div className="h-5"></div>
+    <div className="p-4">
+      <DataTable<Order, Order>
+        title="Orders List"
+        data={ordersWithActions}
+        columns={ORDER_COLUMN}
+        addButtonText="Add Order"
+        initialPageSize={10}
+      />
     </div>
   );
 };
-
 export default OrdersPage;

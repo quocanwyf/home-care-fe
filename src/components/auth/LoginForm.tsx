@@ -1,7 +1,7 @@
 import { useAppNavigate } from '@/hooks/useAppNavigate';
 
-import GradientText from '../common/GradientText';
-import Logo from '../common/Logo';
+import Logo from '../common/icons/Logo';
+import GradientText from '../common/primitives/GradientText';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';

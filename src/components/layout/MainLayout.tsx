@@ -2,10 +2,11 @@
 import { useState } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 
-import Overlay from '@/components/common/Overlay';
+import Overlay from '@/components/common/primitives/Overlay';
 import BackgroundSlider from '@/components/layout/BackgroundSlider';
 import { ROUTE_TITLES } from '@/constants/route-titles/route-titles';
 
+import Footer from './Footer';
 import Header from './Header';
 import Sidebar from './Sidebar';
 import SidebarMobile from './SidebarMobile';
@@ -20,10 +21,10 @@ const MainLayout = () => {
   const currentTitle = ROUTE_TITLES[location.pathname] || 'dashboard';
 
   return (
-    <div className="bg-background-first relative min-h-screen">
+    <div className="bg-background-first min-h-screen overflow-hidden">
       <BackgroundSlider />
       <Overlay className="opacity-60" />
-      <div className="absolute inset-0 z-20 mx-6 my-4 flex">
+      <div className="max-mobile:mx-0 max-tablet:mx-2 absolute inset-0 z-20 mx-6 my-4 flex">
         <div className={`desktop:block mr-6 hidden w-1/4`}>
           <Sidebar />
         </div>
@@ -50,8 +51,9 @@ const MainLayout = () => {
             onMobileSidebarOpen={isMobileSidebarOpen}
             title={currentTitle}
           />
-          <div className="bg-background-second h-full w-full rounded-2xl px-4 shadow-md">
-            <Outlet />
+          <Outlet />
+          <div className="my-4">
+            <Footer />
           </div>
         </div>
       </div>

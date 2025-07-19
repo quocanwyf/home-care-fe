@@ -2,8 +2,8 @@ import { useLocation, useNavigate } from 'react-router-dom';
 
 import { MENU_ITEMS } from '@/constants/mock-data/mock-data-sidebar';
 
-import GradientText from '../common/GradientText';
-import Logo from '../common/Logo';
+import Logo from '../common/icons/Logo';
+import GradientText from '../common/primitives/GradientText';
 
 export default function Sidebar() {
   const navigate = useNavigate();

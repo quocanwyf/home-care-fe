@@ -1,7 +1,6 @@
-import MenuIcon from '@/components/common/MenuIcon';
-import NotificationBell from '@/components/common/NotificationBell';
-
-import Icon from '../common/Icon';
+import Icon from '@/components/common/icons/Icon';
+import MenuIcon from '@/components/common/icons/MenuIcon';
+import NotificationBell from '@/components/common/icons/NotificationBell';
 
 const Header = ({
   onOpenMenuClick,

@@ -1,4 +1,4 @@
-import TooltipInfo from './TooltipInfo';
+import TooltipInfo from '@/components/common/primitives/TooltipInfo';
 
 const Icon = ({
   src = '',

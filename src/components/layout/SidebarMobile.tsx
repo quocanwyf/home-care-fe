@@ -2,7 +2,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 
 import { MENU_ITEMS } from '@/constants/mock-data/mock-data-sidebar';
 
-import Logo from '../common/Logo';
+import Logo from '../common/icons/Logo';
 
 const SidebarMobile = ({
   onMobileSidebarOpen,

@@ -1,6 +1,6 @@
 import LoginForm from '@/components/auth/LoginForm';
-import GradientText from '@/components/common/GradientText';
-import Overlay from '@/components/common/Overlay';
+import GradientText from '@/components/common/primitives/GradientText';
+import Overlay from '@/components/common/primitives/Overlay';
 
 import BackGroundImageLogin from '../../components/auth/BackGroundImageLogin';
 

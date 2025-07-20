@@ -1,10 +1,10 @@
 export type Staffs = {
-  identifier: string;
+  phoneNumber: string;
   fullName: string;
-  dateOfBirth: string; // ISO format
   address: string;
+  dateOfBirth: string; // ISO format
 };
 
-export type StaffsWithStatus = Staffs & {
+export type StaffsWithStatus = {
   status: 'active' | 'inactive' | 'banned';
 };

@@ -1,3 +1,5 @@
+import { ChevronUpIcon } from 'lucide-react';
+
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -27,6 +29,7 @@ export default function PageSizeDropdown({
       <DropdownMenuTrigger asChild>
         <Button variant="outline" className="text-sm">
           {pageSize}
+          <ChevronUpIcon className="h-4 w-4 opacity-50" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">

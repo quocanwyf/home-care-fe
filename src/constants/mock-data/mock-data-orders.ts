@@ -40,7 +40,7 @@ export const data: Orders[] = [
     phoneNumberCustomers: '0955678901',
     addressCustomers: 'Cần Thơ',
     serviceCategory: 'Dọn dẹp văn phòng',
-    orderDate: '2025-07-15',
+    orderDate: '2025-07-15 12:00:00',
     cost: 300000,
     status: { status: 'inProgress' },
   },

@@ -19,7 +19,6 @@ export const useStatusFilter = ({
   initialStatus = 'all',
 }: UseStatusFilterProps): UseStatusFilterReturn => {
   const [statusFilter, setStatusFilter] = useState<string>(initialStatus);
-  console.log(statusFilter);
 
   // Lọc dữ liệu dựa trên status được chọn
   const filteredData = useMemo(() => {

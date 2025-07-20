@@ -1,8 +1,9 @@
 import { AppTable } from '@/components/table/AppTable';
+import { STATUS_ORDERS } from '@/constants/dropdown/status-orders';
 import { data } from '@/constants/mock-data/mock-data-orders';
 import { usePageSize } from '@/hooks/usePageSize';
 import { useStatusFilter } from '@/hooks/useStatusFilter';
-import { orderColumns } from '@/types/table/column/order-column';
+import { orderColumn } from '@/types/table/column/order-column';
 
 const OrdersPage = () => {
   const { statusFilter, filteredData, handleStatusChange, resetFilter } =
@@ -21,7 +22,7 @@ const OrdersPage = () => {
   return (
     <AppTable
       data={filteredData}
-      columns={orderColumns(
+      columns={orderColumn(
         (row) => console.log('Xem', row),
         (row) => console.log('Sửa', row),
         (row) => console.log('Xoá', row)
@@ -30,12 +31,13 @@ const OrdersPage = () => {
       //status variable and function
       statusFilter={statusFilter}
       onStatusFilterChange={handleStatusChange}
+      listStatusFilter={STATUS_ORDERS}
       //pagesize variable and function
       pageSize={pageSize}
       onPageSizeChange={handlePageSizeChange}
       //reset filters
       onResetFilters={resetAllFilters}
-      isLoading
+      // isLoading
     />
   );
 };

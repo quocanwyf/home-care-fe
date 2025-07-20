@@ -1,15 +1,15 @@
-import type { OrdersWithStatus } from '@/types/table/orders';
-import { OrdersStatusStyles } from '@/types/table/orders';
+import { ObjectsStatusStyles } from '@/types/table/objects/union-objects';
+import type { ObjectsWithStatus } from '@/types/table/objects/union-objects';
 
 const OrderStatusBadge = ({
   status,
 }: {
-  status: OrdersWithStatus['status'];
+  status: ObjectsWithStatus['status'];
 }) => {
   return (
     <span
       className={`inline-flex items-center rounded-full border px-2.5 py-1 text-xs font-bold ${
-        OrdersStatusStyles[status]
+        ObjectsStatusStyles[status]
       }`}
     >
       {status === 'inProgress'

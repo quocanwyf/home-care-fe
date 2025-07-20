@@ -7,7 +7,7 @@ import TableActions from '@/components/table/TableActions';
 import type { Orders } from '@/types/table/orders';
 import type { ColumnDef } from '@tanstack/react-table';
 
-export const orderColumns = (
+export const orderColumn = (
   onView?: (row: Orders) => void,
   onEdit?: (row: Orders) => void,
   onDelete?: (row: Orders) => void
@@ -28,7 +28,9 @@ export const orderColumns = (
     accessorKey: 'orderDate',
     header: 'Order Date',
     cell: ({ row }) =>
-      format(new Date(row.original.orderDate), 'dd/MM/yyyy', { locale: vi }),
+      format(new Date(row.original.orderDate), 'dd/MM/yyyy HH:mm:ss', {
+        locale: vi,
+      }),
   },
   {
     accessorKey: 'cost',

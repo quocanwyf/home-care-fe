@@ -12,6 +12,7 @@ import StatusFilterDropdown from './StatusFilterDropdown';
 interface PageFooterProps {
   status: string;
   onStatusFilterChange?: (status: string) => void;
+  listStatusFilter?: string[];
   className?: string;
   pageSize?: number;
   onPageSizeChange?: (size: number) => void;
@@ -27,6 +28,7 @@ export default function PageFooter({
   //status filter
   status,
   onStatusFilterChange,
+  listStatusFilter = [],
   //pagesize
   pageSize = 10,
   onPageSizeChange,
@@ -75,6 +77,7 @@ export default function PageFooter({
         <StatusFilterDropdown
           status={status}
           onChange={onStatusFilterChange || (() => {})}
+          listStatusFilter={listStatusFilter}
         />
         <PageSizeDropdown
           pageSize={pageSize}

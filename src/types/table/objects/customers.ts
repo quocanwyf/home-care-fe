@@ -1,5 +1,5 @@
 export type Customer = {
-  phone: string;
+  phoneNumber: string;
   fullName: string;
   address: string;
   points: number;

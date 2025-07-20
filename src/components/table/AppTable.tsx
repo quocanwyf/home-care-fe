@@ -33,6 +33,7 @@ type AppTableProps<T, TValue = unknown> = {
   onRowClick?: (row: T) => void;
   pageHeaderTitle?: string;
   statusFilter?: string;
+  listStatusFilter?: string[];
   onStatusFilterChange?: (status: string) => void;
   pageSize?: number;
   onPageSizeChange?: (size: number) => void;
@@ -46,6 +47,7 @@ export function AppTable<T>({
   onRowClick,
   pageHeaderTitle = '',
   statusFilter = 'all',
+  listStatusFilter = [],
   onStatusFilterChange,
   pageSize = 10,
   onPageSizeChange,
@@ -175,6 +177,7 @@ export function AppTable<T>({
         <PageFooter
           status={statusFilter}
           onStatusFilterChange={onStatusFilterChange}
+          listStatusFilter={listStatusFilter}
           pageSize={pageSize}
           onPageSizeChange={onPageSizeChange}
           onResetFilters={onResetFilters}

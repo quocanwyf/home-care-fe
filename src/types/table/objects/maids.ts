@@ -1,10 +1,10 @@
 export type Maids = {
   phoneNumber: string;
   fullName: string;
-  dateOfBirth: string; // ISO format
   address: string;
+  dateOfBirth: string; // ISO format
 };
 
-export type MaidsWithStatus = Maids & {
+export type MaidsWithStatus = {
   status: 'active' | 'inactive' | 'banned';
 };

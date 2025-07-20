@@ -5,28 +5,33 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { PAGE_SIZE_TABLE } from '@/constants/pagesize/page-size-table';
 
 interface PageSizeDropdownProps {
-  pageSize: number;
-  onChange: (size: number) => void;
+  pageSize?: number;
+  onPageSizeChange?: (size: number) => void;
+  totalData?: number; // Optional, not used in this component
 }
 
 export default function PageSizeDropdown({
-  pageSize,
-  onChange,
+  pageSize = 10,
+  onPageSizeChange = () => {},
+  totalData = 0,
 }: PageSizeDropdownProps) {
-  const options = [10, 20, 50, 100];
-
+  const availablePageSizes = PAGE_SIZE_TABLE.filter(
+    (size) => size <= totalData
+  );
   return (
     <DropdownMenu>
+      <span className="text-sm text-gray-600"> Show: </span>
       <DropdownMenuTrigger asChild>
         <Button variant="outline" className="text-sm">
-          Show: {pageSize}
+          {pageSize}
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        {options.map((size) => (
-          <DropdownMenuItem key={size} onClick={() => onChange(size)}>
+        {availablePageSizes.map((size) => (
+          <DropdownMenuItem key={size} onClick={() => onPageSizeChange(size)}>
             {size} per page
           </DropdownMenuItem>
         ))}

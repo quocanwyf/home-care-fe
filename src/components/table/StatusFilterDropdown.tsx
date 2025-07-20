@@ -25,6 +25,8 @@ export default function StatusFilterDropdown({
   };
   return (
     <DropdownMenu>
+      <span className="text-sm text-gray-600">Filter by status:</span>
+
       <DropdownMenuTrigger asChild>
         <Button
           variant="outline"

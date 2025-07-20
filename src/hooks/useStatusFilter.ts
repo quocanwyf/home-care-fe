@@ -12,7 +12,6 @@ interface UseStatusFilterReturn {
   filteredData: Orders[];
   handleStatusChange: (status: string) => void;
   resetFilter: () => void;
-  availableStatuses: string[];
 }
 
 export const useStatusFilter = ({
@@ -21,15 +20,6 @@ export const useStatusFilter = ({
 }: UseStatusFilterProps): UseStatusFilterReturn => {
   const [statusFilter, setStatusFilter] = useState<string>(initialStatus);
   console.log(statusFilter);
-
-  // Tự động lấy danh sách status từ data
-  const availableStatuses = useMemo(() => {
-    const statuses = [
-      'all',
-      ...new Set(data.map((order) => order.status.status)),
-    ];
-    return statuses;
-  }, [data]);
 
   // Lọc dữ liệu dựa trên status được chọn
   const filteredData = useMemo(() => {
@@ -54,6 +44,5 @@ export const useStatusFilter = ({
     filteredData,
     handleStatusChange,
     resetFilter,
-    availableStatuses,
   };
 };

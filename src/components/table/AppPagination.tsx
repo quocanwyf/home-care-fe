@@ -1,5 +1,10 @@
 import clsx from 'clsx';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import {
+  ChevronLeft,
+  ChevronRight,
+  ChevronsLeft,
+  ChevronsRight,
+} from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 
@@ -50,17 +55,35 @@ export default function AppPagination({
     return pages;
   };
 
+  // Kiểm tra disabled states
+  const isFirstPage = currentPage === 1;
+  const isLastPage = currentPage === pageCount;
+
   return (
     <div className="flex items-center space-x-1">
+      {/* First Page Button */}
       <Button
         size="icon"
         variant="ghost"
-        onClick={() => onPageChange(currentPage - 2)}
-        disabled={currentPage === 1}
+        onClick={() => onPageChange(0)} // Go to first page (0-based)
+        disabled={isFirstPage}
+        title="Trang đầu"
+      >
+        <ChevronsLeft className="h-4 w-4" />
+      </Button>
+
+      {/* Previous Page Button */}
+      <Button
+        size="icon"
+        variant="ghost"
+        onClick={() => onPageChange(pageIndex - 1)} // Previous page
+        disabled={isFirstPage}
+        title="Trang trước"
       >
         <ChevronLeft className="h-4 w-4" />
       </Button>
 
+      {/* Page Numbers */}
       {generatePages().map((page, index) =>
         page === '...' ? (
           <span key={index} className="text-muted-foreground px-2">
@@ -73,22 +96,36 @@ export default function AppPagination({
             variant={page === currentPage ? 'default' : 'ghost'}
             className={clsx(
               'rounded-full',
-              page === currentPage && 'bg-blue-300 text-white'
+              page === currentPage && 'bg-blue-500 text-white hover:bg-blue-600'
             )}
-            onClick={() => onPageChange(Number(page) - 1)}
+            onClick={() => onPageChange(Number(page) - 1)} // Convert to 0-based
+            title={`Trang ${page}`}
           >
             {page}
           </Button>
         )
       )}
 
+      {/* Next Page Button */}
       <Button
         size="icon"
         variant="ghost"
-        onClick={() => onPageChange(pageIndex + 1)}
-        disabled={currentPage === pageCount}
+        onClick={() => onPageChange(pageIndex + 1)} // Next page
+        disabled={isLastPage}
+        title="Trang sau"
       >
         <ChevronRight className="h-4 w-4" />
+      </Button>
+
+      {/* Last Page Button */}
+      <Button
+        size="icon"
+        variant="ghost"
+        onClick={() => onPageChange(pageCount - 1)} // Go to last page (0-based)
+        disabled={isLastPage}
+        title="Trang cuối"
+      >
+        <ChevronsRight className="h-4 w-4" />
       </Button>
     </div>
   );

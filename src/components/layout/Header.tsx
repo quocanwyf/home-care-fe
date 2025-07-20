@@ -1,4 +1,4 @@
-import Icon from '@/components/common/icons/Icon';
+import Icon from '@/components/common/icons/ImageIcon';
 import MenuIcon from '@/components/common/icons/MenuIcon';
 import NotificationBell from '@/components/common/icons/NotificationBell';
 

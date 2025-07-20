@@ -1,23 +1,23 @@
-// import { ORDER_STATUS } from '@/constants/status/order-status';
-// const OrderStatusBadge = ({
-//   status,
-// }: {
-//   status: keyof typeof ORDER_STATUS;
-// }) => {
-//   return (
-//     <span
-//       className={`inline-flex items-center rounded-full border px-2.5 py-1 text-xs font-bold ${
-//         ORDER_STATUS[status]
-//       }`}
-//     >
-//       {status}
-//     </span>
-//   );
-// };
-// export default OrderStatusBadge;
+import type { OrdersWithStatus } from '@/types/table/orders';
+import { OrdersStatusStyles } from '@/types/table/orders';
 
-const StatusOrdersBadge = () => {
-  return <div>StatusOrdersBadge</div>;
+const OrderStatusBadge = ({
+  status,
+}: {
+  status: OrdersWithStatus['status'];
+}) => {
+  return (
+    <span
+      className={`inline-flex items-center rounded-full border px-2.5 py-1 text-xs font-bold ${
+        OrdersStatusStyles[status]
+      }`}
+    >
+      {status === 'inProgress'
+        ? 'in progress'
+        : status === 'waitPayment'
+          ? 'wait payment'
+          : status}
+    </span>
+  );
 };
-
-export default StatusOrdersBadge;
+export default OrderStatusBadge;

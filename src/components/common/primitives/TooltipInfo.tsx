@@ -10,7 +10,7 @@ export default function TooltipInfo({
   children,
   side = 'top',
   align = 'center',
-  delay = 300,
+  delay = 500,
 }: {
   content: string;
   children: React.ReactNode;

@@ -34,9 +34,8 @@ const OrdersPage = () => {
       pageSize={pageSize}
       onPageSizeChange={handlePageSizeChange}
       //reset filters
-
       onResetFilters={resetAllFilters}
-      // isLoading
+      isLoading
     />
   );
 };

@@ -1,0 +1,12 @@
+export const STATUS_DISPLAY_NAME: Record<string, string> = {
+  all: 'All',
+  pending: 'Pending',
+  assigned: 'Assigned',
+  inProgress: 'In Progress',
+  waitPayment: 'Wait Payment',
+  completed: 'Completed',
+  cancelled: 'Cancelled',
+  active: 'Active',
+  inactive: 'Inactive',
+  banned: 'Banned',
+};

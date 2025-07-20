@@ -1,4 +1,4 @@
-import Icon from '@/components/common/icons/Icon';
+import Icon from '@/components/common/icons/ImageIcon';
 import MenuIcon from '@/components/common/icons/MenuIcon';
 import NotificationBell from '@/components/common/icons/NotificationBell';
 
@@ -13,7 +13,7 @@ const Header = ({
 }) => {
   return (
     <header className="flex items-center justify-between rounded-2xl px-2 py-4 shadow-md">
-      <div className="text-lg font-bold text-white">{title}</div>
+      <div className="text-lg font-bold text-white">{title} Page</div>
 
       <div className="flex flex-row-reverse gap-4">
         {/* Menu icon only display on the mobile */}

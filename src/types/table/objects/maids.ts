@@ -3,8 +3,9 @@ export type Maids = {
   fullName: string;
   address: string;
   dateOfBirth: string; // ISO format
+  status: MaidsWithStatus;
 };
 
 export type MaidsWithStatus = {
-  status: 'active' | 'inactive' | 'banned';
+  status: 'active' | 'inactive';
 };

@@ -1,4 +1,4 @@
-import type { Maids } from '@/types/table/maids';
+import type { Maids } from '@/types/table/objects/maids';
 
 export const data: Maids[] = [
   {

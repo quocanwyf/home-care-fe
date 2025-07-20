@@ -25,7 +25,9 @@ const CustomersPage = () => {
       columns={customerColumn(
         (row) => console.log('Xem', row),
         (row) => console.log('Sửa', row),
-        (row) => console.log('Xoá', row)
+        (row) => console.log('Xoá', row),
+        (row) => console.log('Xoá', row),
+        (row) => console.log('Bỏ cấm', row)
       )}
       pageHeaderTitle="Customers List"
       //status variable and function

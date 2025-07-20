@@ -1,15 +1,15 @@
 import { useMemo, useState } from 'react';
 
-import type { Orders } from '@/types/table/orders';
+import type { ObjectsUnion } from '@/types/table/objects/union-objects';
 
 interface UseStatusFilterProps {
-  data: Orders[];
+  data: ObjectsUnion[];
   initialStatus?: string;
 }
 
 interface UseStatusFilterReturn {
   statusFilter: string;
-  filteredData: Orders[];
+  filteredData: ObjectsUnion[];
   handleStatusChange: (status: string) => void;
   resetFilter: () => void;
 }
@@ -25,7 +25,7 @@ export const useStatusFilter = ({
     if (statusFilter === 'all') {
       return data;
     }
-    return data.filter((order) => order.status.status === statusFilter);
+    return data.filter((objects) => objects.status?.status === statusFilter);
   }, [data, statusFilter]);
 
   // Handler để thay đổi status

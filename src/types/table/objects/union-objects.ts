@@ -1,3 +1,17 @@
+export type ObjectsUnion = {
+  phoneNumberCustomers?: string;
+  addressCustomers?: string;
+  serviceCategory?: string;
+  orderDate?: string;
+  cost?: number;
+  phoneNumber?: string;
+  fullName?: string;
+  address?: string;
+  dateOfBirth?: string;
+  points?: number;
+  status?: ObjectsWithStatus;
+};
+
 export type ObjectsWithStatus = {
   status:
     | 'pending'

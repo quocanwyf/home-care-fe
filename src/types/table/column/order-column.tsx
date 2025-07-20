@@ -4,7 +4,7 @@ import { vi } from 'date-fns/locale';
 
 import OrderStatusBadge from '@/components/common/badge/StatusOrdersBadge';
 import TableActions from '@/components/table/TableActions';
-import type { Orders } from '@/types/table/orders';
+import type { Orders } from '@/types/table/objects/orders';
 import type { ColumnDef } from '@tanstack/react-table';
 
 export const orderColumn = (

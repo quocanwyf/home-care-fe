@@ -1,4 +1,4 @@
-import type { Orders } from '@/types/table/orders';
+import type { Orders } from '@/types/table/objects/orders';
 
 export const data: Orders[] = [
   // Status: pending

@@ -1,4 +1,4 @@
-import type { Customers } from '@/types/table/customers';
+import type { Customers } from '@/types/table/objects/customers';
 
 export const data: Customers[] = [
   {

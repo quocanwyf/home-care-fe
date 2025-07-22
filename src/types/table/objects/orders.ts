@@ -1,6 +1,6 @@
 export type Orders = {
+  orderId: string;
   phoneNumberCustomers: string;
-  addressCustomers: string;
   serviceCategory: string;
   orderDate: string; // ISO format
   cost: number;

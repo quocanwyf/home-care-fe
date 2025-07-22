@@ -14,6 +14,7 @@ const StaffsPage = lazy(
   () => import('@/pages/human-resources/staffs/StaffsPage')
 );
 const OrdersPage = lazy(() => import('@/pages/orders/OrdersPage'));
+const AddOrderPage = lazy(() => import('@/pages/orders/AddOrderPage'));
 const FinancesPage = lazy(
   () => import('@/pages/inventory/finances/FianancesPage')
 );
@@ -46,6 +47,7 @@ const AppRouter = () => {
           <Route path="/staffs" element={<StaffsPage />} />
 
           <Route path="/orders" element={<OrdersPage />} />
+          <Route path="/orders/add" element={<AddOrderPage />} />
 
           <Route path="/finances" element={<FinancesPage />} />
           <Route path="/permissions" element={<PermissionsPage />} />

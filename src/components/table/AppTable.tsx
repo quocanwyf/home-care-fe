@@ -64,6 +64,10 @@ export function AppTable<T>({
     setPagination((prev) => ({ ...prev, pageSize }));
   }, [pageSize]);
 
+  useEffect(() => {
+    setPagination((prev) => ({ ...prev, pageIndex: 0 }));
+  }, [statusFilter, pageSize]);
+
   const table = useReactTable({
     data,
     columns,

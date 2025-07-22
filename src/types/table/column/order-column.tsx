@@ -13,12 +13,12 @@ export const orderColumn = (
   onDelete?: (row: Orders) => void
 ): ColumnDef<Orders, unknown>[] => [
   {
-    accessorKey: 'phoneNumberCustomers',
-    header: 'Phone number',
+    accessorKey: 'orderId',
+    header: 'Order ID',
   },
   {
-    accessorKey: 'addressCustomers',
-    header: 'Address',
+    accessorKey: 'phoneNumberCustomers',
+    header: 'Phone number',
   },
   {
     accessorKey: 'serviceCategory',

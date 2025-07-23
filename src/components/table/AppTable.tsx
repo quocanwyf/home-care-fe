@@ -37,6 +37,7 @@ type AppTableProps<T, TValue = unknown> = {
   onStatusFilterChange?: (status: string) => void;
   pageSize?: number;
   onPageSizeChange?: (size: number) => void;
+  onPaginationChange?: (pagination: PaginationState) => void;
   onResetFilters?: () => void;
 };
 
@@ -51,6 +52,7 @@ export function AppTable<T>({
   onStatusFilterChange,
   pageSize = 10,
   onPageSizeChange,
+  onPaginationChange,
   onResetFilters,
 }: AppTableProps<T>) {
   const [sorting, setSorting] = useState<SortingState>([]);
@@ -58,6 +60,11 @@ export function AppTable<T>({
     pageIndex: 0,
     pageSize: pageSize,
   });
+
+  // console.log(pagination);
+  useEffect(() => {
+    onPaginationChange?.(pagination);
+  }, [pagination, onPaginationChange]);
 
   // Cập nhật pagination khi pageSize thay đổi từ bên ngoài
   useEffect(() => {

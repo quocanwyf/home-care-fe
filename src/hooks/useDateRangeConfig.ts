@@ -29,22 +29,13 @@ export function useDateRangeConfig() {
     };
 
     const newRange = {
-      from: range.from || null,
-      to: range.to || null,
+      from: formatDate(range.from || null),
+      to: formatDate(range.to || null),
     };
 
     setDateRange(newRange);
 
-    // Format và log theo yêu cầu
-    if (range.from && range.to) {
-      const formattedRange = {
-        from: formatDate(range.from),
-        to: formatDate(range.to),
-      };
-      console.log('Formatted date range:', formattedRange);
-    } else if (range.from) {
-      console.log('Selected from date:', formatDate(range.from));
-    }
+    // console.log('Date range changed:', newRange);
   };
 
   useEffect(() => {
@@ -64,4 +55,6 @@ export function useDateRangeConfig() {
       }));
     };
   }, [dateRange, setConfig]);
+
+  return { dateRange };
 }

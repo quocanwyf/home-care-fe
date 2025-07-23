@@ -98,7 +98,9 @@ const Header = ({
         </div>
       </div>
       <div className="max-tablet:flex max-tablet:gap-4 hidden">
-        <div className="min-w-[calc(50%-12px)]">
+        <div
+          className={`${config.enableDateRange ? 'min-w-[calc(50%-12px)]' : 'min-w-full'}`}
+        >
           {config.onSearch && (
             <SearchInput
               value={value}

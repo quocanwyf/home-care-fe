@@ -2,8 +2,10 @@ import { AppTable } from '@/components/table/AppTable';
 import { STATUS_HR } from '@/constants/dropdown/status-hr';
 import { data } from '@/constants/mock-data/mock-data-customers';
 import { usePageSize } from '@/hooks/usePageSize';
+import { useSearchConfig } from '@/hooks/useSearchConfig';
 import { useStatusFilter } from '@/hooks/useStatusFilter';
 import { customerColumn } from '@/types/table/column/customer-column';
+import { resetAllFilters } from '@/utils/reset-all-filters';
 
 const CustomersPage = () => {
   const { statusFilter, filteredData, handleStatusChange, resetFilter } =
@@ -11,14 +13,23 @@ const CustomersPage = () => {
       data,
       initialStatus: 'all',
     });
+
   const { pageSize, handlePageSizeChange, resetPageSize } = usePageSize({
     initialPageSize: 10,
+  });
+
+  useSearchConfig({
+    placeholder: 'Search by customer phone number...',
+    onSearch: (keyword) => {
+      console.log('Searching for:', keyword);
+    },
   });
 
   const resetAllFilters = () => {
     resetFilter();
     resetPageSize();
   };
+
   return (
     <AppTable
       data={filteredData}

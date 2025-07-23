@@ -2,8 +2,10 @@ import { AppTable } from '@/components/table/AppTable';
 import { STATUS_ORDERS } from '@/constants/dropdown/status-orders';
 import { data } from '@/constants/mock-data/mock-data-orders';
 import { usePageSize } from '@/hooks/usePageSize';
+import { useSearchConfig } from '@/hooks/useSearchConfig';
 import { useStatusFilter } from '@/hooks/useStatusFilter';
 import { orderColumn } from '@/types/table/column/order-column';
+import { resetAllFilters } from '@/utils/reset-all-filters';
 
 const OrdersPage = () => {
   const { statusFilter, filteredData, handleStatusChange, resetFilter } =
@@ -11,14 +13,23 @@ const OrdersPage = () => {
       data,
       initialStatus: 'all',
     });
+
   const { pageSize, handlePageSizeChange, resetPageSize } = usePageSize({
     initialPageSize: 10,
+  });
+
+  useSearchConfig({
+    placeholder: 'Search by order id...',
+    onSearch: (keyword) => {
+      console.log('Searching for:', keyword);
+    },
   });
 
   const resetAllFilters = () => {
     resetFilter();
     resetPageSize();
   };
+
   return (
     <AppTable
       data={filteredData}

@@ -1,8 +1,11 @@
-import { useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+
+import { debounce } from 'lodash';
 
 import Icon from '@/components/common/icons/ImageIcon';
 import MenuIcon from '@/components/common/icons/MenuIcon';
 import NotificationBell from '@/components/common/icons/NotificationBell';
+import { useSearch } from '@/context/SearchContext';
 
 import SearchInput from '../common/primitives/SearchInput';
 
@@ -15,7 +18,33 @@ const Header = ({
   onMobileSidebarOpen: boolean;
   title: string;
 }) => {
-  const [query, setQuery] = useState('');
+  const { config } = useSearch();
+  const [value, setValue] = useState('');
+
+  // Tạo debounced function bằng useMemo thay vì useCallback
+  const debouncedSearch = useMemo(
+    () =>
+      debounce((val: string) => {
+        config.onSearch?.(val);
+      }, 500),
+    [config]
+  );
+
+  // Cleanup khi unmount
+  useEffect(() => {
+    return () => {
+      setValue('');
+      debouncedSearch.cancel();
+    };
+  }, [debouncedSearch]);
+
+  const handleChange = useCallback(
+    (val: string) => {
+      setValue(val);
+      debouncedSearch(val);
+    },
+    [debouncedSearch]
+  );
   return (
     <header className="flex flex-col gap-4 rounded-2xl px-2 py-4 shadow-md">
       <div className="flex items-center justify-between">
@@ -25,11 +54,13 @@ const Header = ({
 
         <div className="flex items-center justify-center gap-8">
           <div className="max-tablet:hidden">
-            <SearchInput
-              value={query}
-              onChange={setQuery}
-              placeholder="Search by phone number..."
-            />
+            {config.onSearch && (
+              <SearchInput
+                value={value}
+                onChange={handleChange}
+                placeholder={config.placeholder || 'Search...'}
+              />
+            )}
           </div>
           <div className="flex flex-row-reverse gap-4">
             {/* Menu icon only display on the mobile */}
@@ -59,11 +90,13 @@ const Header = ({
         </div>
       </div>
       <div className="max-tablet:block hidden">
-        <SearchInput
-          value={query}
-          onChange={setQuery}
-          placeholder="Search by phone number..."
-        />
+        {config.onSearch && (
+          <SearchInput
+            value={value}
+            onChange={handleChange}
+            placeholder={config.placeholder || 'Search...'}
+          />
+        )}
       </div>
     </header>
   );

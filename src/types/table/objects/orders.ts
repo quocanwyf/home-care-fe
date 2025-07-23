@@ -7,11 +7,5 @@ export type Orders = {
   status: OrdersWithStatus;
 };
 export type OrdersWithStatus = {
-  status:
-    | 'pending'
-    | 'assigned'
-    | 'inProgress'
-    | 'waitPayment'
-    | 'completed'
-    | 'cancelled';
+  status: 'pending' | 'confirmed' | 'inProgress' | 'completed' | 'cancelled';
 };

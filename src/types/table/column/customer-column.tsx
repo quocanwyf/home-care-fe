@@ -24,10 +24,10 @@ export const customerColumn = (
     header: 'Address',
   },
   {
-    accessorKey: 'points',
+    accessorKey: 'point',
     header: 'Points',
     cell: ({ row }) =>
-      new Intl.NumberFormat('vi-VN').format(row.original.points),
+      new Intl.NumberFormat('vi-VN').format(row.original.point) + ' Ps',
   },
   {
     accessorKey: 'status',

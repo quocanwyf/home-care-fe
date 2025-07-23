@@ -5,7 +5,6 @@ import { usePageSize } from '@/hooks/usePageSize';
 import { useSearchConfig } from '@/hooks/useSearchConfig';
 import { useStatusFilter } from '@/hooks/useStatusFilter';
 import { staffMaidColumns } from '@/types/table/column/staff-maid-columns';
-import { resetAllFilters } from '@/utils/reset-all-filters';
 
 const StaffsPage = () => {
   const { statusFilter, filteredData, handleStatusChange, resetFilter } =

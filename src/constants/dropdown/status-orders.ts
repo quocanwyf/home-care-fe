@@ -1,9 +1,10 @@
 export const STATUS_ORDERS = [
   'all',
   'pending',
-  'assigned',
+  // 'assigned',
+  'confirmed',
   'inProgress',
-  'waitPayment',
+  // 'waitPayment',
   'completed',
   'cancelled',
 ];

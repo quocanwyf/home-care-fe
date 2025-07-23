@@ -5,7 +5,6 @@ import { usePageSize } from '@/hooks/usePageSize';
 import { useSearchConfig } from '@/hooks/useSearchConfig';
 import { useStatusFilter } from '@/hooks/useStatusFilter';
 import { customerColumn } from '@/types/table/column/customer-column';
-import { resetAllFilters } from '@/utils/reset-all-filters';
 
 const CustomersPage = () => {
   const { statusFilter, filteredData, handleStatusChange, resetFilter } =

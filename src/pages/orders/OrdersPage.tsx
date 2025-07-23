@@ -5,7 +5,6 @@ import { usePageSize } from '@/hooks/usePageSize';
 import { useSearchConfig } from '@/hooks/useSearchConfig';
 import { useStatusFilter } from '@/hooks/useStatusFilter';
 import { orderColumn } from '@/types/table/column/order-column';
-import { resetAllFilters } from '@/utils/reset-all-filters';
 
 const OrdersPage = () => {
   const { statusFilter, filteredData, handleStatusChange, resetFilter } =

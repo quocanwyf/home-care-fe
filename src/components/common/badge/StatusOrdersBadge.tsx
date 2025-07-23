@@ -14,9 +14,9 @@ const OrderStatusBadge = ({
     >
       {status === 'inProgress'
         ? 'in progress'
-        : status === 'waitPayment'
-          ? 'wait payment'
-          : status}
+        : // : status === 'waitPayment'
+          //   ? 'wait payment'
+          status}
     </span>
   );
 };

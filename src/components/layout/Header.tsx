@@ -7,6 +7,7 @@ import MenuIcon from '@/components/common/icons/MenuIcon';
 import NotificationBell from '@/components/common/icons/NotificationBell';
 import { useSearch } from '@/context/SearchContext';
 
+import { DateRangePicker } from '../common/primitives/DateRangePicker';
 import SearchInput from '../common/primitives/SearchInput';
 
 const Header = ({
@@ -38,13 +39,14 @@ const Header = ({
     };
   }, [debouncedSearch]);
 
-  const handleChange = useCallback(
+  const handleChangeSearch = useCallback(
     (val: string) => {
       setValue(val);
       debouncedSearch(val);
     },
     [debouncedSearch]
   );
+
   return (
     <header className="flex flex-col gap-4 rounded-2xl px-2 py-4 shadow-md">
       <div className="flex items-center justify-between">
@@ -53,14 +55,18 @@ const Header = ({
         </div>
 
         <div className="flex items-center justify-center gap-8">
-          <div className="max-tablet:hidden">
+          <div className="max-tablet:hidden max-tablet-lg:flex-col flex items-center gap-4">
             {config.onSearch && (
               <SearchInput
                 value={value}
-                onChange={handleChange}
+                onChange={handleChangeSearch}
                 placeholder={config.placeholder || 'Search...'}
               />
             )}
+            <DateRangePicker
+              onChange={(range) => console.log('Selected date range:', range)}
+              className="min-w-[240px] rounded-full"
+            />
           </div>
           <div className="flex flex-row-reverse gap-4">
             {/* Menu icon only display on the mobile */}
@@ -89,14 +95,24 @@ const Header = ({
           </div>
         </div>
       </div>
-      <div className="max-tablet:block hidden">
-        {config.onSearch && (
-          <SearchInput
-            value={value}
-            onChange={handleChange}
-            placeholder={config.placeholder || 'Search...'}
+      <div className="max-tablet:flex max-tablet:gap-4 hidden">
+        <div className="min-w-[calc(50%-12px)]">
+          {config.onSearch && (
+            <SearchInput
+              value={value}
+              onChange={handleChangeSearch}
+              placeholder={config.placeholder || 'Search...'}
+            />
+          )}
+        </div>
+        <div className="min-w-[calc(50%-18px)]">
+          {' '}
+          <DateRangePicker
+            initialRange={{ from: undefined, to: undefined }}
+            onChange={(range) => console.log('Selected date range:', range)}
+            numberOfMonths={1}
           />
-        )}
+        </div>
       </div>
     </header>
   );

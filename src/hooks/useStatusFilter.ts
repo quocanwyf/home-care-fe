@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import type { ObjectsUnion } from '@/types/table/objects/union-objects';
 
@@ -37,6 +37,11 @@ export const useStatusFilter = ({
   const resetFilter = () => {
     setStatusFilter(initialStatus);
   };
+
+  // Log mỗi khi statusFilter thay đổi
+  useEffect(() => {
+    console.log('Current status filter:', statusFilter);
+  }, [statusFilter]);
 
   return {
     statusFilter,

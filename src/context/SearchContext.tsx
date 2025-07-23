@@ -1,14 +1,19 @@
 // SearchContext.tsx
 import { createContext, useContext, useState } from 'react';
+import type { DateRange } from 'react-day-picker';
 
 type SearchConfig = {
   placeholder?: string;
   onSearch?: (value: string) => void;
+  enableDateRange?: boolean;
+  onDateRangeChange?: (range: DateRange) => void;
 };
 
 const SearchContext = createContext<{
   config: SearchConfig;
-  setConfig: (cfg: SearchConfig) => void;
+  setConfig: (
+    cfg: SearchConfig | ((prevConfig: SearchConfig) => SearchConfig)
+  ) => void;
 }>({
   config: {},
   setConfig: () => {},

@@ -63,10 +63,12 @@ const Header = ({
                 placeholder={config.placeholder || 'Search...'}
               />
             )}
-            <DateRangePicker
-              onChange={(range) => console.log('Selected date range:', range)}
-              className="min-w-[240px] rounded-full"
-            />
+            {config.enableDateRange && (
+              <DateRangePicker
+                onChange={config.onDateRangeChange}
+                className="min-w-[240px] rounded-full"
+              />
+            )}
           </div>
           <div className="flex flex-row-reverse gap-4">
             {/* Menu icon only display on the mobile */}
@@ -106,12 +108,12 @@ const Header = ({
           )}
         </div>
         <div className="min-w-[calc(50%-18px)]">
-          {' '}
-          <DateRangePicker
-            initialRange={{ from: undefined, to: undefined }}
-            onChange={(range) => console.log('Selected date range:', range)}
-            numberOfMonths={1}
-          />
+          {config.enableDateRange && (
+            <DateRangePicker
+              onChange={config.onDateRangeChange}
+              numberOfMonths={1}
+            />
+          )}{' '}
         </div>
       </div>
     </header>

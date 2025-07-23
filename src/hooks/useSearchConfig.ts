@@ -13,13 +13,18 @@ export function useSearchConfig({
   const { setConfig } = useSearch();
 
   useEffect(() => {
-    setConfig({
+    setConfig((prevConfig) => ({
+      ...prevConfig,
       placeholder,
       onSearch,
-    });
+    }));
 
     return () => {
-      setConfig({}); // Reset khi rời trang
+      setConfig((prevConfig) => ({
+        ...prevConfig,
+        placeholder: undefined,
+        onSearch: undefined,
+      }));
     };
   }, []);
 }

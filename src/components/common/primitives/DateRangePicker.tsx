@@ -14,8 +14,8 @@ import {
 import { cn } from '@/lib/utils';
 
 export interface DateRange {
-  from: DateRange | undefined;
-  to: DateRange | undefined;
+  from: Date | undefined;
+  to: Date | undefined;
 }
 
 interface DateRangePickerProps {
@@ -46,9 +46,8 @@ export function DateRangePicker({
   const handleSelect = useCallback(
     (range: DateRange | undefined) => {
       setDate(range);
-      // onChange?.(range);
-      const formattedRange = formatDateRange(range);
-      onChange?.(formattedRange);
+      // Chỉ gửi Date objects, không format ở đây
+      onChange?.(range);
     },
     [onChange]
   );
@@ -61,17 +60,6 @@ export function DateRangePicker({
     },
     [onChange]
   );
-
-  const formatDateRange = (
-    range: DateRange | undefined
-  ): FormattedDateRange | undefined => {
-    if (!range) return undefined;
-
-    return {
-      from: range.from ? formatDate(range.from) : undefined,
-      to: range.to ? formatDate(range.to) : undefined,
-    };
-  };
 
   const formatDate = (date: Date) => {
     return format(date, 'dd/MM/yyyy', { locale: vi });

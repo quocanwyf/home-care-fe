@@ -1,6 +1,7 @@
 import { AppTable } from '@/components/table/AppTable';
 import { STATUS_ORDERS } from '@/constants/dropdown/status-orders';
 import { data } from '@/constants/mock-data/mock-data-orders';
+import { useDateRangeConfig } from '@/hooks/useDateRangeConfig';
 import { usePageSize } from '@/hooks/usePageSize';
 import { useSearchConfig } from '@/hooks/useSearchConfig';
 import { useStatusFilter } from '@/hooks/useStatusFilter';
@@ -16,6 +17,7 @@ const OrdersPage = () => {
   const { pageSize, handlePageSizeChange, resetPageSize } = usePageSize({
     initialPageSize: 10,
   });
+  useDateRangeConfig();
 
   useSearchConfig({
     placeholder: 'Search by order id...',

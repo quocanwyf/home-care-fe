@@ -2,16 +2,18 @@ import { useEffect, useState } from 'react';
 
 import { AppTable } from '@/components/table/AppTable';
 import { STATUS_ORDERS } from '@/constants/dropdown/status-orders';
-import { data } from '@/constants/mock-data/mock-data-orders';
-import { useDateRangeConfig } from '@/hooks/useDateRangeConfig';
-import { useOrders } from '@/hooks/useOrders.api';
-import { usePageSize } from '@/hooks/usePageSize';
-import { useSearchConfig } from '@/hooks/useSearchConfig';
-import { useStatusFilter } from '@/hooks/useStatusFilter';
+// import { data } from '@/constants/mock-data/mock-data-orders';
+import { useOrders } from '@/hooks/api/useOrders.api';
+import { useDateRangeConfig } from '@/hooks/common/useDateRangeConfig';
+import { usePageSize } from '@/hooks/common/usePageSize';
+import { useSearchConfig } from '@/hooks/common/useSearchConfig';
+import { useStatusFilter } from '@/hooks/common/useStatusFilter';
+import { useToast } from '@/hooks/common/useToast';
 import { orderColumn } from '@/types/table/column/order-column';
 import type { PaginationState } from '@tanstack/react-table';
 
 const OrdersPage = () => {
+  const { showError } = useToast();
   const [orders, setOrders] = useState([]);
 
   //có 5 cái mục search cần gọi api là: pagination, status, pageSize, dateRange,search
@@ -22,11 +24,10 @@ const OrdersPage = () => {
     pageSize: 10,
   });
   //2status
-  const { statusFilter, filteredData, handleStatusChange, resetFilter } =
-    useStatusFilter({
-      data,
-      initialStatus: 'all',
-    });
+  const { statusFilter, handleStatusChange, resetFilter } = useStatusFilter({
+    orders,
+    initialStatus: 'all',
+  });
   //3pageSize
   const { pageSize, handlePageSizeChange, resetPageSize } = usePageSize({
     initialPageSize: 10,
@@ -41,7 +42,6 @@ const OrdersPage = () => {
     placeholder: 'Search by order id...',
     onSearch: (keyword) => {
       setSearchKeyword(keyword);
-      console.log('Searching for:', keyword);
     },
   });
 
@@ -78,6 +78,12 @@ const OrdersPage = () => {
     }
   }, [ordersFetchData]);
 
+  useEffect(() => {
+    if (isError) {
+      showError(error?.message || 'An error occurred while fetching orders.');
+    }
+  }, [isError, error, showError]);
+
   return (
     <AppTable
       data={orders}
@@ -98,7 +104,8 @@ const OrdersPage = () => {
       onPaginationChange={handlePaginationChange}
       //reset filters
       onResetFilters={resetAllFilters}
-      // isLoading
+      isLoading={isLoading || isFetching}
+      totalData={ordersFetchData?.totalOrders || 1}
     />
   );
 };

@@ -1,4 +1,4 @@
-import { useAppNavigate } from '@/hooks/useAppNavigate';
+import { useAppNavigate } from '@/hooks/common/useAppNavigate';
 
 import TooltipInfo from '../common/primitives/TooltipInfo';
 import { Button } from '../ui/button';

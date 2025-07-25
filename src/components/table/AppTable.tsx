@@ -39,6 +39,7 @@ type AppTableProps<T, TValue = unknown> = {
   onPageSizeChange?: (size: number) => void;
   onPaginationChange?: (pagination: PaginationState) => void;
   onResetFilters?: () => void;
+  totalData?: number;
 };
 
 export function AppTable<T>({
@@ -54,7 +55,7 @@ export function AppTable<T>({
   onPageSizeChange,
   onPaginationChange,
   onResetFilters,
-  // totalData,
+  totalData,
 }: AppTableProps<T>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [pagination, setPagination] = useState<PaginationState>({
@@ -83,6 +84,8 @@ export function AppTable<T>({
       sorting,
       pagination,
     },
+    pageCount: Math.ceil((totalData ?? 1) / pagination.pageSize),
+    manualPagination: true,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
@@ -199,7 +202,7 @@ export function AppTable<T>({
             setPagination((prev) => ({ ...prev, pageIndex }));
             table.setPageIndex(pageIndex);
           }}
-          totalData={data.length}
+          totalData={totalData ?? table.getFilteredRowModel().rows.length}
         />
       </div>
     </div>

@@ -1,14 +1,14 @@
 import type { OrderParams } from '@/types/params';
 import type { Orders } from '@/types/table/objects/orders';
 
-export const fetchOrders = async (params: OrderParams): Promise<Orders[]> => {
+export const ordersApi = async (params: OrderParams): Promise<Orders[]> => {
   const queryParams = new URLSearchParams();
 
   // Nếu status khác 'all' thì mới gửi
   if (params.status && params.status !== 'all') {
     queryParams.append('status', params.status);
   }
-
+  console.log('aloasinomoto', params.status, queryParams.toString());
   // Nếu có search
   if (params.search && params.search.trim() !== '') {
     queryParams.append('search', params.search.trim());
@@ -25,9 +25,14 @@ export const fetchOrders = async (params: OrderParams): Promise<Orders[]> => {
   queryParams.append('limit', String(params.limit ?? 10));
 
   const url = `${import.meta.env.VITE_API_BASE_URL}/admin/order?${queryParams.toString()}`;
-  console.log('Fetching URL:', url); // Debug nếu cần
 
-  const response = await fetch(url);
+  const response = await fetch(url, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    credentials: 'include',
+  });
 
   if (!response.ok) {
     throw new Error(`Fetch failed: ${response.status}`);

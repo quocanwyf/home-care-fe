@@ -1,6 +1,7 @@
 import { Suspense, lazy } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 
+import ProtectedRoute from '@/components/auth/ProtectedRoute';
 import LoadingFallback from '@/components/fallback/LoadingFallback';
 
 const MainLayout = lazy(() => import('@/components/layout/MainLayout'));
@@ -34,9 +35,9 @@ const AppRouter = () => {
         <Route
           path="/"
           element={
-            // <ProtectedRoute>
-            <MainLayout />
-            // </ProtectedRoute>
+            <ProtectedRoute>
+              <MainLayout />
+            </ProtectedRoute>
           }
         >
           <Route index element={<Navigate to="/dashboard" replace />} />

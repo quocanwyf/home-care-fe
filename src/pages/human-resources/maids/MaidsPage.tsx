@@ -1,9 +1,9 @@
 import { AppTable } from '@/components/table/AppTable';
 import { STATUS_HR } from '@/constants/dropdown/status-hr';
 import { data } from '@/constants/mock-data/mock-data-maids';
-import { usePageSize } from '@/hooks/usePageSize';
-import { useSearchConfig } from '@/hooks/useSearchConfig';
-import { useStatusFilter } from '@/hooks/useStatusFilter';
+import { usePageSize } from '@/hooks/common/usePageSize';
+import { useSearchConfig } from '@/hooks/common/useSearchConfig';
+import { useStatusFilter } from '@/hooks/common/useStatusFilter';
 import { staffMaidColumns } from '@/types/table/column/staff-maid-columns';
 
 const MaidsPage = () => {

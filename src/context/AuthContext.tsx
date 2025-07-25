@@ -1,0 +1,74 @@
+import { createContext, useContext, useEffect, useState } from 'react';
+
+import { useAuthCheck } from '@/hooks/api/useAuthCheck';
+import { useLogin } from '@/hooks/api/useLogin.api';
+import type { AuthContextType, LoginRequest, User } from '@/types/auth';
+
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
+interface AuthProviderProps {
+  children: React.ReactNode;
+}
+
+export const AuthProvider = ({ children }: AuthProviderProps) => {
+  const [user, setUser] = useState<User | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const loginMutation = useLogin();
+
+  const {
+    data: authData,
+    isLoading: isCheckingAuth,
+    isError: isAuthError,
+  } = useAuthCheck();
+
+  console.log('AuthProvider: ...', authData);
+
+  useEffect(() => {
+    if (authData) {
+      setUser(authData);
+    } else if (isAuthError) {
+      setUser(null);
+    }
+
+    if (!isCheckingAuth) {
+      setIsLoading(false);
+    }
+  }, [authData, isAuthError, isCheckingAuth]);
+
+  const login = async (credentials: LoginRequest): Promise<void> => {
+    const response = await loginMutation.mutateAsync(credentials);
+
+    const userData: User = {
+      fullName: response.fullName,
+      role: response.role,
+      permissionList: response.permissionList,
+      hmrId: credentials.hmrId,
+    };
+
+    setUser(userData);
+  };
+
+  const logout = () => {
+    setUser(null);
+  };
+
+  const value: AuthContextType = {
+    user,
+    isAuthenticated: !!user,
+    login,
+    logout,
+    isLoading: loginMutation.isPending || isLoading,
+  };
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+};
+
+// Custom hook to use auth context
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (context === undefined) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
+  return context;
+};

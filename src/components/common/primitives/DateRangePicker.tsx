@@ -179,7 +179,7 @@ export function DateRangePicker({
                       variant="ghost"
                       size="sm"
                       className="text-muted-foreground hover:text-destructive h-7 text-xs"
-                      onClick={() => handleSelect(undefined)}
+                      onClick={handleClear}
                     >
                       Xóa
                     </Button>

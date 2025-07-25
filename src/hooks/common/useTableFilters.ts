@@ -2,7 +2,7 @@ import { useCallback, useMemo, useState } from 'react';
 
 import type { PaginationState } from '@tanstack/react-table';
 
-import { useDateRangeConfig } from './useDateRangeConfig';
+import { useDateRangeConfig } from './common/useDateRangeConfig';
 
 interface UseTableFiltersProps {
   initialData: any[];

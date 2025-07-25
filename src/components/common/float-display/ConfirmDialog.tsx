@@ -13,7 +13,7 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { MESSAGES_DIALOG } from '@/constants/messages/messages-dialog';
-import { useToast } from '@/hooks/useToast';
+import { useToast } from '@/hooks/common/useToast';
 
 export default function ConfirmDialog({
   open,

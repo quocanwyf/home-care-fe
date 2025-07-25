@@ -9,15 +9,15 @@ const LoginPage = () => {
     <div className="shadow-md">
       <BackGroundImageLogin />
       <Overlay className="h-full opacity-50" />
-      <div className="absolute inset-0 z-20 mx-6 my-4 flex items-center justify-center">
-        <div className="w-full max-w-sm rounded-2xl bg-white p-8 shadow-lg">
+      <div className="absolute inset-0 z-20 flex items-center justify-center">
+        <div className="w-full max-w-md rounded-2xl bg-white p-8 shadow-lg">
           <GradientText
             content="LOGIN"
-            className="flex justify-center text-xl"
+            className="mt-2 flex justify-center text-xl"
           />
           <GradientText
             content="Enter your email and password to login"
-            className="flex justify-center text-sm"
+            className="mt-2 flex justify-center text-sm"
           />
           <LoginForm />
         </div>

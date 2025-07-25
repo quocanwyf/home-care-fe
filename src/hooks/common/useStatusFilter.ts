@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 
 import type { ObjectsUnion } from '@/types/table/objects/union-objects';
 
@@ -22,10 +22,15 @@ export const useStatusFilter = ({
 
   // Lọc dữ liệu dựa trên status được chọn
   const filteredData = useMemo(() => {
+    if (!data || !Array.isArray(data) || data.length === 0) {
+      return [];
+    }
+
     if (statusFilter === 'all') {
       return data;
     }
-    return data.filter((objects) => objects.status?.status === statusFilter);
+
+    return data.filter((objects) => objects.status === statusFilter);
   }, [data, statusFilter]);
 
   // Handler để thay đổi status
@@ -37,11 +42,6 @@ export const useStatusFilter = ({
   const resetFilter = () => {
     setStatusFilter(initialStatus);
   };
-
-  // Log mỗi khi statusFilter thay đổi
-  useEffect(() => {
-    console.log('Current status filter:', statusFilter);
-  }, [statusFilter]);
 
   return {
     statusFilter,

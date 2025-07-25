@@ -1,7 +1,3 @@
-// columns/orderColumns.ts
-import { format } from 'date-fns';
-import { vi } from 'date-fns/locale';
-
 import OrderStatusBadge from '@/components/common/badge/StatusOrdersBadge';
 import TableActions from '@/components/table/TableActions';
 import type { Orders } from '@/types/table/objects/orders';
@@ -27,20 +23,31 @@ export const orderColumn = (
   {
     accessorKey: 'orderDate',
     header: 'Order Date',
-    cell: ({ row }) =>
-      format(new Date(row.original.orderDate), 'dd/MM/yyyy HH:mm:ss', {
-        locale: vi,
-      }),
   },
   {
     accessorKey: 'cost',
     header: 'Cost',
-    cell: ({ row }) => `${row.original.cost.toLocaleString()} đ`,
+    cell: ({ row }) => {
+      const costValue = row.original.cost;
+
+      // 1. Kiểm tra xem cost có phải là null hoặc undefined không
+      if (costValue == null) return 'N/A';
+
+      // 2. Chuyển đổi giá trị chuỗi sang số
+      const costNumber = parseFloat(String(costValue));
+
+      // 3. Kiểm tra xem việc chuyển đổi có thành công không
+      if (isNaN(costNumber)) return 'N/A';
+
+      // 4. Nếu mọi thứ đều ổn, định dạng số
+      return `${costNumber.toLocaleString()} đ`;
+    },
   },
+
   {
     accessorKey: 'status',
     header: 'Status',
-    cell: ({ row }) => <OrderStatusBadge status={row.original.status.status} />,
+    cell: ({ row }) => <OrderStatusBadge status={row.original.status} />,
   },
   {
     id: 'actions',

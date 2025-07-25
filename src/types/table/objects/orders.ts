@@ -6,6 +6,9 @@ export type Orders = {
   cost: number;
   status: OrdersWithStatus;
 };
-export type OrdersWithStatus = {
-  status: 'pending' | 'confirmed' | 'inProgress' | 'completed' | 'cancelled';
-};
+export type OrdersWithStatus =
+  | 'pending'
+  | 'confirmed'
+  | 'inProgress'
+  | 'completed'
+  | 'cancelled';

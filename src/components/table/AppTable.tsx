@@ -54,6 +54,7 @@ export function AppTable<T>({
   onPageSizeChange,
   onPaginationChange,
   onResetFilters,
+  // totalData,
 }: AppTableProps<T>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [pagination, setPagination] = useState<PaginationState>({

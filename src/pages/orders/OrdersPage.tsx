@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { AppTable } from '@/components/table/AppTable';
 import { STATUS_ORDERS } from '@/constants/dropdown/status-orders';
 import { data } from '@/constants/mock-data/mock-data-orders';
 import { useDateRangeConfig } from '@/hooks/useDateRangeConfig';
+import { useOrders } from '@/hooks/useOrders.api';
 import { usePageSize } from '@/hooks/usePageSize';
 import { useSearchConfig } from '@/hooks/useSearchConfig';
 import { useStatusFilter } from '@/hooks/useStatusFilter';
@@ -11,6 +12,8 @@ import { orderColumn } from '@/types/table/column/order-column';
 import type { PaginationState } from '@tanstack/react-table';
 
 const OrdersPage = () => {
+  const [orders, setOrders] = useState([]);
+
   //có 5 cái mục search cần gọi api là: pagination, status, pageSize, dateRange,search
   const [searchKeyword, setSearchKeyword] = useState('');
   //1pagination
@@ -51,19 +54,33 @@ const OrdersPage = () => {
     resetPageSize();
   };
 
-  const payload = {
-    status: statusFilter,
-    limit: pageSize,
-    fromDate: dateRange.from,
-    toDate: dateRange.to,
-    page: currentPagination.pageIndex,
-    search: searchKeyword,
+  const params = {
+    status: statusFilter ?? 'all',
+    limit: pageSize ?? 10,
+    fromDate: dateRange.from ?? '',
+    toDate: dateRange.to ?? '',
+    page: currentPagination.pageIndex + 1,
+    search: searchKeyword ?? '',
   };
 
-  console.log('Payload for API:', payload);
+  const {
+    data: ordersFetchData,
+    isLoading,
+    isError,
+    error,
+    isFetching,
+  } = useOrders(params);
+
+  useEffect(() => {
+    if (ordersFetchData) {
+      const test = ordersFetchData || [];
+      setOrders(test.result || []);
+    }
+  }, [ordersFetchData]);
+
   return (
     <AppTable
-      data={filteredData}
+      data={orders}
       columns={orderColumn(
         (row) => console.log('Xem', row),
         (row) => console.log('Sửa', row),

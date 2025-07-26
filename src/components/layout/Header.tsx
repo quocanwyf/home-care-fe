@@ -5,6 +5,8 @@ import { debounce } from 'lodash';
 import Icon from '@/components/common/icons/ImageIcon';
 import MenuIcon from '@/components/common/icons/MenuIcon';
 import NotificationBell from '@/components/common/icons/NotificationBell';
+import { headerAvatarOptions } from '@/constants/dropdown/header-avatar-options';
+import { useAuth } from '@/context/AuthContext';
 import { useSearch } from '@/context/SearchContext';
 
 import { DateRangePicker } from '../common/primitives/DateRangePicker';
@@ -21,6 +23,7 @@ const Header = ({
 }) => {
   const { config } = useSearch();
   const [value, setValue] = useState('');
+  const { user, logout, isLoading } = useAuth();
 
   // Tạo debounced function bằng useMemo thay vì useCallback
   const debouncedSearch = useMemo(
@@ -50,8 +53,11 @@ const Header = ({
   return (
     <header className="flex flex-col gap-4 rounded-2xl px-2 py-4 shadow-md">
       <div className="flex items-center justify-between">
-        <div className="ml-1 text-lg font-bold text-white">
-          Full name - Role / {title} Page
+        <div className="ml-1 text-lg font-semibold text-white">
+          {/* Full name - Role / {title} Page */}
+          {user
+            ? `${user.fullName} - ${user.role} / ${title} Page`
+            : 'HomeCare'}
         </div>
 
         <div className="flex items-center justify-center gap-8">

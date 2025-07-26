@@ -61,7 +61,9 @@ const LoginForm = () => {
     <form onSubmit={handleSubmit}>
       <div className="mx-4 mt-6 flex flex-wrap justify-center gap-6 md:flex-row">
         <div className="grid w-full max-w-sm items-center gap-3">
-          <Label htmlFor="hmrId">User ID</Label>
+          <Label className="font-semibold" htmlFor="hmrId">
+            User ID
+          </Label>
           <Input
             type="text"
             id="hmrId"
@@ -75,7 +77,9 @@ const LoginForm = () => {
           />
         </div>
         <div className="grid w-full max-w-sm items-center gap-3">
-          <Label htmlFor="password">Password</Label>
+          <Label className="font-semibold" htmlFor="password">
+            Password
+          </Label>
           <Input
             type="password"
             id="password"

@@ -8,7 +8,6 @@ export const customersApi = async (
   params: CustomerParams,
   signal?: AbortSignal
 ): Promise<CustomersResponse> => {
-  // ✅ Build query parameters
   const queryParams = new URLSearchParams();
 
   if (params.status) {

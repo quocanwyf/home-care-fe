@@ -3,6 +3,6 @@ export interface OrderParams {
   limit?: number;
   status?: string;
   search?: string;
-  fromDate?: string; // Định dạng DD-MM-YYYY
-  toDate?: string; // Định dạng DD-MM-YYYY
+  fromDate?: string | Date; // Định dạng DD-MM-YYYY
+  toDate?: string | Date; // Định dạng DD-MM-YYYY
 }

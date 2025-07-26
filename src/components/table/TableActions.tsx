@@ -1,13 +1,14 @@
-import { Ban, Edit, Eye, ShieldBan, Trash2 } from 'lucide-react';
+import { Ban, Edit, Eye, FileClock, ShieldBan, Trash2 } from 'lucide-react';
 
 import TooltipInfo from '../common/primitives/TooltipInfo';
 
 interface TableActionsProps<T> {
-  onView?: (row: T) => void;
-  onEdit?: (row: T) => void;
-  onDelete?: (row: T) => void;
-  onBan?: (row: T) => void;
-  onUnban?: (row: T) => void;
+  onView?: (row: T) => void | undefined;
+  onEdit?: (row: T) => void | undefined;
+  onDelete?: (row: T) => void | undefined;
+  onBan?: (row: T) => void | undefined;
+  onUnban?: (row: T) => void | undefined;
+  onViewHistory?: (row: T) => void | undefined;
   row: T;
 }
 
@@ -17,6 +18,7 @@ const TableActions = <T,>({
   onDelete,
   onBan,
   onUnban,
+  onViewHistory,
   row,
 }: TableActionsProps<T>) => {
   return (
@@ -64,6 +66,17 @@ const TableActions = <T,>({
                 title="Delete"
               >
                 <Trash2 className="h-4 w-4" />
+              </button>
+            </TooltipInfo>
+          )}
+          {onViewHistory && (
+            <TooltipInfo content="View history">
+              <button
+                onClick={() => onViewHistory(row)}
+                className="cursor-pointer p-1 text-purple-400 transition-colors hover:text-purple-600"
+                title="View history"
+              >
+                <FileClock className="h-4 w-4" />
               </button>
             </TooltipInfo>
           )}

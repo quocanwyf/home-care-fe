@@ -1,21 +1,8 @@
-// types/customer/index.ts
-export interface CustomerLocation {
-  addressNum: string;
-  ward: string;
-  city: string;
-}
-
-export interface Customer {
-  fullName: string;
-  phoneNumber: string;
-  point: string;
-  status: string;
-  location: CustomerLocation;
-}
+import type { Customers } from '../table/objects/customers';
 
 export interface CustomersResponse {
   success: boolean;
-  result: Customer[];
+  result: Customers[];
   totalCustomers: number;
 }
 

@@ -9,8 +9,7 @@ export const useLogin = () => {
   const { showSuccess, showError } = useToast();
   return useMutation({
     mutationFn: (credentials: LoginRequest) => loginApi(credentials),
-    onSuccess: (data) => {
-      console.log('Login successful:', data);
+    onSuccess: () => {
       showSuccess(MESSAGES_AUTH.LOGIN_SUCCESS);
     },
 

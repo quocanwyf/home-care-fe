@@ -39,7 +39,7 @@ const OrdersPage = () => {
 
   //5search
   useSearchConfig({
-    placeholder: 'Search by order id...',
+    placeholder: 'By order id...',
     onSearch: (keyword) => {
       setSearchKeyword(keyword);
     },

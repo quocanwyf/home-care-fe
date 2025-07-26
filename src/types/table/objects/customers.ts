@@ -1,7 +1,13 @@
+export interface CustomerLocation {
+  addressNum: string;
+  ward: string;
+  city: string;
+}
+
 export type Customers = {
   phoneNumber: string;
   fullName: string;
-  address: string;
+  location: CustomerLocation;
   point: number;
   status: CustomerWithStatus;
 };

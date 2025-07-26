@@ -46,7 +46,7 @@ const MainLayout = () => {
               onClick={handleOpenMenu}
             />
           )}
-          <div className="flex w-full flex-col">
+          <div className="flex h-full w-full flex-col overflow-hidden">
             <Header
               onOpenMenuClick={handleOpenMenu}
               onMobileSidebarOpen={isMobileSidebarOpen}

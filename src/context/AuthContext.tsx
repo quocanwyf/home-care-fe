@@ -2,6 +2,7 @@ import { createContext, useContext, useEffect, useState } from 'react';
 
 import { useAuthCheck } from '@/hooks/api/useAuthCheck';
 import { useLogin } from '@/hooks/api/useLogin.api';
+import { useLogout } from '@/hooks/api/useLogout.api';
 import type { AuthContextType, LoginRequest, User } from '@/types/auth';
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -15,14 +16,13 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [isLoading, setIsLoading] = useState(true);
 
   const loginMutation = useLogin();
+  const logoutMutation = useLogout();
 
   const {
     data: authData,
     isLoading: isCheckingAuth,
     isError: isAuthError,
   } = useAuthCheck();
-
-  console.log('AuthProvider: ...', authData);
 
   useEffect(() => {
     if (authData) {
@@ -49,7 +49,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     setUser(userData);
   };
 
-  const logout = () => {
+  const logout = async () => {
+    await logoutMutation.mutateAsync();
     setUser(null);
   };
 

@@ -5,11 +5,12 @@ import type { Customers } from '@/types/table/objects/customers';
 import type { ColumnDef } from '@tanstack/react-table';
 
 export const customerColumn = (
-  onView?: (row: Customers) => void,
-  onEdit?: (row: Customers) => void,
-  onDelete?: (row: Customers) => void,
-  onBan?: (row: Customers) => void,
-  onUnban?: (row: Customers) => void
+  onView?: (row: Customers) => void | undefined,
+  onEdit?: (row: Customers) => void | undefined,
+  onDelete?: (row: Customers) => void | undefined,
+  onBan?: (row: Customers) => void | undefined,
+  onUnban?: (row: Customers) => void | undefined,
+  onViewHistory?: (row: Customers) => void | undefined
 ): ColumnDef<Customers, unknown>[] => [
   {
     accessorKey: 'phoneNumber',
@@ -20,8 +21,20 @@ export const customerColumn = (
     header: 'Full name',
   },
   {
-    accessorKey: 'address',
+    // ✅ Fix: Tạo custom accessor cho location
+    accessorKey: 'location',
     header: 'Address',
+    cell: ({ row }) => {
+      const location = row.getValue('location') as Customers['location'];
+      return (
+        <div className="max-w-[200px]">
+          <div className="text-sm">{location.addressNum}</div>
+          <div className="text-muted-foreground text-xs">
+            {location.ward}, {location.city}
+          </div>
+        </div>
+      );
+    },
   },
   {
     accessorKey: 'point',
@@ -41,11 +54,12 @@ export const customerColumn = (
       const isBanned = row.original.status === 'banned';
       return (
         <TableActions
-          onView={isBanned ? undefined : onView}
-          onEdit={isBanned ? undefined : onEdit}
-          onDelete={isBanned ? undefined : onDelete}
-          onBan={isBanned ? undefined : onBan}
+          onView={undefined}
+          onEdit={undefined}
+          onDelete={undefined}
+          onBan={onBan}
           onUnban={isBanned ? onUnban : undefined}
+          onViewHistory={onViewHistory}
           row={row.original}
         />
       );

@@ -32,8 +32,6 @@ export const loginApi = async (
     const data: LoginResponse = await response.json();
     return data;
   } catch (error) {
-    console.error(MESSAGES_AUTH.SERVER_ERROR + error);
-
     if (error instanceof Error) {
       throw error;
     }

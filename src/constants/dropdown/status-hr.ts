@@ -1,1 +1,1 @@
-export const STATUS_HR = ['active', 'inactive', 'banned'];
+export const STATUS_HR = ['all', 'active', 'inactive'];

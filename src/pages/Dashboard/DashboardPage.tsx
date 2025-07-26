@@ -21,10 +21,12 @@ const DashboardPage = () => {
           cancelText="No, throw it away"
           onConfirm={handleConfirm}
           icon
+          danger
         >
           <Button
             className="cursor-pointer px-4 py-2 text-white"
             onClick={() => setOpen(true)}
+            variant="destructive"
           >
             Thêm mục
           </Button>

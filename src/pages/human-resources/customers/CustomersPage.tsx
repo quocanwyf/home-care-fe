@@ -1,5 +1,5 @@
 import { AppTable } from '@/components/table/AppTable';
-import { STATUS_HR } from '@/constants/dropdown/status-hr';
+import { STATUS_HR } from '@/constants/dropdown/status-customers';
 import { data } from '@/constants/mock-data/mock-data-customers';
 import { usePageSize } from '@/hooks/common/usePageSize';
 import { useSearchConfig } from '@/hooks/common/useSearchConfig';

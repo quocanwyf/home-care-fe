@@ -1,14 +1,17 @@
-import type { OrderParams } from '@/types/params';
+import type { OrderParams } from '@/types/params/order-params';
 import type { Orders } from '@/types/table/objects/orders';
 
-export const ordersApi = async (params: OrderParams): Promise<Orders[]> => {
+export const ordersApi = async (
+  params: OrderParams,
+  signal?: AbortSignal
+): Promise<Orders[]> => {
   const queryParams = new URLSearchParams();
 
   // Nếu status khác 'all' thì mới gửi
   if (params.status && params.status !== 'all') {
     queryParams.append('status', params.status);
   }
-  console.log('aloasinomoto', params.status, queryParams.toString());
+
   // Nếu có search
   if (params.search && params.search.trim() !== '') {
     queryParams.append('search', params.search.trim());
@@ -32,6 +35,7 @@ export const ordersApi = async (params: OrderParams): Promise<Orders[]> => {
       'Content-Type': 'application/json',
     },
     credentials: 'include',
+    signal,
   });
 
   if (!response.ok) {

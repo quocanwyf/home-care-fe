@@ -34,7 +34,7 @@ export const staffMaidColumns = (
   {
     accessorKey: 'status',
     header: 'Status',
-    cell: ({ row }) => <OrderStatusBadge status={row.original.status.status} />,
+    cell: ({ row }) => <OrderStatusBadge status={row.original.status} />,
   },
   {
     id: 'actions',

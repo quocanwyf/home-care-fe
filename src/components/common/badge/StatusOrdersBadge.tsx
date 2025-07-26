@@ -1,11 +1,7 @@
 import { ObjectsStatusStyles } from '@/types/table/objects/union-objects';
 import type { ObjectsWithStatus } from '@/types/table/objects/union-objects';
 
-const OrderStatusBadge = ({
-  status,
-}: {
-  status: ObjectsWithStatus['status'];
-}) => {
+const OrderStatusBadge = ({ status }: { status: ObjectsWithStatus }) => {
   return (
     <span
       className={`inline-flex items-center rounded-full border px-2.5 py-1 text-xs font-bold ${

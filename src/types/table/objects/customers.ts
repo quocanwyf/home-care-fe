@@ -5,6 +5,4 @@ export type Customers = {
   point: number;
   status: CustomerWithStatus;
 };
-export type CustomerWithStatus = {
-  status: 'active' | 'inactive' | 'banned';
-};
+export type CustomerWithStatus = 'active' | 'inactive' | 'banned';

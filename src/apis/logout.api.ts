@@ -1,3 +1,5 @@
+import { MESSAGES_AUTH } from '@/constants/messages/messages-auth';
+
 export const logoutApi = async (): Promise<void> => {
   const response = await fetch(
     `${import.meta.env.VITE_API_BASE_URL}/admin/auth/logout`,
@@ -11,6 +13,6 @@ export const logoutApi = async (): Promise<void> => {
   );
 
   if (!response.ok) {
-    console.warn('Logout API failed, but proceeding with client logout');
+    console.warn(MESSAGES_AUTH.LOGOUT_FAILED);
   }
 };

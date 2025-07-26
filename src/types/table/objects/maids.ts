@@ -6,6 +6,4 @@ export type Maids = {
   status: MaidsWithStatus;
 };
 
-export type MaidsWithStatus = {
-  status: 'active' | 'inactive';
-};
+export type MaidsWithStatus = 'active' | 'inactive';

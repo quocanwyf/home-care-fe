@@ -32,13 +32,13 @@ export const customerColumn = (
   {
     accessorKey: 'status',
     header: 'Status',
-    cell: ({ row }) => <OrderStatusBadge status={row.original.status.status} />,
+    cell: ({ row }) => <OrderStatusBadge status={row.original.status} />,
   },
   {
     id: 'actions',
     header: 'Actions',
     cell: ({ row }) => {
-      const isBanned = row.original.status.status === 'banned';
+      const isBanned = row.original.status === 'banned';
       return (
         <TableActions
           onView={isBanned ? undefined : onView}

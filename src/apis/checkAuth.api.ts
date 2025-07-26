@@ -1,3 +1,4 @@
+import { MESSAGES_AUTH } from '@/constants/messages/messages-auth';
 import type { User } from '@/types/auth';
 
 export const checkAuthApi = async (): Promise<User> => {
@@ -13,7 +14,7 @@ export const checkAuthApi = async (): Promise<User> => {
   );
 
   if (!response.ok) {
-    throw new Error('Unauthorized');
+    throw new Error(MESSAGES_AUTH.UNAUTHORIZED_ACCESS);
   }
 
   return response.json();

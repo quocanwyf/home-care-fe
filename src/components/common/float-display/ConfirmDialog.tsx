@@ -26,6 +26,7 @@ export default function ConfirmDialog({
   confirmText = 'Confirm',
   cancelText = 'Cancel',
   danger = false,
+  ban = false,
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -37,6 +38,7 @@ export default function ConfirmDialog({
   confirmText?: string;
   cancelText?: string;
   danger?: boolean;
+  ban?: boolean;
 }) {
   const [isLoading, setIsLoading] = useState(false);
   const { showSuccess, showError } = useToast();

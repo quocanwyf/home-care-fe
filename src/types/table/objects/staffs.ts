@@ -6,6 +6,4 @@ export type Staffs = {
   status: StaffsWithStatus;
 };
 
-export type StaffsWithStatus = {
-  status: 'active' | 'inactive';
-};
+export type StaffsWithStatus = 'active' | 'inactive';

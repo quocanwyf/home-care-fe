@@ -7,4 +7,5 @@ export const MESSAGES_AUTH = {
   LOGOUT_FAILED: 'Logout failed.',
   USER_ID_REQUIRED: 'User ID is required.',
   PASSWORD_REQUIRED: 'Password is required.',
+  UNAUTHORIZED_ACCESS: 'Unauthorized access.',
 };

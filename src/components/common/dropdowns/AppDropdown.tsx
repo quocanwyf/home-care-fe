@@ -24,6 +24,7 @@ export default function AppDropdown({
   showIcon = true,
   minWidth = ' ',
   label,
+  children,
 }: {
   triggerLabel?: string;
   options: Option[];
@@ -32,17 +33,31 @@ export default function AppDropdown({
   showIcon?: boolean;
   minWidth?: string;
   label?: string;
+  children?: React.ReactNode;
 }) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild className={` ${minWidth}`}>
-        <Button
+        {/* <Button
           variant="outline"
           className={`flex items-center gap-2 ${triggerClassName}`}
         >
           {triggerLabel}
           {showIcon && <ChevronDown className="h-4 w-4" />}
-        </Button>
+        </Button> */}
+        {children ? (
+          // ✅ Custom trigger
+          <div className={`cursor-pointer ${triggerClassName}`}>{children}</div>
+        ) : (
+          // ✅ Default button trigger
+          <Button
+            variant="outline"
+            className={`flex items-center gap-2 ${triggerClassName}`}
+          >
+            {triggerLabel}
+            {showIcon && <ChevronDown className="h-4 w-4" />}
+          </Button>
+        )}
       </DropdownMenuTrigger>
       <DropdownMenuContent align="start" className={` ${minWidth}`}>
         {label && (

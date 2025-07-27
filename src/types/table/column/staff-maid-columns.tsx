@@ -8,6 +8,8 @@ import type { Maids } from '@/types/table/objects/maids';
 import type { Staffs } from '@/types/table/objects/staffs';
 import type { ColumnDef } from '@tanstack/react-table';
 
+import type { HRs } from '../objects/hrs';
+
 export const staffMaidColumns = (
   onView?: (row: Staffs | Maids) => void,
   onEdit?: (row: Staffs | Maids) => void,
@@ -22,14 +24,24 @@ export const staffMaidColumns = (
     header: 'Full name',
   },
   {
-    accessorKey: 'address',
+    // Tạo custom accessor cho location
+    accessorKey: 'location',
     header: 'Address',
+    cell: ({ row }) => {
+      const location = row.getValue('location') as HRs['location'];
+      return (
+        <div className="max-w-[200px]">
+          <div className="text-sm">{location.addressNum}</div>
+          <div className="text-muted-foreground text-xs">
+            {location.ward}, {location.city}
+          </div>
+        </div>
+      );
+    },
   },
   {
     accessorKey: 'dateOfBirth',
     header: 'Date of birth',
-    cell: ({ row }) =>
-      format(new Date(row.original.dateOfBirth), 'dd/MM/yyyy', { locale: vi }),
   },
   {
     accessorKey: 'status',

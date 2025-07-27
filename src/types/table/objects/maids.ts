@@ -1,7 +1,9 @@
+import type { HRLocation } from './hrs';
+
 export type Maids = {
   phoneNumber: string;
   fullName: string;
-  address: string;
+  location: HRLocation;
   dateOfBirth: string; // ISO format
   status: MaidsWithStatus;
 };

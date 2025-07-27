@@ -11,7 +11,7 @@ export const customerColumn = (
   onBan?: (row: Customers) => void | undefined,
   onUnban?: (row: Customers) => void | undefined,
   onViewHistory?: (row: Customers) => void | undefined
-): ColumnDef<Customers, unknown>[] => [
+): ColumnDef<Customers>[] => [
   {
     accessorKey: 'phoneNumber',
     header: 'Phone number',
@@ -21,9 +21,9 @@ export const customerColumn = (
     header: 'Full name',
   },
   {
-    // ✅ Fix: Tạo custom accessor cho location
+    // Tạo custom accessor cho location
     accessorKey: 'location',
-    header: 'Address',
+    header: 'Location',
     cell: ({ row }) => {
       const location = row.getValue('location') as Customers['location'];
       return (

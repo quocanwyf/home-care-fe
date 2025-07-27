@@ -1,7 +1,9 @@
+import type { HRLocation } from './hrs';
+
 export type Staffs = {
   phoneNumber: string;
   fullName: string;
-  address: string;
+  location: HRLocation;
   dateOfBirth: string; // ISO format
   status: StaffsWithStatus;
 };

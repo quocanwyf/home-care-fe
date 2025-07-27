@@ -10,21 +10,18 @@ export const customersApi = async (
 ): Promise<CustomersResponse> => {
   const queryParams = new URLSearchParams();
 
-  if (params.status) {
+  if (params.status && params.status !== 'all') {
     queryParams.append('status', params.status);
   }
 
-  if (params.search) {
-    queryParams.append('search', params.search);
+  if (params.search && params.search.trim() !== '') {
+    queryParams.append('search', params.search.trim());
   }
 
   queryParams.append('page', String(params.page ?? 0));
   queryParams.append('limit', String(params.limit ?? 10));
 
-  const url = `${import.meta.env.VITE_API_BASE_URL}/admin/customer${
-    queryParams.toString() ? `?${queryParams.toString()}` : ''
-  }`;
-
+  const url = `${import.meta.env.VITE_API_BASE_URL}/admin/customer?${queryParams.toString()}`;
   const response = await fetch(url, {
     method: 'GET',
     headers: {

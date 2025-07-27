@@ -25,6 +25,7 @@ export default function AppDropdown({
   minWidth = ' ',
   label,
   children,
+  disabled = false,
 }: {
   triggerLabel?: string;
   options: Option[];
@@ -34,10 +35,15 @@ export default function AppDropdown({
   minWidth?: string;
   label?: string;
   children?: React.ReactNode;
+  disabled?: boolean;
 }) {
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild className={` ${minWidth}`}>
+      <DropdownMenuTrigger
+        asChild
+        className={` ${minWidth}`}
+        disabled={disabled}
+      >
         {/* <Button
           variant="outline"
           className={`flex items-center gap-2 ${triggerClassName}`}
@@ -47,7 +53,11 @@ export default function AppDropdown({
         </Button> */}
         {children ? (
           // ✅ Custom trigger
-          <div className={`cursor-pointer ${triggerClassName}`}>{children}</div>
+          <div
+            className={`cursor-pointer ${triggerClassName} ${triggerClassName} ${disabled ? 'pointer-events-none' : ''}`}
+          >
+            {children}
+          </div>
         ) : (
           // ✅ Default button trigger
           <Button
@@ -70,7 +80,8 @@ export default function AppDropdown({
           <DropdownMenuItem
             key={option.value}
             onSelect={() => onSelect(option)}
-            className="cursor-pointer"
+            className={`cursor-pointer ${disabled ? 'pointer-events-none opacity-50' : ''}`}
+            disabled={disabled}
           >
             {option.icon && <span className="mr-2">{option.icon}</span>}
             {option.label}

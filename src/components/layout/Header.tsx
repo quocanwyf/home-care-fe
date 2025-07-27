@@ -5,12 +5,10 @@ import { debounce } from 'lodash';
 import Icon from '@/components/common/icons/ImageIcon';
 import MenuIcon from '@/components/common/icons/MenuIcon';
 import NotificationBell from '@/components/common/icons/NotificationBell';
-import { headerAvatarOptions } from '@/constants/dropdown/header-avatar-options';
 import { useAuth } from '@/context/AuthContext';
 import { useSearch } from '@/context/SearchContext';
-import { handleUserMenuSelect } from '@/helpers/handle-header-avatar-select';
 
-import AppDropdown from '../common/dropdowns/AppDropdown';
+import { HeaderAvatarDropdown } from '../common/dropdowns/HeaderAvatarDropdown';
 import { DateRangePicker } from '../common/primitives/DateRangePicker';
 import SearchInput from '../common/primitives/SearchInput';
 
@@ -90,21 +88,11 @@ const Header = ({
               className="transition-transform duration-300 ease-in-out hover:scale-120"
               contentTooltip="User Avatar"
             /> */}
-            <AppDropdown
-              triggerLabel=""
-              options={headerAvatarOptions}
-              onSelect={(option) => handleUserMenuSelect(option, logout)}
-              triggerClassName="!p-0 !border-none !bg-transparent hover:!bg-transparent"
-              showIcon={false}
-              label={user?.fullName || 'User Menu'}
-            >
-              <Icon
-                src="/icon-image/avatar-1.png"
-                alt="avatar"
-                className="cursor-pointer transition-transform duration-300 ease-in-out hover:scale-120"
-                contentTooltip={user?.fullName || 'User Menu'}
-              />
-            </AppDropdown>
+            <HeaderAvatarDropdown
+              user={user}
+              logout={logout}
+              isLoading={isLoading}
+            />
 
             <NotificationBell
               count={5}

@@ -21,7 +21,7 @@ export const HeaderAvatarDropdown = ({
         alt="avatar small"
         className="h-6 w-6 rounded-full"
       />
-      <span>{user?.fullName || 'User Menu'}</span>
+      <span>{user?.fullName + ' - ' + user?.role || 'User Menu'}</span>
     </div>
   );
   return (

@@ -1,7 +1,3 @@
-// columns/orderColumns.ts
-import { format } from 'date-fns';
-import { vi } from 'date-fns/locale';
-
 import OrderStatusBadge from '@/components/common/badge/StatusOrdersBadge';
 import TableActions from '@/components/table/TableActions';
 import type { Maids } from '@/types/table/objects/maids';

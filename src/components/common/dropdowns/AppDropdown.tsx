@@ -1,3 +1,5 @@
+import type { JSX } from 'react/jsx-runtime';
+
 import { ChevronDown } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
@@ -26,6 +28,8 @@ export default function AppDropdown({
   label,
   children,
   disabled = false,
+  className = '',
+  classNameItem = '',
 }: {
   triggerLabel?: string;
   options: Option[];
@@ -33,9 +37,11 @@ export default function AppDropdown({
   triggerClassName?: string;
   showIcon?: boolean;
   minWidth?: string;
-  label?: string;
+  label?: string | JSX.Element;
   children?: React.ReactNode;
   disabled?: boolean;
+  className?: string;
+  classNameItem?: string;
 }) {
   return (
     <DropdownMenu>
@@ -69,7 +75,10 @@ export default function AppDropdown({
           </Button>
         )}
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="start" className={` ${minWidth}`}>
+      <DropdownMenuContent
+        align="start"
+        className={` ${minWidth} ${className}`}
+      >
         {label && (
           <>
             <DropdownMenuLabel>{label}</DropdownMenuLabel>
@@ -80,7 +89,7 @@ export default function AppDropdown({
           <DropdownMenuItem
             key={option.value}
             onSelect={() => onSelect(option)}
-            className={`cursor-pointer ${disabled ? 'pointer-events-none opacity-50' : ''}`}
+            className={`cursor-pointer ${classNameItem} ${disabled ? 'pointer-events-none opacity-50' : ''}`}
             disabled={disabled}
           >
             {option.icon && <span className="mr-2">{option.icon}</span>}

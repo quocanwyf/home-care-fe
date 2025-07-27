@@ -24,7 +24,7 @@ const Header = ({
   const { config } = useSearch();
   const [value, setValue] = useState('');
   const { user, logout, isLoading } = useAuth();
-
+  console.log('Header user', user);
   // Tạo debounced function bằng useMemo thay vì useCallback
   const debouncedSearch = useMemo(
     () =>
@@ -76,7 +76,7 @@ const Header = ({
               />
             )}
           </div>
-          <div className="flex flex-row-reverse gap-4">
+          <div className="relative flex flex-row-reverse gap-4">
             {/* Menu icon only display on the mobile */}
             <MenuIcon
               onOpenMenuClick={onOpenMenuClick}

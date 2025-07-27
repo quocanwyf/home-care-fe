@@ -14,16 +14,29 @@ export const HeaderAvatarDropdown = ({
   logout: () => Promise<void>;
   isLoading?: boolean;
 }) => {
+  const customLabel = (
+    <div className="flex items-center gap-2">
+      <Icon
+        src="/icon-image/avatar-1.png"
+        alt="avatar small"
+        className="h-6 w-6 rounded-full"
+      />
+      <span>{user?.fullName || 'User Menu'}</span>
+    </div>
+  );
   return (
     <AppDropdown
       options={headerAvatarOptions}
       onSelect={(option) => handleUserMenuSelect(option, logout)}
-      triggerClassName={`!p-0 !border-none !bg-transparent hover:!bg-transparent ${
+      triggerClassName={`!p-0 !border-none  ${
         isLoading ? 'opacity-50 cursor-not-allowed' : ''
       }`}
       showIcon={false}
-      label={user?.fullName || 'User Menu'}
+      label={customLabel}
+      minWidth=""
       disabled={isLoading}
+      className="absolute -right-10 z-50 w-48 rounded-md border border-gray-200 bg-white shadow-lg"
+      classNameItem="  px-4 py-2 text-sm hover:bg-tab-hover"
     >
       <Icon
         src="/icon-image/avatar-1.png"

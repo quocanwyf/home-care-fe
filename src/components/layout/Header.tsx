@@ -24,7 +24,24 @@ const Header = ({
   const { config } = useSearch();
   const [value, setValue] = useState('');
   const { user, logout, isLoading } = useAuth();
-  console.log('Header user', user);
+  console.log('Header: User data', user, 'Loading:', isLoading);
+
+  const getUserDisplayName = useCallback(() => {
+    console.log(
+      'Header: Getting user display name',
+      user,
+      'Loading:',
+      isLoading
+    );
+    if (!user) {
+      return isLoading ? 'Loading...' : 'HomeCare';
+    }
+
+    const fullName = user.user.fullName || 'Unknown User';
+    const role = user.user.role || 'User';
+    return `${fullName} - ${role} / ${title} Page`;
+  }, [user, isLoading, title]);
+
   // Tạo debounced function bằng useMemo thay vì useCallback
   const debouncedSearch = useMemo(
     () =>
@@ -51,13 +68,11 @@ const Header = ({
   );
 
   return (
-    <header className="flex flex-col gap-4 rounded-2xl px-2 py-4 shadow-md">
+    <header className="flex min-h-[74px] flex-col justify-center gap-4 rounded-2xl px-2 py-4 shadow-md">
       <div className="flex items-center justify-between">
         <div className="ml-1 text-lg font-semibold text-white">
           {/* Full name - Role / {title} Page */}
-          {user
-            ? `${user.fullName} - ${user.role} / ${title} Page`
-            : 'HomeCare'}
+          {getUserDisplayName()}
         </div>
 
         <div className="flex items-center justify-center gap-8">

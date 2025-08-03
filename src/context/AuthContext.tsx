@@ -40,10 +40,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     const response = await loginMutation.mutateAsync(credentials);
 
     const userData: User = {
-      fullName: response.fullName,
-      role: response.role,
-      permissionList: response.permissionList,
-      hmrId: credentials.hmrId,
+      user: response.user,
+      messages: response.messages,
     };
 
     setUser(userData);
@@ -66,6 +64,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 };
 
 // Custom hook to use auth context
+// eslint-disable-next-line react-refresh/only-export-components
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (context === undefined) {

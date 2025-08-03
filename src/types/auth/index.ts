@@ -4,16 +4,23 @@ export interface LoginRequest {
 }
 
 export interface LoginResponse {
-  fullName: string;
-  role: string;
-  permissionList: string[];
+  user: {
+    fullName: string;
+    role: string;
+    permissionList: string[];
+    hmrId?: string;
+  };
+  messages: string;
 }
 
 export interface User {
-  fullName: string;
-  role: string;
-  permissionList: string[];
-  hmrId?: string;
+  user: {
+    fullName: string;
+    role: string;
+    permissionList: string[];
+    hmrId?: string;
+  };
+  messages: string;
 }
 
 export interface AuthContextType {

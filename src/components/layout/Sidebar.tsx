@@ -17,7 +17,10 @@ export default function Sidebar() {
   };
 
   const isActiveItem = (path: string) => {
-    return location.pathname === path;
+    if (path === '/') return location.pathname === '/';
+    return (
+      location.pathname === path || location.pathname.startsWith(path + '/')
+    );
   };
 
   return (

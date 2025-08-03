@@ -1,4 +1,4 @@
-import OrderForm from '@/components/form/OrderForm';
+import OrderForm from '@/components/form/order-form/OrderForm';
 
 const AddOrderPage = () => {
   return (

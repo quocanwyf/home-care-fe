@@ -7,7 +7,7 @@ export const useCustomers = (params: CustomerParams) => {
   return useQuery({
     queryKey: ['customers', params],
     queryFn: ({ signal }) => customersApi(params, signal),
-    keepPreviousData: true,
+    placeholderData: undefined,
     refetchOnWindowFocus: false,
   });
 };

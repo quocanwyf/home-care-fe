@@ -6,7 +6,7 @@ type SearchConfig = {
   placeholder?: string;
   onSearch?: (value: string) => void;
   enableDateRange?: boolean;
-  onDateRangeChange?: (range: DateRange) => void;
+  onDateRangeChange?: (range: DateRange | undefined) => void;
 };
 
 const SearchContext = createContext<{
@@ -29,4 +29,5 @@ export const SearchProvider = ({ children }: { children: React.ReactNode }) => {
   );
 };
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useSearch = () => useContext(SearchContext);

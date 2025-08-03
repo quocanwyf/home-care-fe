@@ -26,7 +26,6 @@ export default function ConfirmDialog({
   confirmText = 'Confirm',
   cancelText = 'Cancel',
   danger = false,
-  ban = false,
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;

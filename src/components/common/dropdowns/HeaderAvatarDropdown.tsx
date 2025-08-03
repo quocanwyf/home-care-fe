@@ -21,7 +21,9 @@ export const HeaderAvatarDropdown = ({
         alt="avatar small"
         className="h-6 w-6 rounded-full"
       />
-      <span>{user?.fullName + ' - ' + user?.role || 'User Menu'}</span>
+      <span className="text-sm font-semibold">
+        {user?.user?.fullName + ' - ' + user?.user?.role || 'User Menu'}
+      </span>
     </div>
   );
   return (
@@ -35,7 +37,7 @@ export const HeaderAvatarDropdown = ({
       label={customLabel}
       minWidth=""
       disabled={isLoading}
-      className="absolute -right-10 z-50 w-48 rounded-md border border-gray-200 bg-white shadow-lg"
+      className="max-tablet:-right-20 absolute -right-10 z-50 w-52 rounded-md border border-gray-200 bg-white shadow-2xl"
       classNameItem="  px-4 py-2 text-sm hover:bg-tab-hover"
     >
       <Icon
@@ -45,7 +47,7 @@ export const HeaderAvatarDropdown = ({
           isLoading ? 'cursor-not-allowed opacity-50' : ''
         }`}
         contentTooltip={
-          isLoading ? 'Processing...' : user?.fullName || 'User Menu'
+          isLoading ? 'Processing...' : user?.user?.fullName || 'User Menu'
         }
       />
     </AppDropdown>

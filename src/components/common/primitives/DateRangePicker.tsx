@@ -15,12 +15,12 @@ import { cn } from '@/lib/utils';
 
 export interface DateRange {
   from: Date | undefined;
-  to: Date | undefined;
+  to?: Date | undefined;
 }
 
 interface DateRangePickerProps {
   className?: string;
-  onChange?: (range: DateRange | undefined) => void;
+  onChange?: ((range: DateRange | undefined) => void) | undefined;
   placeholder?: string;
   disabled?: boolean;
   numberOfMonths?: number;

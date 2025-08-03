@@ -6,7 +6,7 @@ export const useHRs = (params: HRParams) => {
   return useQuery({
     queryKey: ['hrs', params],
     queryFn: ({ signal }) => hrsApi(params, signal),
-    keepPreviousData: true,
+    placeholderData: undefined,
     refetchOnWindowFocus: false,
   });
 };

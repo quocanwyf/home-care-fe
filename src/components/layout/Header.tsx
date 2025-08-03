@@ -24,21 +24,14 @@ const Header = ({
   const { config } = useSearch();
   const [value, setValue] = useState('');
   const { user, logout, isLoading } = useAuth();
-  console.log('Header: User data', user, 'Loading:', isLoading);
 
   const getUserDisplayName = useCallback(() => {
-    console.log(
-      'Header: Getting user display name',
-      user,
-      'Loading:',
-      isLoading
-    );
     if (!user) {
       return isLoading ? 'Loading...' : 'HomeCare';
     }
 
-    const fullName = user.user.fullName || 'Unknown User';
-    const role = user.user.role || 'User';
+    const fullName = user?.user?.fullName || 'Unknown User';
+    const role = user?.user?.role || 'User';
     return `${fullName} - ${role} / ${title} Page`;
   }, [user, isLoading, title]);
 

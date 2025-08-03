@@ -4,22 +4,34 @@ export const data: Customers[] = [
   {
     phoneNumber: '0123791242',
     fullName: 'Le duc tho',
-    address: 'q3 tphcm',
+    location: {
+      addressNum: '1234',
+      ward: 'Ward 1',
+      city: 'Ho Chi Minh City',
+    },
     point: 314414141,
     status: 'active',
   },
   {
     phoneNumber: '0123791243',
     fullName: 'Nguyen Van A',
-    address: '2222',
+    location: {
+      addressNum: '5678',
+      ward: 'Ward 2',
+      city: 'Hanoi',
+    },
     point: 314141441,
     status: 'inactive',
   },
   {
     phoneNumber: '0123791244',
     fullName: 'Nguyen Van B',
-    address: 'q2 tphcm',
-    point: 3111313,
+    location: {
+      addressNum: '91011',
+      ward: 'Ward 3',
+      city: 'Da Nang',
+    },
+    point: 141414141,
     status: 'banned',
   },
 ];

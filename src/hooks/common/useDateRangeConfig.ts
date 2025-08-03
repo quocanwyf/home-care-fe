@@ -6,13 +6,14 @@ import { useSearch } from '@/context/SearchContext';
 export function useDateRangeConfig() {
   const { setConfig } = useSearch();
   const [dateRange, setDateRange] = useState<{
-    from: Date | null;
-    to: Date | null;
+    from: string | null;
+    to: string | null;
   }>({
     from: null,
     to: null,
   });
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleDateRangeChange = (range: any) => {
     //hủy
     if (!range) {

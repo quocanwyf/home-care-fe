@@ -7,7 +7,7 @@ export const useOrders = (params: OrderParams) => {
   return useQuery({
     queryKey: ['orders', params], // `params` là một phần của key, khi nó thay đổi, query sẽ fetch lại
     queryFn: ({ signal }) => ordersApi(params, signal),
-    keepPreviousData: true, // Giữ lại dữ liệu cũ khi đang fetch dữ liệu mới để UI không bị giật
+    placeholderData: undefined,
     refetchOnWindowFocus: false,
   });
 };

@@ -15,7 +15,7 @@ const LoadingFallback = () => {
     }, 1000);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [colors.length]);
 
   const currentColors = colors[colorIndex];
   return (

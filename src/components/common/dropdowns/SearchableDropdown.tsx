@@ -1,5 +1,6 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
+import { debounce } from 'lodash';
 import { ChevronDown } from 'lucide-react';
 
 import { Input } from '@/components/ui/input';
@@ -23,6 +24,7 @@ type SearchableDropdownProps = {
   options: string[];
   onSelect: (value: string) => void;
   onSearch?: (searchTerm: string) => void;
+  debounceMs?: number;
 };
 
 const SearchableDropdown = ({
@@ -31,10 +33,26 @@ const SearchableDropdown = ({
   options,
   onSelect,
   onSearch,
+  debounceMs = 500,
 }: SearchableDropdownProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const dropdownRef = useRef<HTMLDivElement>(null);
+
+  const debouncedSearch = useMemo(
+    () =>
+      debounce((term: string) => {
+        onSearch?.(term);
+      }, debounceMs),
+    [onSearch, debounceMs]
+  );
+
+  // Cleanup khi unmount
+  useEffect(() => {
+    return () => {
+      debouncedSearch.cancel();
+    };
+  }, [debouncedSearch]);
 
   // Filter options based on search term
   const filteredOptions = options.filter((option) =>
@@ -72,9 +90,7 @@ const SearchableDropdown = ({
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setSearchTerm(value);
-    if (onSearch) {
-      onSearch(value);
-    }
+    debouncedSearch(value);
   };
 
   return (

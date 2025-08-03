@@ -3,8 +3,6 @@ import { useState } from 'react';
 
 import CustomerArea from './CustomerArea';
 
-// Import icon đầu tiên để kiểm tra
-
 export default function OrderForm() {
   const [formData, setFormData] = useState({
     //isCusHasAccount: false, // Chưa sử dụng

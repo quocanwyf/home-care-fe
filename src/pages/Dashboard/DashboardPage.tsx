@@ -2,7 +2,7 @@ import OrderForm from '@/components/form/OrderForm';
 
 const DashboardPage = () => {
   return (
-    <div className="h-full w-full rounded-2xl bg-white p-10">
+    <div className="h-full w-full rounded-xl bg-white p-10">
       {/* <Label className="font-semibold" htmlFor="hmrId">
         <Phone className="inline-block h-4 w-4" />
         User ID

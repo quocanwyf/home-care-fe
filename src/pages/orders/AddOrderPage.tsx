@@ -2,7 +2,7 @@ import OrderForm from '@/components/form/OrderForm';
 
 const AddOrderPage = () => {
   return (
-    <div className="h-full w-full rounded-2xl bg-white p-6">
+    <div className="h-full w-full rounded-xl bg-white px-8 py-6">
       {/* <Label className="font-semibold" htmlFor="hmrId">
             <Phone className="inline-block h-4 w-4" />
             User ID

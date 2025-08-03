@@ -68,7 +68,7 @@ const Header = ({
   );
 
   return (
-    <header className="flex min-h-[74px] flex-col justify-center gap-4 rounded-2xl px-2 py-4 shadow-md">
+    <header className="flex min-h-[70px] flex-col justify-center gap-4 rounded-2xl px-2 py-4 shadow-md">
       <div className="flex items-center justify-between">
         <div className="ml-1 text-lg font-semibold text-white">
           {/* Full name - Role / {title} Page */}

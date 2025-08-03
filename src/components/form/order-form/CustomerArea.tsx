@@ -150,7 +150,7 @@ const CustomerArea = ({
   return (
     <>
       {/* Vùng khách hàng */}
-      <div className="my-7 w-full rounded-md bg-blue-200/40 px-4 py-2">
+      <div className="my-7 w-full rounded-md">
         {/* TITLE */}
         <div className="text-overlay-slider mx-2 my-4 font-bold opacity-80">
           Customer Information

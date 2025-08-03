@@ -105,14 +105,18 @@ const SearchableDropdown = ({
 
       <div className="relative">
         <div
-          className={`flex cursor-pointer items-center ${input?.disabled ? 'cursor-not-allowed opacity-50' : ''}`}
+          className={`flex items-center ${input?.disabled ? 'cursor-not-allowed opacity-80' : ''}`}
           onClick={handleInputClick}
         >
           <Input
             type="text"
             id={input?.inputId}
             name={input?.inputName}
-            className={`${input?.className} focus:border-overlay-slider hover:border-overlay-slider/50 h-9 border-gray-300/60 pr-8 focus:shadow-xs ${input?.disabled ? 'cursor-not-allowed' : 'cursor-pointer'}`}
+            className={`${input?.className} focus:border-overlay-slider hover:border-overlay-slider/50 h-9 pr-8 focus:shadow-xs ${
+              input?.disabled
+                ? 'border-gray-400 bg-gray-400/60'
+                : 'hover:border-overlay-slider/50 cursor-pointer border-gray-400/60'
+            }`}
             placeholder={input?.placeholder}
             value={input?.value || ''}
             readOnly={!isOpen}

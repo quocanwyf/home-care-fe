@@ -1,5 +1,3 @@
-import { useState } from 'react';
-
 import { Loader2, Search } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
@@ -48,24 +46,33 @@ const InputButtonSearch = ({
           type="text"
           id={input?.inputId}
           name={input?.inputName}
-          className={`focus:border-overlay-slider hover:border-overlay-slider/50 h-9 border-gray-300/60 focus:shadow-xs ${input?.className}`}
+          className={`focus:border-overlay-slider hover:border-overlay-slider/50 h-9 border-gray-400/60 focus:shadow-xs ${input?.className}`}
           required={input?.required}
           placeholder={input?.placeholder}
           value={input?.value}
           onChange={input?.onChange}
         />
-        <Button
-          type="button"
-          onClick={button?.onClick}
-          disabled={button?.disabled}
-          className={`flex cursor-pointer items-center rounded-lg bg-blue-600 px-4 py-3 text-white transition-all hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-gray-400 ${button?.className}`}
-        >
-          {button?.isLoading ? (
-            <Loader2 className="!h-3 !w-3 animate-spin" />
-          ) : (
-            <Search className="!h-3 !w-3" />
-          )}
-        </Button>
+        {button?.disabled ? (
+          <div className="flex cursor-not-allowed items-center rounded-lg bg-gray-400 px-3 py-3 text-white">
+            {button?.isLoading ? (
+              <Loader2 className="!h-3 !w-3 animate-spin" />
+            ) : (
+              <Search className="!h-3 !w-3" />
+            )}
+          </div>
+        ) : (
+          <Button
+            type="button"
+            onClick={button?.onClick}
+            className={`flex cursor-pointer items-center rounded-lg bg-blue-600 px-4 py-3 text-white transition-all hover:bg-blue-700 ${button?.className}`}
+          >
+            {button?.isLoading ? (
+              <Loader2 className="!h-3 !w-3 animate-spin" />
+            ) : (
+              <Search className="!h-3 !w-3" />
+            )}
+          </Button>
+        )}
       </div>
     </div>
   );

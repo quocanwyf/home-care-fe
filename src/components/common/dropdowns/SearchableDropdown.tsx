@@ -37,7 +37,11 @@ const SearchableDropdown = ({
 }: SearchableDropdownProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
+  const [dropdownPosition, setDropdownPosition] = useState<'bottom' | 'top'>(
+    'bottom'
+  );
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLDivElement>(null);
 
   const debouncedSearch = useMemo(
     () =>
@@ -53,6 +57,25 @@ const SearchableDropdown = ({
       debouncedSearch.cancel();
     };
   }, [debouncedSearch]);
+
+  // Calculate dropdown position when opening
+  const calculateDropdownPosition = () => {
+    if (!inputRef.current) return;
+
+    const inputRect = inputRef.current.getBoundingClientRect();
+    const viewportHeight = window.innerHeight;
+    const dropdownHeight = 240; // Max height của dropdown (max-h-60 = 15rem = 240px)
+
+    const spaceBelow = viewportHeight - inputRect.bottom;
+    const spaceAbove = inputRect.top;
+
+    // Nếu không đủ chỗ bên dưới và có đủ chỗ bên trên
+    if (spaceBelow < dropdownHeight && spaceAbove > dropdownHeight) {
+      setDropdownPosition('top');
+    } else {
+      setDropdownPosition('bottom');
+    }
+  };
 
   // Filter options based on search term
   const filteredOptions = options.filter((option) =>
@@ -77,6 +100,7 @@ const SearchableDropdown = ({
 
   const handleInputClick = () => {
     if (!input?.disabled) {
+      calculateDropdownPosition();
       setIsOpen(true);
     }
   };
@@ -94,7 +118,7 @@ const SearchableDropdown = ({
   };
 
   return (
-    <div className="flex flex-col gap-1 px-2" ref={dropdownRef}>
+    <div className="flex flex-col gap-2 px-2" ref={dropdownRef}>
       <Label
         className={`flex items-center gap-2 text-sm ${label?.classNameLabel}`}
         htmlFor={input?.inputId}
@@ -103,7 +127,7 @@ const SearchableDropdown = ({
         {label?.labelTitle}
       </Label>
 
-      <div className="relative">
+      <div className="relative" ref={inputRef}>
         <div
           className={`flex items-center ${input?.disabled ? 'cursor-not-allowed opacity-80' : ''}`}
           onClick={handleInputClick}
@@ -112,9 +136,9 @@ const SearchableDropdown = ({
             type="text"
             id={input?.inputId}
             name={input?.inputName}
-            className={`${input?.className} focus:border-overlay-slider hover:border-overlay-slider/50 h-9 pr-8 focus:shadow-xs ${
+            className={`${input?.className} focus:border-overlay-slider hover:border-overlay-slider/50 h-10 bg-white pr-8 focus:shadow-xs ${
               input?.disabled
-                ? 'border-gray-400 bg-gray-400/60'
+                ? 'border-gray-400 bg-gray-400/20'
                 : 'hover:border-overlay-slider/50 cursor-pointer border-gray-400/60'
             }`}
             placeholder={input?.placeholder}
@@ -130,7 +154,13 @@ const SearchableDropdown = ({
 
         {/* Dropdown */}
         {isOpen && !input?.disabled && (
-          <div className="absolute z-50 mt-1 max-h-60 w-full overflow-hidden rounded-md border border-gray-300 bg-white shadow-lg">
+          <div
+            className={`absolute z-50 max-h-60 w-full overflow-hidden rounded-md border border-gray-300 bg-white shadow-lg ${
+              dropdownPosition === 'top'
+                ? 'bottom-full mb-1' // Hiển thị lên trên
+                : 'top-full mt-1' // Hiển thị xuống dưới
+            }`}
+          >
             {/* Search input */}
             <div className="border-b p-2">
               <Input

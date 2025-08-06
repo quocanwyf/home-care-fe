@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { AppTable } from '@/components/table/AppTable';
 import { STATUS_CUSTOMER } from '@/constants/dropdown/status-customers';
 // import { data } from '@/constants/mock-data/mock-data-customers';
-import { useCustomers } from '@/hooks/api/useCustomers.api';
+import { useGetCustomers } from '@/hooks/api/useCustomers.api';
 import { usePageSize } from '@/hooks/common/usePageSize';
 import { useSearchConfig } from '@/hooks/common/useSearchConfig';
 import { useStatusFilter } from '@/hooks/common/useStatusFilter';
@@ -60,7 +60,7 @@ const CustomersPage = () => {
     error,
     isError,
     isFetching,
-  } = useCustomers(params);
+  } = useGetCustomers(params);
 
   useEffect(() => {
     if (customersData) {

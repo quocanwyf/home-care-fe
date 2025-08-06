@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { AppTable } from '@/components/table/AppTable';
 import { STATUS_ORDERS } from '@/constants/dropdown/status-orders';
 // import { data } from '@/constants/mock-data/mock-data-orders';
-import { useOrders } from '@/hooks/api/useOrders.api';
+import { useGetOrders } from '@/hooks/api/useOrders.api';
 import { useDateRangeConfig } from '@/hooks/common/useDateRangeConfig';
 import { usePageSize } from '@/hooks/common/usePageSize';
 import { useSearchConfig } from '@/hooks/common/useSearchConfig';
@@ -69,7 +69,7 @@ const OrdersPage = () => {
     isError,
     error,
     isFetching,
-  } = useOrders(params);
+  } = useGetOrders(params);
 
   useEffect(() => {
     if (ordersFetchData) {

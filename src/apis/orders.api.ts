@@ -1,7 +1,7 @@
 import type { OrderParams } from '@/types/params/order-params';
 import type { Orders } from '@/types/table/objects/orders';
 
-export const ordersApi = async (
+export const getOrdersApi = async (
   params: OrderParams,
   signal?: AbortSignal
 ): Promise<Orders[]> => {

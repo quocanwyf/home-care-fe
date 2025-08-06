@@ -24,7 +24,7 @@ const LoadingFallback = () => {
         <img
           src="/bg-imgage/loading-picture.gif"
           alt="Loading..."
-          className="h-1/3 w-1/6 mix-blend-multiply"
+          className="max-tablet:h-1/2 max-tablet:w-1/2 max-mobile:h-1/4 max-mobile:w-1/4 h-1/3 w-1/6 mix-blend-multiply"
           style={{
             filter: 'contrast(1.1) brightness(1.1)    ',
           }}

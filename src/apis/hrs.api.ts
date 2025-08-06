@@ -1,6 +1,6 @@
 import type { HRParams, HRsResponse } from '@/types/params/hr-params';
 
-export const hrsApi = async (
+export const getHrsApi = async (
   params: HRParams,
   signal?: AbortSignal
 ): Promise<HRsResponse> => {

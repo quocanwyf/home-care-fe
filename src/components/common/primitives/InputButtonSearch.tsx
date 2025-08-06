@@ -33,7 +33,7 @@ const InputButtonSearch = ({
   button,
 }: InputButtonSearchProps) => {
   return (
-    <div className="flex flex-col gap-1 px-2">
+    <div className="flex flex-col gap-2 px-2">
       <Label
         className={`${label?.classNameLabel} flex items-center gap-2 text-sm`}
         htmlFor={input?.inputId}
@@ -46,14 +46,14 @@ const InputButtonSearch = ({
           type="text"
           id={input?.inputId}
           name={input?.inputName}
-          className={`focus:border-overlay-slider hover:border-overlay-slider/50 h-9 border-gray-400/60 focus:shadow-xs ${input?.className}`}
+          className={`focus:border-overlay-slider hover:border-overlay-slider/50 h-10 border-gray-400/60 bg-white focus:shadow-xs ${input?.className}`}
           required={input?.required}
           placeholder={input?.placeholder}
           value={input?.value}
           onChange={input?.onChange}
         />
         {button?.disabled ? (
-          <div className="flex cursor-not-allowed items-center rounded-lg bg-gray-400 px-3 py-3 text-white">
+          <div className="flex cursor-not-allowed items-center rounded-lg bg-gray-400 px-3 text-white">
             {button?.isLoading ? (
               <Loader2 className="!h-3 !w-3 animate-spin" />
             ) : (
@@ -64,7 +64,7 @@ const InputButtonSearch = ({
           <Button
             type="button"
             onClick={button?.onClick}
-            className={`flex cursor-pointer items-center rounded-lg bg-blue-600 px-4 py-3 text-white transition-all hover:bg-blue-700 ${button?.className}`}
+            className={`flex h-10 cursor-pointer items-center rounded-lg bg-blue-600 px-3 text-white transition-all hover:bg-blue-700 ${button?.className}`}
           >
             {button?.isLoading ? (
               <Loader2 className="!h-3 !w-3 animate-spin" />

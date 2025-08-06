@@ -1,10 +1,11 @@
 // apis/customers.api.ts
 import type {
+  CheckCustomerResponse,
   CustomerParams,
   CustomersResponse,
 } from '@/types/params/customer-params';
 
-export const customersApi = async (
+export const getCustomersApi = async (
   params: CustomerParams,
   signal?: AbortSignal
 ): Promise<CustomersResponse> => {
@@ -37,5 +38,31 @@ export const customersApi = async (
 
   const data: CustomersResponse = await response.json();
 
+  return data;
+};
+
+export const checkCustomerExistApi = async (
+  cusPhone: string,
+  signal?: AbortSignal
+): Promise<CheckCustomerResponse> => {
+  const url = `${import.meta.env.VITE_API_BASE_URL}/admin/customer/checkExist/${cusPhone}`;
+
+  const response = await fetch(url, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    credentials: 'include',
+    signal,
+  });
+
+  if (!response.ok) {
+    if (response.status === 404) {
+      throw new Error('Customer not found');
+    }
+    throw new Error('Server error');
+  }
+
+  const data: CheckCustomerResponse = await response.json();
   return data;
 };

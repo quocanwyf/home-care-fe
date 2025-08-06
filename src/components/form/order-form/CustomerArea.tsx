@@ -1,64 +1,14 @@
 import { useState } from 'react';
 
-import { Factory, Hotel, House, Phone, User } from 'lucide-react';
+import { Factory, Hotel, House, Phone, SquareUser, User } from 'lucide-react';
 
 import SearchableDropdown from '@/components/common/dropdowns/SearchableDropdown';
 import InputButtonSearch from '@/components/common/primitives/InputButtonSearch';
 import InputLabel from '@/components/common/primitives/InputLabel';
-
-const MOCK_CITIES = [
-  'Ho Chi Minh City',
-  'Ha Noi',
-  'Da Nang',
-  'Can Tho',
-  'Hai Phong',
-  'Bien Hoa',
-  'Hue',
-  'Nha Trang',
-  'Buon Ma Thuot',
-  'Quy Nhon',
-];
-
-const MOCK_WARDS: { [key: string]: string[] } = {
-  'Ho Chi Minh City': [
-    'District 1',
-    'District 2',
-    'District 3',
-    'District 4',
-    'District 5',
-    'District 6',
-    'District 7',
-    'District 8',
-    'District 9',
-    'District 10',
-    'Binh Thanh',
-    'Thu Duc',
-    'Phu Nhuan',
-    'Tan Binh',
-    'Tan Phu',
-  ],
-  'Ha Noi': [
-    'Dong Da',
-    'Ba Dinh',
-    'Hoan Kiem',
-    'Hai Ba Trung',
-    'Cau Giay',
-    'Tay Ho',
-    'Long Bien',
-    'Hoang Mai',
-    'Thanh Xuan',
-    'Nam Tu Liem',
-  ],
-  'Da Nang': [
-    'Hai Chau',
-    'Thanh Khe',
-    'Son Tra',
-    'Ngu Hanh Son',
-    'Lien Chieu',
-    'Cam Le',
-  ],
-  'Can Tho': ['Ninh Kieu', 'Binh Thuy', 'Cai Rang', 'O Mon', 'Thot Not'],
-};
+import {
+  MOCK_CITIES,
+  MOCK_WARDS,
+} from '@/constants/mock-data/mock-data-locations';
 
 type CustomerAreaProps = {
   formData: {
@@ -150,10 +100,11 @@ const CustomerArea = ({
   return (
     <>
       {/* Vùng khách hàng */}
-      <div className="my-7 w-full rounded-md">
+      <div className="bg-overlay-slider/10 my-6 w-full rounded-md p-2">
         {/* TITLE */}
-        <div className="text-overlay-slider mx-2 my-4 font-bold opacity-80">
-          Customer Information
+        <div className="text-overlay-slider mx-2 my-4 flex flex-row items-center font-bold">
+          <SquareUser className="-mt-0.5 mr-2 h-6 w-6" />
+          <p>CUSTOMER INFORMATION</p>
         </div>
         {/* INPUTS Phone, Full Name */}
         <div className="max-tablet:grid-cols-1 mb-4 grid w-full grid-cols-2 gap-4">
@@ -180,7 +131,7 @@ const CustomerArea = ({
             />
           </div>
 
-          <div className="flex-1">
+          <div className="mb-2 flex-1">
             <InputLabel
               label={{
                 labelTitle: 'Full name',

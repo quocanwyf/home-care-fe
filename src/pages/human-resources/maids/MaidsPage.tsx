@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { AppTable } from '@/components/table/AppTable';
 import { STATUS_HR } from '@/constants/dropdown/status-hr';
 // import { data } from '@/constants/mock-data/mock-data-maids';
-import { useHRs } from '@/hooks/api/useHRs';
+import { useGetHRs } from '@/hooks/api/useHRs';
 import { usePageSize } from '@/hooks/common/usePageSize';
 import { useSearchConfig } from '@/hooks/common/useSearchConfig';
 import { useStatusFilter } from '@/hooks/common/useStatusFilter';
@@ -61,7 +61,7 @@ const MaidsPage = () => {
     error,
     isError,
     isFetching,
-  } = useHRs(params);
+  } = useGetHRs(params);
 
   useEffect(() => {
     if (maidsData) {

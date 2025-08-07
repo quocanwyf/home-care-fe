@@ -30,6 +30,9 @@
   --breakpoint-tablet: 768px;
   --breakpoint-tablet-lg: 1024px;
   --breakpoint-desktop: 1280px;
+
+  /*shadow*/
+  --shadow-around: 0 0 10px rgba(125, 130, 246, 0.3);
 }
 
 html,

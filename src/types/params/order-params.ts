@@ -11,6 +11,32 @@ export interface OrderParams {
   toDate?: string | Date; // Định dạng DD-MM-YYYY
 }
 
+//order form add data type
+export interface OrderFormData {
+  phoneNumberCustomer: string;
+  fullNameCustomer: string;
+  location: {
+    addressNum: string;
+    city: string;
+    ward: string;
+  };
+  serviceType?: string;
+  requestType?: string;
+  workDays?: {
+    startDay: string;
+    endDay: string;
+  };
+  workTime?: {
+    startTime: string;
+    endTime: string;
+  };
+  paymentType?: string;
+  totalHelperCost?: string;
+  totalOrderCost?: string;
+  helperId?: string;
+  discounts?: Discount[];
+}
+
 //get customer exist phone params
 export interface CustomerFormData {
   cusId: string;
@@ -36,5 +62,5 @@ export type CustomerAreaProps = {
       ward: string;
     };
   };
-  onUpdateFormData: (newData: Partial<typeof FormData>) => void;
+  onUpdateFormData: (newData: Partial<OrderFormData>) => void;
 };

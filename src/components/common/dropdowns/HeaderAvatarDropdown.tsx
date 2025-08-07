@@ -37,6 +37,7 @@ export const HeaderAvatarDropdown = ({
       label={customLabel}
       minWidth=""
       disabled={isLoading}
+      useAutoWidth={false}
       className="max-tablet:-right-20 absolute -right-10 z-50 w-52 rounded-md border border-gray-200 bg-white shadow-2xl"
       classNameItem="  px-4 py-2 text-sm hover:bg-tab-hover"
     >

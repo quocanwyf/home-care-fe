@@ -4,7 +4,9 @@ import { Label } from '@/components/ui/label';
 const InputLabel = ({
   label,
   input,
+  className = '',
 }: {
+  className?: string;
   label?: {
     classNameLabel?: string;
     labelTitle?: string;
@@ -21,7 +23,7 @@ const InputLabel = ({
   };
 }) => {
   return (
-    <div className="flex flex-col gap-2 px-2">
+    <div className={`flex flex-col gap-2 ${className}`}>
       <Label
         className={`flex items-center gap-2 text-sm ${label?.classNameLabel}`}
         htmlFor={input?.inputId}

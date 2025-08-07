@@ -25,15 +25,17 @@ type InputButtonSearchProps = {
     disabled?: boolean;
     isLoading?: boolean;
   };
+  className?: string;
 };
 
 const InputButtonSearch = ({
   label,
   input,
   button,
+  className = '',
 }: InputButtonSearchProps) => {
   return (
-    <div className="flex flex-col gap-2 px-2">
+    <div className={`flex flex-col gap-2 ${className}`}>
       <Label
         className={`${label?.classNameLabel} flex items-center gap-2 text-sm`}
         htmlFor={input?.inputId}

@@ -27,6 +27,7 @@ type SearchableDropdownProps = {
   debounceMs?: number;
   isLoading?: boolean;
   error?: string;
+  className?: string;
 };
 
 const SearchableDropdown = ({
@@ -38,10 +39,10 @@ const SearchableDropdown = ({
   debounceMs = 500,
   isLoading = false,
   error,
+  className = '',
 }: SearchableDropdownProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
-  const [displayValue, setDisplayValue] = useState(input?.value || '');
   const [dropdownPosition, setDropdownPosition] = useState<'bottom' | 'top'>(
     'bottom'
   );
@@ -62,18 +63,6 @@ const SearchableDropdown = ({
       debouncedSearch.cancel();
     };
   }, [debouncedSearch]);
-
-  // Update display value when input value changes
-  useEffect(() => {
-    if (input?.value) {
-      const selectedOption = options.find(
-        (option) => option.value === input.value
-      );
-      setDisplayValue(selectedOption?.label || input.value);
-    } else {
-      setDisplayValue('');
-    }
-  }, [input?.value, options]);
 
   // Calculate dropdown position when opening
   const calculateDropdownPosition = () => {
@@ -123,7 +112,6 @@ const SearchableDropdown = ({
 
   const handleOptionSelect = (option: { label: string; value: string }) => {
     onSelect(option.value, option.label);
-    setDisplayValue(option.label);
     setIsOpen(false);
     setSearchTerm('');
   };
@@ -135,7 +123,7 @@ const SearchableDropdown = ({
   };
 
   return (
-    <div className="flex flex-col gap-2 px-2" ref={dropdownRef}>
+    <div className={`flex flex-col gap-2 ${className}`} ref={dropdownRef}>
       <Label
         className={`flex items-center gap-2 text-sm ${label?.classNameLabel}`}
         htmlFor={input?.inputId}

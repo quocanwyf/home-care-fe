@@ -5,10 +5,6 @@ import { Factory, Hotel, House, Phone, SquareUser, User } from 'lucide-react';
 import SearchableDropdown from '@/components/common/dropdowns/SearchableDropdown';
 import InputButtonSearch from '@/components/common/primitives/InputButtonSearch';
 import InputLabel from '@/components/common/primitives/InputLabel';
-import {
-  MOCK_CITIES,
-  MOCK_WARDS,
-} from '@/constants/mock-data/mock-data-locations';
 import { checkPhoneRegex } from '@/helpers/check-phone-regex';
 import { useGetProvinces, useGetWards } from '@/hooks/api/useLocations.api';
 import { useCheckCustomerExist } from '@/hooks/api/useOrders.api';
@@ -47,6 +43,11 @@ const CustomerArea = ({ formData, onUpdateFormData }: CustomerAreaProps) => {
     }
 
     setIsSearching(true);
+
+    console.log(
+      'Searching for customer with phone:',
+      formData.phoneNumberCustomer
+    );
 
     try {
       const result = await checkCustomerExistPhoneMutation.mutateAsync(
@@ -141,9 +142,9 @@ const CustomerArea = ({ formData, onUpdateFormData }: CustomerAreaProps) => {
   return (
     <>
       {/* Vùng khách hàng */}
-      <div className="bg-overlay-slider/10 my-6 w-full rounded-md px-4 pt-2 pb-4">
+      <div className="bg-overlay-slider/8 shadow-around my-6 w-full rounded-md px-4 pt-2 pb-4">
         {/* TITLE */}
-        <div className="text-overlay-slider mx-2 my-4 flex flex-row items-center font-bold">
+        <div className="text-overlay-slider mx-2 mt-4 mb-5 flex flex-row items-center font-bold">
           <SquareUser className="-mt-0.5 mr-2 h-6 w-6" />
           <p>CUSTOMER INFORMATION</p>
         </div>
@@ -151,6 +152,7 @@ const CustomerArea = ({ formData, onUpdateFormData }: CustomerAreaProps) => {
         <div className="max-tablet:grid-cols-1 mb-4 grid w-full grid-cols-2 gap-4">
           <div className="flex-1">
             <InputButtonSearch
+              className="px-2"
               label={{
                 labelTitle: 'Search customer by phone number',
                 icon: <Phone className="h-3 w-3" />,
@@ -174,6 +176,7 @@ const CustomerArea = ({ formData, onUpdateFormData }: CustomerAreaProps) => {
 
           <div className="mb-2 flex-1">
             <InputLabel
+              className="px-2"
               label={{
                 labelTitle: 'Full name',
                 icon: <User className="h-3 w-3" />,
@@ -195,6 +198,7 @@ const CustomerArea = ({ formData, onUpdateFormData }: CustomerAreaProps) => {
         <div className="max-tablet:grid-cols-1 mb-4 grid w-full grid-cols-3 gap-4">
           <div className="flex-1">
             <SearchableDropdown
+              className="px-2"
               label={{
                 labelTitle: 'City',
                 icon: <Hotel className="h-3 w-3" />,
@@ -215,6 +219,7 @@ const CustomerArea = ({ formData, onUpdateFormData }: CustomerAreaProps) => {
           </div>
           <div className="flex-1">
             <SearchableDropdown
+              className="px-2"
               label={{
                 labelTitle: 'Ward',
                 icon: <Factory className="h-3 w-3" />,
@@ -236,6 +241,7 @@ const CustomerArea = ({ formData, onUpdateFormData }: CustomerAreaProps) => {
           </div>
           <div className="flex-1">
             <InputLabel
+              className="px-2"
               label={{
                 labelTitle: 'Address (House number, street)',
                 icon: <House className="h-3 w-3" />,

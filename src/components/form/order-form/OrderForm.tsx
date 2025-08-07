@@ -1,10 +1,13 @@
 // src/components/UserForm.jsx
 import { useState } from 'react';
 
+import type { OrderFormData } from '@/types/params/order-params';
+
 import CustomerArea from './CustomerArea';
+import InformationOrderArea from './InformationOrderArea';
 
 export default function OrderForm() {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<OrderFormData>({
     //isCusHasAccount: false, // Chưa sử dụng
     //customerId: '', // Chưa sử dụng, nếu có tk thì sẽ dùng, k thì trả null
     // Vùng khách hàng
@@ -32,35 +35,6 @@ export default function OrderForm() {
     // helperId: '', // gán ngv đang có trạng thái workingStatus online
     // discounts: [],
   });
-  const searchCustomerByPhone = async (phoneNumber: string) => {
-    console.log('Searching customer by phone:', phoneNumber);
-
-    // Giả lập API call với timeout
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        // Giả lập dữ liệu trả về - có thể có hoặc không có thông tin
-        const mockCustomers = {
-          '0123456789': {
-            fullName: 'Nguyễn Văn A',
-            address: '123 Lê Lợi',
-            city: 'Ho Chi Minh City',
-            ward: 'Ward 1',
-          },
-          '0987654321': {
-            fullName: 'Trần Thị B',
-            address: '456 Nguyễn Huệ',
-            city: 'Ha Noi',
-            ward: 'Dong Da',
-          },
-        };
-
-        const customer =
-          mockCustomers[phoneNumber as keyof typeof mockCustomers];
-        console.log('Customer found:', customer);
-        resolve(customer || null);
-      }, 1500); // 1.5 giây delay
-    });
-  };
 
   const handleUpdateFormData = (newData: Partial<typeof formData>) => {
     setFormData((prev) => ({ ...prev, ...newData }));
@@ -72,7 +46,10 @@ export default function OrderForm() {
       <CustomerArea
         formData={formData}
         onUpdateFormData={handleUpdateFormData}
-        onSearchCustomer={searchCustomerByPhone}
+      />
+      <InformationOrderArea
+        formData={formData}
+        onUpdateFormData={handleUpdateFormData}
       />
     </div>
   );

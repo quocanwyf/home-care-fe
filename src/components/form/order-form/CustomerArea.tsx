@@ -9,52 +9,84 @@ import {
   MOCK_CITIES,
   MOCK_WARDS,
 } from '@/constants/mock-data/mock-data-locations';
+import { checkPhoneRegex } from '@/helpers/check-phone-regex';
+import { useGetProvinces, useGetWards } from '@/hooks/api/useLocations.api';
+import { useCheckCustomerExist } from '@/hooks/api/useOrders.api';
+import { useToast } from '@/hooks/common/useToast';
+import type { CustomerAreaProps } from '@/types/params/order-params';
 
-type CustomerAreaProps = {
-  formData: {
-    phoneNumberCustomer: string;
-    fullNameCustomer: string;
-    location: {
-      addressNum: string;
-      city: string;
-      ward: string;
-    };
-  };
-  onUpdateFormData: (newData: Partial<typeof FormData>) => void;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  onSearchCustomer: (phoneNumber: string) => Promise<any>;
-};
-
-const CustomerArea = ({
-  formData,
-  onUpdateFormData,
-  onSearchCustomer,
-}: CustomerAreaProps) => {
+const CustomerArea = ({ formData, onUpdateFormData }: CustomerAreaProps) => {
   const [isSearching, setIsSearching] = useState(false);
+  const [provinceSearch, setProvinceSearch] = useState('');
+  const [wardSearch, setWardSearch] = useState('');
+  const [selectedProvinceCode, setSelectedProvinceCode] = useState('');
+
+  const { showSuccess, showError, showInfo } = useToast();
+
+  //api check exist phone customer
+  const checkCustomerExistPhoneMutation = useCheckCustomerExist();
+
+  // Location API calls
+  const {
+    data: provincesData,
+    isLoading: provincesLoading,
+    error: provincesError,
+  } = useGetProvinces(provinceSearch);
+
+  const {
+    data: wardsData,
+    isLoading: wardsLoading,
+    error: wardsError,
+  } = useGetWards(selectedProvinceCode, wardSearch);
 
   const handleSearchCustomer = async () => {
     if (!formData.phoneNumberCustomer.trim()) return;
 
-    setIsSearching(true);
-    try {
-      const customer = await onSearchCustomer(formData.phoneNumberCustomer);
+    if (!checkPhoneRegex(formData.phoneNumberCustomer.trim(), showError)) {
+      return;
+    }
 
-      if (customer) {
+    setIsSearching(true);
+
+    try {
+      const result = await checkCustomerExistPhoneMutation.mutateAsync(
+        formData.phoneNumberCustomer
+      );
+
+      if (result.success && result.customer) {
         // Auto fill form data nếu tìm thấy khách hàng
         onUpdateFormData({
-          fullNameCustomer: customer.fullName,
+          fullNameCustomer: result.customer.fullName,
           location: {
-            addressNum: customer.address,
-            city: customer.city,
-            ward: customer.ward,
+            addressNum: result.customer.location.addressNum,
+            city: result.customer.location.city,
+            ward: result.customer.location.ward,
           },
         });
+
+        // Tìm provinceCode từ city name để load wards
+        const matchedProvince = provincesData?.result?.find(
+          (p) =>
+            p.provinceName === result.customer.location.city ||
+            p.provinceFullName === result.customer.location.city
+        );
+        if (matchedProvince) {
+          setSelectedProvinceCode(matchedProvince.provinceCode);
+        }
+
+        // Log discount list nếu có
+        if (result.discountList?.length > 0) {
+          console.log('Available discounts:', result.discountList);
+          showInfo(`Có ${result.discountList.length} khuyến mãi khả dụng`);
+        }
+
+        showSuccess(`Tìm thấy khách hàng: ${result.customer.fullName}`);
       } else {
-        // Thông báo không tìm thấy khách hàng
-        console.log('Không tìm thấy thông tin khách hàng');
+        showError('Không tìm thấy thông tin khách hàng');
       }
     } catch (error) {
       console.error('Lỗi khi tìm kiếm khách hàng:', error);
+      showError('Lỗi khi tìm kiếm khách hàng: ' + error);
     } finally {
       setIsSearching(false);
     }
@@ -73,11 +105,12 @@ const CustomerArea = ({
     }
   };
 
-  const handleCitySelect = (city: string) => {
+  const handleCitySelect = (provinceCode: string, provinceName?: string) => {
+    setSelectedProvinceCode(provinceCode);
     onUpdateFormData({
       location: {
         ...formData.location,
-        city: city,
+        city: provinceName || provinceCode,
         ward: '', // Reset ward when city changes
       },
     });
@@ -92,15 +125,23 @@ const CustomerArea = ({
     });
   };
 
-  // Get wards for selected city
-  const availableWards = formData.location.city
-    ? MOCK_WARDS[formData.location.city] || []
-    : [];
+  // Convert API data to dropdown options
+  const provinceOptions =
+    provincesData?.result?.map((province) => ({
+      label: province.provinceName,
+      value: province.provinceCode,
+    })) || [];
+
+  const wardOptions =
+    wardsData?.result?.map((ward) => ({
+      label: ward.wardName,
+      value: ward.wardName,
+    })) || [];
 
   return (
     <>
       {/* Vùng khách hàng */}
-      <div className="bg-overlay-slider/10 my-6 w-full rounded-md p-2">
+      <div className="bg-overlay-slider/10 my-6 w-full rounded-md px-4 pt-2 pb-4">
         {/* TITLE */}
         <div className="text-overlay-slider mx-2 my-4 flex flex-row items-center font-bold">
           <SquareUser className="-mt-0.5 mr-2 h-6 w-6" />
@@ -153,23 +194,6 @@ const CustomerArea = ({
         {/* INPUTS Location */}
         <div className="max-tablet:grid-cols-1 mb-4 grid w-full grid-cols-3 gap-4">
           <div className="flex-1">
-            <InputLabel
-              label={{
-                labelTitle: 'Address (House number, street)',
-                icon: <House className="h-3 w-3" />,
-              }}
-              input={{
-                inputId: 'addressCustomer',
-                className: 'w-full',
-                inputName: 'addressCustomer',
-                placeholder: 'Enter address',
-                value: formData.location.addressNum,
-                onChange: (e) =>
-                  handleInputChange('location.addressNum', e.target.value),
-              }}
-            />
-          </div>
-          <div className="flex-1">
             <SearchableDropdown
               label={{
                 labelTitle: 'City',
@@ -182,8 +206,11 @@ const CustomerArea = ({
                 placeholder: 'Select city',
                 value: formData.location.city,
               }}
-              options={MOCK_CITIES}
+              options={provinceOptions}
               onSelect={handleCitySelect}
+              onSearch={setProvinceSearch}
+              isLoading={provincesLoading}
+              error={provincesError?.message}
             />
           </div>
           <div className="flex-1">
@@ -198,10 +225,30 @@ const CustomerArea = ({
                 className: 'w-full',
                 placeholder: 'Select ward',
                 value: formData.location.ward,
-                disabled: !formData.location.city, // Disable if no city selected
+                disabled: !selectedProvinceCode, // Disable if no city selected
               }}
-              options={availableWards}
+              options={wardOptions}
               onSelect={handleWardSelect}
+              onSearch={setWardSearch}
+              isLoading={wardsLoading}
+              error={wardsError?.message}
+            />
+          </div>
+          <div className="flex-1">
+            <InputLabel
+              label={{
+                labelTitle: 'Address (House number, street)',
+                icon: <House className="h-3 w-3" />,
+              }}
+              input={{
+                inputId: 'addressCustomer',
+                className: 'w-full',
+                inputName: 'addressCustomer',
+                placeholder: 'Enter address',
+                value: formData.location.addressNum,
+                onChange: (e) =>
+                  handleInputChange('location.addressNum', e.target.value),
+              }}
             />
           </div>
         </div>

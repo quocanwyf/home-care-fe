@@ -53,7 +53,7 @@ const InputButtonSearch = ({
           onChange={input?.onChange}
         />
         {button?.disabled ? (
-          <div className="flex cursor-not-allowed items-center rounded-lg bg-gray-400 px-3 text-white">
+          <div className="flex cursor-not-allowed items-center rounded-lg bg-blue-600/60 px-3 text-white">
             {button?.isLoading ? (
               <Loader2 className="!h-3 !w-3 animate-spin" />
             ) : (

@@ -1,15 +1,11 @@
-export interface HRLocation {
-  addressNum: string;
-  ward: string;
-  city: string;
-}
+import type { Location } from './locations';
 
 export type HRs = {
   phoneNumber: string;
   fullName: string;
   dateOfBirth: string; // ISO format
   status: HRsWithStatus;
-  location: HRLocation;
+  location: Location;
 };
 
 export type HRsWithStatus = 'active' | 'inactive';

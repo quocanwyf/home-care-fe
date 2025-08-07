@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { debounce } from 'lodash';
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown, Loader2 } from 'lucide-react';
 
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -21,10 +21,12 @@ type SearchableDropdownProps = {
     value?: string;
     disabled?: boolean;
   };
-  options: string[];
-  onSelect: (value: string) => void;
+  options: Array<{ label: string; value: string }>;
+  onSelect: (value: string, label?: string) => void;
   onSearch?: (searchTerm: string) => void;
   debounceMs?: number;
+  isLoading?: boolean;
+  error?: string;
 };
 
 const SearchableDropdown = ({
@@ -34,9 +36,12 @@ const SearchableDropdown = ({
   onSelect,
   onSearch,
   debounceMs = 500,
+  isLoading = false,
+  error,
 }: SearchableDropdownProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
+  const [displayValue, setDisplayValue] = useState(input?.value || '');
   const [dropdownPosition, setDropdownPosition] = useState<'bottom' | 'top'>(
     'bottom'
   );
@@ -57,6 +62,18 @@ const SearchableDropdown = ({
       debouncedSearch.cancel();
     };
   }, [debouncedSearch]);
+
+  // Update display value when input value changes
+  useEffect(() => {
+    if (input?.value) {
+      const selectedOption = options.find(
+        (option) => option.value === input.value
+      );
+      setDisplayValue(selectedOption?.label || input.value);
+    } else {
+      setDisplayValue('');
+    }
+  }, [input?.value, options]);
 
   // Calculate dropdown position when opening
   const calculateDropdownPosition = () => {
@@ -79,7 +96,7 @@ const SearchableDropdown = ({
 
   // Filter options based on search term
   const filteredOptions = options.filter((option) =>
-    option.toLowerCase().includes(searchTerm.toLowerCase())
+    option?.label?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   // Close dropdown when clicking outside
@@ -99,14 +116,14 @@ const SearchableDropdown = ({
   }, []);
 
   const handleInputClick = () => {
-    if (!input?.disabled) {
-      calculateDropdownPosition();
-      setIsOpen(true);
-    }
+    if (input?.disabled) return;
+    calculateDropdownPosition();
+    setIsOpen(!isOpen);
   };
 
-  const handleOptionSelect = (option: string) => {
-    onSelect(option);
+  const handleOptionSelect = (option: { label: string; value: string }) => {
+    onSelect(option.value, option.label);
+    setDisplayValue(option.label);
     setIsOpen(false);
     setSearchTerm('');
   };
@@ -147,6 +164,7 @@ const SearchableDropdown = ({
             disabled={input?.disabled}
             required={input?.required}
           />
+
           <ChevronDown
             className={`absolute right-2 h-4 w-4 transition-transform ${isOpen ? 'rotate-180' : ''} ${input?.disabled ? 'text-gray-400' : 'text-gray-600'}`}
           />
@@ -175,18 +193,27 @@ const SearchableDropdown = ({
 
             {/* Options list */}
             <div className="max-h-48 overflow-y-auto">
-              {filteredOptions.length > 0 ? (
+              {isLoading ? (
+                <div className="flex items-center justify-center p-4">
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  <span className="text-sm text-gray-500">Loading...</span>
+                </div>
+              ) : error ? (
+                <div className="p-4 text-center text-sm text-red-500">
+                  {error}
+                </div>
+              ) : filteredOptions.length > 0 ? (
                 filteredOptions.map((option, index) => (
                   <div
-                    key={index}
-                    className="cursor-pointer border-b px-3 py-2 text-sm last:border-b-0 hover:bg-blue-50"
+                    key={`${option.value}-${index}`}
+                    className="cursor-pointer px-3 py-2 text-sm hover:bg-gray-100"
                     onClick={() => handleOptionSelect(option)}
                   >
-                    {option}
+                    {option.label}
                   </div>
                 ))
               ) : (
-                <div className="px-3 py-2 text-sm text-gray-500">
+                <div className="p-4 text-center text-sm text-gray-500">
                   No options found
                 </div>
               )}

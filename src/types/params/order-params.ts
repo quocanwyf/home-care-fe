@@ -1,3 +1,7 @@
+import type { Discount } from '../table/objects/customers';
+import type { Location } from '../table/objects/locations';
+
+// get orders params
 export interface OrderParams {
   page?: number;
   limit?: number;
@@ -7,32 +11,30 @@ export interface OrderParams {
   toDate?: string | Date; // Định dạng DD-MM-YYYY
 }
 
-//order form add
-export interface LocationData {
-  addressNum: string;
-  city: string;
-  ward: string;
-}
-
+//get customer exist phone params
 export interface CustomerFormData {
-  phoneNumberCustomer: string;
-  fullNameCustomer: string;
-  location: LocationData;
+  cusId: string;
+  fullName: string;
+  phone: string;
+  location: Location;
 }
 
-export interface OrderFormData extends CustomerFormData {
-  // Thêm các fields khác khi cần
-  // serviceType?: string;
-  // requestType?: string;
-  // workDays?: {
-  //   startDay: string;
-  //   endDay: string;
-  // };
+export interface CustomerCheckResponse {
+  success: boolean;
+  customer: CustomerFormData;
+  discountList: Discount[];
 }
 
-export interface CustomerAreaProps {
-  formData: CustomerFormData;
-  onUpdateFormData: (newData: Partial<CustomerFormData>) => void;
-  onSearchCustomer: (phoneNumber: string) => Promise<any>;
-  isSearching?: boolean;
-}
+// customer area form data
+export type CustomerAreaProps = {
+  formData: {
+    phoneNumberCustomer: string;
+    fullNameCustomer: string;
+    location: {
+      addressNum: string;
+      city: string;
+      ward: string;
+    };
+  };
+  onUpdateFormData: (newData: Partial<typeof FormData>) => void;
+};

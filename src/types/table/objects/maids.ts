@@ -1,9 +1,9 @@
-import type { HRLocation } from './hrs';
+import type { Location } from './locations';
 
 export type Maids = {
   phoneNumber: string;
   fullName: string;
-  location: HRLocation;
+  location: Location;
   dateOfBirth: string; // ISO format
   status: MaidsWithStatus;
 };

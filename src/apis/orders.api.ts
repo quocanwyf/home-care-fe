@@ -1,4 +1,7 @@
-import type { OrderParams } from '@/types/params/order-params';
+import type {
+  CustomerCheckResponse,
+  OrderParams,
+} from '@/types/params/order-params';
 import type { Orders } from '@/types/table/objects/orders';
 
 export const getOrdersApi = async (
@@ -43,5 +46,28 @@ export const getOrdersApi = async (
   }
 
   const data: Orders[] = await response.json();
+  return data;
+};
+
+export const getCheckExistCustomerPhone = async (
+  phone: string,
+  signal?: AbortSignal
+): Promise<CustomerCheckResponse> => {
+  const url = `${import.meta.env.VITE_API_BASE_URL}/admin/customer/checkExist/${phone}`;
+
+  const response = await fetch(url, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    credentials: 'include',
+    signal,
+  });
+
+  if (!response.ok) {
+    throw new Error(`Customer check failed: ${response.status}`);
+  }
+
+  const data: CustomerCheckResponse = await response.json();
   return data;
 };

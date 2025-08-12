@@ -1,6 +1,7 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 
 import { MENU_ITEMS } from '@/constants/mock-data/mock-data-sidebar';
+import { useAuth } from '@/context/AuthContext';
 
 import Logo from '../common/icons/Logo';
 import GradientText from '../common/primitives/GradientText';
@@ -8,9 +9,19 @@ import GradientText from '../common/primitives/GradientText';
 export default function Sidebar() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { logout } = useAuth();
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   const handleMenuClick = (path: string, label: string) => {
     if (label === 'Log out') {
+      handleLogout();
       return;
     }
     navigate(path);

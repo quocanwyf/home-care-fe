@@ -50,10 +50,8 @@ const LoginForm = () => {
         state: { from: 'login' },
         delay: 700,
       });
-    } catch (error) {
-      setError(
-        error instanceof Error ? error.message : MESSAGES_AUTH.LOGIN_FAILED
-      );
+    } catch (error: any) {
+      setError(MESSAGES_AUTH.LOGIN_FAILED || error.message);
     }
   };
 

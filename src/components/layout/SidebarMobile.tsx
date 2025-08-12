@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { MENU_ITEMS } from '@/constants/mock-data/mock-data-sidebar';
 
 import Logo from '../common/icons/Logo';
+import GradientText from '../common/primitives/GradientText';
 
 const SidebarMobile = ({
   onMobileSidebarOpen,
@@ -33,9 +34,7 @@ const SidebarMobile = ({
           <div className="flex items-center justify-center gap-2 px-4 py-3">
             <Logo />
             <span className="text-text-primary font-bold">HOME CARE</span>
-            <span className="from-text-linear1 via-text-linear2 to-text-linear3 bg-gradient-to-b bg-clip-text text-transparent">
-              <span className="font-bold">- ADMIN</span>
-            </span>
+            <GradientText content="- ADMIN" />
           </div>
 
           <div className="border-border-primary mx-4 mb-2 border-b-3" />

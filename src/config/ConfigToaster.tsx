@@ -1,5 +1,4 @@
-import React from "react";
-import { Toaster } from "react-hot-toast";
+import { Toaster } from 'react-hot-toast';
 
 // Component Toaster with configuration
 const ConfigToaster = () => {
@@ -11,15 +10,15 @@ const ConfigToaster = () => {
       containerClassName=""
       containerStyle={{}}
       toastOptions={{
-        className: "",
+        className: '',
         duration: 1000,
         style: {
-          background: "#363636",
-          color: "#fff",
-          fontFamily: "Inter, sans-serif",
-          fontSize: "14px",
-          fontWeight: "500",
-          padding: "10px 12px",
+          background: '#363636',
+          color: '#fff',
+          fontFamily: 'Inter, sans-serif',
+          fontSize: '14px',
+          fontWeight: '500',
+          padding: '10px 12px',
         },
       }}
     />

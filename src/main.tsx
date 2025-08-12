@@ -1,14 +1,30 @@
-import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+
 import App from './App.tsx';
+import { AuthProvider } from './context/AuthContext.tsx';
 import './index.css';
 
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 1000 * 60 * 5, // Dữ liệu sẽ được coi là "tươi" trong 5 phút
+      refetchOnWindowFocus: false, // Tắt tính năng tự động fetch lại khi focus vào tab
+      retry: 0, // Thử gọi lại API 2 lần nếu thất bại
+    },
+  },
+});
+
 createRoot(document.getElementById('root')!).render(
-  <StrictMode>
+  <QueryClientProvider client={queryClient}>
     <BrowserRouter>
-      <App />
+      <AuthProvider>
+        <App />
+      </AuthProvider>
     </BrowserRouter>
-  </StrictMode>
+    <ReactQueryDevtools initialIsOpen={false} />
+  </QueryClientProvider>
 );

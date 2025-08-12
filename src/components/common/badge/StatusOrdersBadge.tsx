@@ -1,23 +1,19 @@
-// import { ORDER_STATUS } from '@/constants/status/order-status';
-// const OrderStatusBadge = ({
-//   status,
-// }: {
-//   status: keyof typeof ORDER_STATUS;
-// }) => {
-//   return (
-//     <span
-//       className={`inline-flex items-center rounded-full border px-2.5 py-1 text-xs font-bold ${
-//         ORDER_STATUS[status]
-//       }`}
-//     >
-//       {status}
-//     </span>
-//   );
-// };
-// export default OrderStatusBadge;
+import { ObjectsStatusStyles } from '@/types/table/objects/union-objects';
+import type { ObjectsWithStatus } from '@/types/table/objects/union-objects';
 
-const StatusOrdersBadge = () => {
-  return <div>StatusOrdersBadge</div>;
+const OrderStatusBadge = ({ status }: { status: ObjectsWithStatus }) => {
+  return (
+    <span
+      className={`inline-flex items-center rounded-full border px-2.5 py-1 text-xs font-bold ${
+        ObjectsStatusStyles[status]
+      }`}
+    >
+      {status === 'inProgress'
+        ? 'in progress'
+        : // : status === 'waitPayment'
+          //   ? 'wait payment'
+          status}
+    </span>
+  );
 };
-
-export default StatusOrdersBadge;
+export default OrderStatusBadge;

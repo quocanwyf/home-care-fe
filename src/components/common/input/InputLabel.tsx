@@ -1,0 +1,48 @@
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+
+const InputLabel = ({
+  label,
+  input,
+  className = '',
+}: {
+  className?: string;
+  label?: {
+    classNameLabel?: string;
+    labelTitle?: string;
+    icon?: React.ReactNode;
+  };
+  input?: {
+    inputId?: string;
+    inputName?: string;
+    className?: string;
+    placeholder?: string;
+    required?: boolean;
+    value?: string;
+    onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  };
+}) => {
+  return (
+    <div className={`flex flex-col gap-2 ${className}`}>
+      <Label
+        className={`flex items-center gap-2 text-sm ${label?.classNameLabel}`}
+        htmlFor={input?.inputId}
+      >
+        {label?.icon}
+        {label?.labelTitle}
+      </Label>
+      <Input
+        type="text"
+        id={input?.inputId}
+        name={input?.inputName}
+        className={`${input?.className} focus:border-overlay-slider hover:border-overlay-slider/50 h-10 border-gray-400/60 bg-white focus:shadow-xs`}
+        required={input?.required}
+        placeholder={input?.placeholder}
+        value={input?.value}
+        onChange={input?.onChange}
+      />
+    </div>
+  );
+};
+
+export default InputLabel;

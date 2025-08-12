@@ -11,7 +11,7 @@ const NotificationBell = ({
 }) => {
   return (
     <TooltipInfo content="Notifications">
-      <div className={`relative h-5 w-5 cursor-pointer ${className}`}>
+      <div className={`relative h-4 w-4 cursor-pointer ${className}`}>
         <Bell className="absolute top-0.75 right-0.25 text-white" />
 
         {count > 0 && (

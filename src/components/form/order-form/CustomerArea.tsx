@@ -1,10 +1,11 @@
 import { useState } from 'react';
+import { useMediaQuery } from 'react-responsive';
 
 import { Factory, Hotel, House, Phone, SquareUser, User } from 'lucide-react';
 
 import SearchableDropdown from '@/components/common/dropdowns/SearchableDropdown';
-import InputButtonSearch from '@/components/common/primitives/InputButtonSearch';
-import InputLabel from '@/components/common/primitives/InputLabel';
+import InputButtonSearch from '@/components/common/input/InputButtonSearch';
+import InputLabel from '@/components/common/input/InputLabel';
 import { checkPhoneRegex } from '@/helpers/check-phone-regex';
 import { useGetProvinces, useGetWards } from '@/hooks/api/useLocations.api';
 import { useCheckCustomerExist } from '@/hooks/api/useOrders.api';
@@ -21,6 +22,11 @@ const CustomerArea = ({ formData, onUpdateFormData }: CustomerAreaProps) => {
 
   //api check exist phone customer
   const checkCustomerExistPhoneMutation = useCheckCustomerExist();
+
+  const isTabletOrMobile = useMediaQuery({ maxWidth: 1024 });
+  const labelTitle = isTabletOrMobile
+    ? 'Address'
+    : 'Address (House number, street)';
 
   // Location API calls
   const {
@@ -41,18 +47,13 @@ const CustomerArea = ({ formData, onUpdateFormData }: CustomerAreaProps) => {
     if (!checkPhoneRegex(formData.phoneNumberCustomer.trim(), showError)) {
       return;
     }
-
     setIsSearching(true);
-
-    console.log(
-      'Searching for customer with phone:',
-      formData.phoneNumberCustomer
-    );
-
     try {
       const result = await checkCustomerExistPhoneMutation.mutateAsync(
         formData.phoneNumberCustomer
       );
+
+      console.log('Search result:', result);
 
       if (result.success && result.customer) {
         // Auto fill form data nếu tìm thấy khách hàng
@@ -145,8 +146,8 @@ const CustomerArea = ({ formData, onUpdateFormData }: CustomerAreaProps) => {
       <div className="bg-overlay-slider/8 shadow-around my-6 w-full rounded-md px-4 pt-2 pb-4">
         {/* TITLE */}
         <div className="text-overlay-slider mx-2 mt-4 mb-5 flex flex-row items-center font-bold">
-          <SquareUser className="-mt-0.5 mr-2 h-6 w-6" />
-          <p>CUSTOMER INFORMATION</p>
+          <SquareUser className="-mt-1 mr-2 h-5.5 w-5.5" />
+          <p className="text-sm">CUSTOMER INFORMATION</p>
         </div>
         {/* INPUTS Phone, Full Name */}
         <div className="max-tablet:grid-cols-1 mb-4 grid w-full grid-cols-2 gap-4">
@@ -243,7 +244,7 @@ const CustomerArea = ({ formData, onUpdateFormData }: CustomerAreaProps) => {
             <InputLabel
               className="px-2"
               label={{
-                labelTitle: 'Address (House number, street)',
+                labelTitle: labelTitle,
                 icon: <House className="h-3 w-3" />,
               }}
               input={{

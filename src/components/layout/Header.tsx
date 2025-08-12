@@ -8,9 +8,9 @@ import NotificationBell from '@/components/common/icons/NotificationBell';
 import { useAuth } from '@/context/AuthContext';
 import { useSearch } from '@/context/SearchContext';
 
+import { DateRangePicker } from '../common/DatePicker/DateRangePicker';
 import { HeaderAvatarDropdown } from '../common/dropdowns/HeaderAvatarDropdown';
-import { DateRangePicker } from '../common/primitives/DateRangePicker';
-import SearchInput from '../common/primitives/SearchInput';
+import SearchInput from '../common/input/SearchInput';
 
 const Header = ({
   onOpenMenuClick,

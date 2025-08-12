@@ -23,8 +23,8 @@ export interface OrderFormData {
   serviceType?: string;
   requestType?: string;
   workDays?: {
-    startDay: string;
-    endDay: string;
+    startDate: string;
+    endDate: string;
   };
   workTime?: {
     startTime: string;
@@ -60,6 +60,10 @@ export type CustomerAreaProps = {
       addressNum: string;
       city: string;
       ward: string;
+    };
+    workDates: {
+      startDate: string;
+      endDate: string;
     };
   };
   onUpdateFormData: (newData: Partial<OrderFormData>) => void;

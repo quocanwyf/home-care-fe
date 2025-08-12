@@ -21,10 +21,10 @@ export default function OrderForm() {
     // Vùng thông tin đơn hàng
     // serviceType: '', //
     // requestType: '', //short-term, long-term
-    // workDays: {
-    //   startDay: '', //dd/mm/yyyy
-    //   endDay: '', //dd/mm/yyyy
-    // },
+    workDates: {
+      startDate: '', //dd/mm/yyyy
+      endDate: '', //dd/mm/yyyy
+    },
     // workTime: {
     //   startTime: '', //hh:mm
     //   endTime: '', //hh:mm
@@ -41,8 +41,7 @@ export default function OrderForm() {
   };
 
   return (
-    // Lớp màu nền gradient cho toàn trang
-    <div className="h-full w-full">
+    <div className="h-full w-full overflow-auto">
       <CustomerArea
         formData={formData}
         onUpdateFormData={handleUpdateFormData}

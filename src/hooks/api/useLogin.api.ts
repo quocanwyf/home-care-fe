@@ -14,7 +14,6 @@ export const useLogin = () => {
     },
 
     onError: (error: Error) => {
-      console.log(error);
       showError(MESSAGES_AUTH.LOGIN_FAILED + error.message);
     },
   });

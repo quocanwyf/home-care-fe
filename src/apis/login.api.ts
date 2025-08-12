@@ -4,7 +4,7 @@ import type { LoginRequest, LoginResponse } from '@/types/auth';
 export const loginApi = async (
   credentials: LoginRequest
 ): Promise<LoginResponse> => {
-  const url = `${import.meta.env.VITE_API_BASE_URL}/admin/auth/logis`;
+  const url = `${import.meta.env.VITE_API_BASE_URL}/admin/auth/login`;
 
   try {
     const response = await fetch(url, {

@@ -68,7 +68,11 @@ const CustomerArea = ({ formData, onUpdateFormData }: CustomerAreaProps) => {
 
         // Tìm provinceCode từ city name để load wards
         const matchedProvince = provincesData?.result?.find(
-          (p) =>
+          (p: {
+            provinceName: string;
+            provinceFullName: string;
+            provinceCode: string;
+          }) =>
             p.provinceName === result.customer.location.city ||
             p.provinceFullName === result.customer.location.city
         );

@@ -109,9 +109,9 @@ const Header = ({
 
             <Icon
               src="/icon-image/sun-moon.png"
-              alt="Toggle dark mode"
+              alt="Toggle theme mode"
               className="transition-transform duration-300 ease-in-out hover:scale-110"
-              contentTooltip="Toggle dark mode"
+              contentTooltip="Toggle theme mode"
             />
           </div>
         </div>

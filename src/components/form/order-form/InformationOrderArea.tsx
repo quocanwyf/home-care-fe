@@ -8,6 +8,7 @@ import {
   type FormattedDateRange,
 } from '@/components/common/date-picker/DateRangePicker';
 import LabelDropdown from '@/components/common/dropdowns/LabelDropdown';
+import TimePickerDropdown from '@/components/common/dropdowns/TimePickerDropdown';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import type { CustomerAreaProps } from '@/types/params/order-params';
@@ -105,6 +106,32 @@ const InformationOrderArea = ({
     }
   };
 
+  const handleStartTimeChange = (time: string) => {
+    onUpdateFormData({
+      workTime: {
+        ...formData.workTime,
+        startTime: time,
+      },
+    });
+  };
+  const getSelectedDate = (): string => {
+    // For short-term, use the single date
+    if (selectedRequestType?.value === 'short-term') {
+      return formData.workDates?.startDate || '';
+    }
+    // For long-term, use the start date
+    return formData.workDates?.startDate || '';
+  };
+
+  const handleEndTimeChange = (time: string) => {
+    onUpdateFormData({
+      workTime: {
+        ...formData.workTime,
+        endTime: time,
+      },
+    });
+  };
+
   return (
     <>
       {/* Vùng thongtin don hang */}
@@ -144,30 +171,28 @@ const InformationOrderArea = ({
           </div>
         </div>{' '}
         <div className="max-tablet:grid-cols-1 mb-4 grid w-full grid-cols-3 gap-4">
-          <div className="flex flex-col gap-3">
-            <Label htmlFor="time-picker" className="px-1">
-              Start Time
-            </Label>
-            <Input
-              type="time"
-              id="time-picker"
-              step="1"
-              defaultValue="10:30:00"
-              className="bg-background appearance-none [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none"
-            />
-          </div>
-          <div className="flex flex-col gap-3">
-            <Label htmlFor="time-picker" className="px-1">
-              End Time
-            </Label>
-            <Input
-              type="time"
-              id="time-picker"
-              step="1"
-              defaultValue="10:30:00"
-              className="bg-background appearance-none [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none"
-            />
-          </div>
+          <TimePickerDropdown
+            label="Start Time"
+            value={formData.workTime?.startTime || ''}
+            onChange={handleStartTimeChange}
+            minTime="06:00"
+            maxTime="22:00"
+            stepMinutes={30}
+            selectedDate={getSelectedDate()}
+            placeholder="Select start time"
+          />
+
+          {/* ✅ End Time Picker */}
+          <TimePickerDropdown
+            label="End Time"
+            value={formData.workTime?.endTime || ''}
+            onChange={handleEndTimeChange}
+            minTime={formData.workTime?.startTime || '06:30'} //  Min is start time + 30 min
+            maxTime="23:00"
+            stepMinutes={30}
+            selectedDate={getSelectedDate()}
+            placeholder="Select end time"
+          />
           {selectedRequestType?.value === 'long-term' ? (
             <div className="w-full flex-1">
               <div className="flex flex-col gap-3">
@@ -202,7 +227,9 @@ const InformationOrderArea = ({
           ) : (
             <div className="max-desktop:mt-6 flex w-full flex-1 items-center justify-center">
               <div className="text-muted-foreground text-center">
-                <p className="text-sm">Please select request type first</p>
+                <p className="max-desktop:mt-6 max-tablet:-mt-4 text-sm">
+                  Please select request type first
+                </p>
               </div>
             </div>
           )}

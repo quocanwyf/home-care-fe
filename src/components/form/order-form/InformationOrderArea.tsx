@@ -9,8 +9,8 @@ import {
 } from '@/components/common/date-picker/DateRangePicker';
 import LabelDropdown from '@/components/common/dropdowns/LabelDropdown';
 import TimePickerDropdown from '@/components/common/dropdowns/TimePickerDropdown';
-import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { addHoursToTime } from '@/helpers/time-utility';
 import type { CustomerAreaProps } from '@/types/params/order-params';
 
 const InformationOrderArea = ({
@@ -73,7 +73,7 @@ const InformationOrderArea = ({
     });
   };
 
-  // ✅ Handle single date selection (short-term) - now returns string
+  //  Handle single date selection (short-term) - now returns string
   const handleSingleDateChange = (dateString: string) => {
     console.log('Selected single date:', dateString);
 
@@ -176,7 +176,7 @@ const InformationOrderArea = ({
             value={formData.workTime?.startTime || ''}
             onChange={handleStartTimeChange}
             minTime="06:00"
-            maxTime="22:00"
+            maxTime="21:00"
             stepMinutes={30}
             selectedDate={getSelectedDate()}
             placeholder="Select start time"
@@ -187,7 +187,11 @@ const InformationOrderArea = ({
             label="End Time"
             value={formData.workTime?.endTime || ''}
             onChange={handleEndTimeChange}
-            minTime={formData.workTime?.startTime || '06:30'} //  Min is start time + 30 min
+            minTime={
+              formData.workTime?.startTime
+                ? addHoursToTime(formData.workTime?.startTime, 2)
+                : '07:00'
+            } //  Min is start time + 30 min
             maxTime="23:00"
             stepMinutes={30}
             selectedDate={getSelectedDate()}

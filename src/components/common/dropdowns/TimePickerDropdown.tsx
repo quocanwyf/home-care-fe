@@ -47,7 +47,7 @@ export default function TimePickerDropdown({
 }: TimePickerDropdownProps) {
   const [open, setOpen] = useState(false);
 
-  // ✅ Generate time options
+  //  Generate time options
   const timeOptions = useMemo(() => {
     const options: string[] = [];
     const [minHour, minMinute] = minTime.split(':').map(Number);

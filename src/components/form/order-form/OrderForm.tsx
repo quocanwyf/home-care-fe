@@ -1,10 +1,12 @@
 // src/components/UserForm.jsx
 import { useState } from 'react';
 
+import { Button } from '@/components/ui/button';
 import type { OrderFormData } from '@/types/params/order-params';
 
 import CustomerArea from './CustomerArea';
 import InformationOrderArea from './InformationOrderArea';
+import TotalOrderArea from './TotalOrderArea';
 
 export default function OrderForm() {
   const [formData, setFormData] = useState<OrderFormData>({
@@ -51,6 +53,11 @@ export default function OrderForm() {
         formData={formData}
         onUpdateFormData={handleUpdateFormData}
       />
+      <TotalOrderArea
+        formData={formData}
+        onUpdateFormData={handleUpdateFormData}
+      />
+      <Button className="float-right mr-6 cursor-pointer">Add order</Button>
     </div>
   );
 }

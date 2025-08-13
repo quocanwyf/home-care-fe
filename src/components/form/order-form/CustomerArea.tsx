@@ -1,7 +1,15 @@
 import { useState } from 'react';
 import { useMediaQuery } from 'react-responsive';
 
-import { Factory, Hotel, House, Phone, SquareUser, User } from 'lucide-react';
+import {
+  Factory,
+  Hotel,
+  House,
+  MemoryStick,
+  Phone,
+  SquareUser,
+  User,
+} from 'lucide-react';
 
 import SearchableDropdown from '@/components/common/dropdowns/SearchableDropdown';
 import InputButtonSearch from '@/components/common/input/InputButtonSearch';
@@ -62,6 +70,7 @@ const CustomerArea = ({ formData, onUpdateFormData }: CustomerAreaProps) => {
           location: {
             addressNum: result.customer.location.addressNum,
             city: result.customer.location.city,
+            district: result.customer.location.district,
             ward: result.customer.location.ward,
           },
         });
@@ -200,7 +209,25 @@ const CustomerArea = ({ formData, onUpdateFormData }: CustomerAreaProps) => {
         </div>
 
         {/* INPUTS Location */}
-        <div className="max-tablet:grid-cols-1 mb-4 grid w-full grid-cols-3 gap-4">
+        <div className="max-tablet:grid-cols-1 mb-4 grid w-full grid-cols-2 gap-4">
+          <div className="flex-1">
+            <InputLabel
+              className="px-2"
+              label={{
+                labelTitle: labelTitle,
+                icon: <House className="h-3 w-3" />,
+              }}
+              input={{
+                inputId: 'addressCustomer',
+                className: 'w-full',
+                inputName: 'addressCustomer',
+                placeholder: 'Enter address',
+                value: formData.location.addressNum,
+                onChange: (e) =>
+                  handleInputChange('location.addressNum', e.target.value),
+              }}
+            />
+          </div>
           <div className="flex-1">
             <SearchableDropdown
               className="px-2"
@@ -220,6 +247,30 @@ const CustomerArea = ({ formData, onUpdateFormData }: CustomerAreaProps) => {
               onSearch={setProvinceSearch}
               isLoading={provincesLoading}
               error={provincesError?.message}
+            />
+          </div>
+        </div>
+        <div className="max-tablet:grid-cols-1 mb-4 grid w-full grid-cols-2 gap-4">
+          <div className="flex-1">
+            <SearchableDropdown
+              className="px-2"
+              label={{
+                labelTitle: 'District',
+                icon: <MemoryStick className="h-3 w-3" />,
+              }}
+              input={{
+                inputId: 'districtCustomer',
+                inputName: 'districtCustomer',
+                className: 'w-full',
+                placeholder: 'Select district',
+                value: formData.location.district,
+                disabled: !selectedProvinceCode, // Disable if no city selected
+              }}
+              options={wardOptions}
+              onSelect={handleWardSelect}
+              onSearch={setWardSearch}
+              isLoading={wardsLoading}
+              error={wardsError?.message}
             />
           </div>
           <div className="flex-1">
@@ -242,24 +293,6 @@ const CustomerArea = ({ formData, onUpdateFormData }: CustomerAreaProps) => {
               onSearch={setWardSearch}
               isLoading={wardsLoading}
               error={wardsError?.message}
-            />
-          </div>
-          <div className="flex-1">
-            <InputLabel
-              className="px-2"
-              label={{
-                labelTitle: labelTitle,
-                icon: <House className="h-3 w-3" />,
-              }}
-              input={{
-                inputId: 'addressCustomer',
-                className: 'w-full',
-                inputName: 'addressCustomer',
-                placeholder: 'Enter address',
-                value: formData.location.addressNum,
-                onChange: (e) =>
-                  handleInputChange('location.addressNum', e.target.value),
-              }}
             />
           </div>
         </div>

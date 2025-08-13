@@ -41,7 +41,7 @@ const InputButtonSearch = ({
         htmlFor={input?.inputId}
       >
         {label?.icon}
-        {label?.labelTitle}
+        {label?.labelTitle} <span className="text-red-500">*</span>
       </Label>
       <div className="flex gap-2">
         <Input

@@ -18,6 +18,7 @@ export interface OrderFormData {
   location: {
     addressNum: string;
     city: string;
+    district: string;
     ward: string;
   };
   serviceType?: string;
@@ -59,6 +60,7 @@ export type CustomerAreaProps = {
     location: {
       addressNum: string;
       city: string;
+      district: string;
       ward: string;
     };
     workDates: {

@@ -6,22 +6,22 @@ export interface ThemeContextType {
 }
 
 export const THEMES = {
-  blue: {
-    name: 'Blue',
-    icon: '🔵',
+  green: {
+    name: 'Green Nature',
+    icon: '🟢',
     class: '',
-    description: 'Nature blue theme',
+    description: 'Fresh and natural', //default
   },
   dark: {
-    name: 'Dark',
+    name: 'Dark Mode',
     icon: '🌙',
     class: 'dark',
-    description: 'Dark mode',
+    description: 'Easy on the eyes',
   },
-  green: {
-    name: 'Green',
-    icon: '🟢',
-    class: 'green',
-    description: 'Default green theme',
+  blue: {
+    name: 'Ocean Blue',
+    icon: '🔵',
+    class: 'blue',
+    description: 'Cool and professional',
   },
 } as const;

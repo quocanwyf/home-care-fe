@@ -8,8 +8,9 @@ import NotificationBell from '@/components/common/icons/NotificationBell';
 import { useAuth } from '@/context/AuthContext';
 import { useSearch } from '@/context/SearchContext';
 
-import { DateRangePicker } from '../common/DatePicker/DateRangePicker';
+import { DateRangePicker } from '../common/date-picker/DateRangePicker';
 import { HeaderAvatarDropdown } from '../common/dropdowns/HeaderAvatarDropdown';
+import ThemeDropdown from '../common/dropdowns/ThemeDropdown';
 import SearchInput from '../common/input/SearchInput';
 
 const Header = ({
@@ -107,12 +108,13 @@ const Header = ({
               className="transition-transform duration-300 ease-in-out hover:scale-110"
             />
 
-            <Icon
+            {/* <Icon
               src="/icon-image/sun-moon.png"
               alt="Toggle theme mode"
               className="transition-transform duration-300 ease-in-out hover:scale-110"
               contentTooltip="Toggle theme mode"
-            />
+            /> */}
+            <ThemeDropdown />
           </div>
         </div>
       </div>

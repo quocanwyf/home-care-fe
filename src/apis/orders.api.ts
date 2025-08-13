@@ -10,7 +10,7 @@ export const getOrdersApi = async (
 ): Promise<Orders[]> => {
   const queryParams = new URLSearchParams();
 
-  // Nếu status khác 'all' thì mới gửi
+  // Nếu status khác all thì mới gửi
   if (params.status && params.status !== 'all') {
     queryParams.append('status', params.status);
   }
@@ -20,17 +20,18 @@ export const getOrdersApi = async (
     queryParams.append('search', params.search.trim());
   }
 
-  // Nếu fromDate và toDate đều có thì mới gửi (tránh lọc sai lệch)
+  // Nếu fromDate và toDate đều có thì mới gửi
   if (params.fromDate && params.toDate) {
     queryParams.append('fromDate', params.fromDate);
     queryParams.append('toDate', params.toDate);
   }
 
-  // Luôn gửi page và limit (có default fallback)
+  // Luôn gửi page và limit
   queryParams.append('page', String(params.page ?? 0));
   queryParams.append('limit', String(params.limit ?? 10));
 
-  const url = `${import.meta.env.VITE_API_BASE_URL}/admin/order?${queryParams.toString()}`;
+  // const url = `${import.meta.env.VITE_API_BASE_URL}/admin/order?${queryParams.toString()}`;
+  const url = `${import.meta.env.VITE_API_BASE_URL}/admin/requests`;
 
   const response = await fetch(url, {
     method: 'GET',

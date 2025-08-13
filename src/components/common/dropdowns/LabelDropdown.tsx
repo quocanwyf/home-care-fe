@@ -29,7 +29,7 @@ const LabelDropdown = ({
       <label
         className={`block text-sm font-medium text-gray-700 ${labelClassName}`}
       >
-        {label}
+        {label} <span className="text-red-500">*</span>
       </label>
       <div className="w-full">
         <AppDropdown

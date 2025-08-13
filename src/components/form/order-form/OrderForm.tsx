@@ -16,6 +16,7 @@ export default function OrderForm() {
     location: {
       addressNum: '',
       city: '',
+      district: '',
       ward: '',
     },
     // Vùng thông tin đơn hàng
@@ -41,7 +42,7 @@ export default function OrderForm() {
   };
 
   return (
-    <div className="h-full w-full overflow-auto">
+    <div className="h-full w-full overflow-y-auto pb-20">
       <CustomerArea
         formData={formData}
         onUpdateFormData={handleUpdateFormData}

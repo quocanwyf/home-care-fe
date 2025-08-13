@@ -2,12 +2,18 @@ import { useState } from 'react';
 
 import { ChevronDown } from 'lucide-react';
 
+import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { formatCurrency } from '@/helpers/format-currency';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@radix-ui/react-popover';
 
 export default function CostSummaryCard() {
   const [selectedDiscount, setSelectedDiscount] = useState('0%');
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isPopoverOpen, setIsPopoverOpen] = useState(false);
 
   const discountOptions = ['0%', '5%', '10%', '15%', '20%', '25%'];
 
@@ -51,45 +57,53 @@ export default function CostSummaryCard() {
         <div className="flex items-center justify-between">
           <span className="text-gray-600">Discounts:</span>
 
-          <div className="relative flex items-center gap-4">
+          <div className="flex items-center gap-4">
             <span className="text-red-600">
               -{formatCurrency(totalCost * discountValue)}
             </span>
 
-            <button
-              onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-              className="flex items-center space-x-2 rounded-md border border-gray-400 bg-white px-3 py-1.5 hover:bg-gray-50"
-            >
-              <span className="font-medium text-red-600">
-                {selectedDiscount}
-              </span>
-              <ChevronDown
-                className={`h-4 w-4 text-gray-400 transition-transform duration-200 ${
-                  isDropdownOpen ? 'rotate-180' : ''
-                }`}
-              />
-            </button>
-
-            {isDropdownOpen && (
-              <div className="absolute right-0 z-10 mt-1 w-20 rounded-md border border-gray-200 bg-white shadow-lg">
-                {discountOptions.map((option) => (
-                  <button
-                    key={option}
-                    onClick={() => {
-                      setSelectedDiscount(option);
-                      setIsDropdownOpen(false);
-                    }}
-                    className={`w-full px-3 py-2 text-left hover:bg-blue-50 focus:bg-blue-50 focus:outline-none ${
-                      selectedDiscount === option
-                        ? 'bg-blue-50 font-medium text-red-600'
-                        : 'text-gray-700'
+            {/*  Use Popover instead of manual dropdown */}
+            <Popover open={isPopoverOpen} onOpenChange={setIsPopoverOpen}>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="flex items-center space-x-2 px-3 py-1.5"
+                >
+                  <span className="font-medium text-red-600">
+                    {selectedDiscount}
+                  </span>
+                  <ChevronDown
+                    className={`h-4 w-4 text-gray-400 transition-transform duration-200 ${
+                      isPopoverOpen ? 'rotate-180' : ''
                     }`}
-                  >
-                    {option}
-                  </button>
-                ))}
-              </div>
-            )}
+                  />
+                </Button>
+              </PopoverTrigger>
+
+              <PopoverContent className="w-20 p-1" align="end" side="bottom">
+                <div className="space-y-1 rounded-md border bg-white">
+                  {discountOptions.map((option) => (
+                    <Button
+                      key={option}
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => {
+                        setSelectedDiscount(option);
+                        setIsPopoverOpen(false);
+                      }}
+                      className={`w-full justify-start px-3 py-2 text-sm ${
+                        selectedDiscount === option
+                          ? 'bg-blue-50 font-medium text-red-600'
+                          : 'text-gray-700 hover:bg-blue-50'
+                      }`}
+                    >
+                      {option}
+                    </Button>
+                  ))}
+                </div>
+              </PopoverContent>
+            </Popover>
           </div>
         </div>
       </CardContent>

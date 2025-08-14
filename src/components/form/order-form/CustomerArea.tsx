@@ -15,7 +15,11 @@ import SearchableDropdown from '@/components/common/dropdowns/SearchableDropdown
 import InputButtonSearch from '@/components/common/input/InputButtonSearch';
 import InputLabel from '@/components/common/input/InputLabel';
 import { checkPhoneRegex } from '@/helpers/check-phone-regex';
-import { useGetProvinces, useGetWards } from '@/hooks/api/useLocations.api';
+import {
+  useGetDistricts,
+  useGetProvinces,
+  useGetWards,
+} from '@/hooks/api/useLocations.api';
 import { useCheckCustomerExist } from '@/hooks/api/useOrders.api';
 import { useToast } from '@/hooks/common/useToast';
 import type { CustomerAreaProps } from '@/types/params/order-params';
@@ -23,8 +27,10 @@ import type { CustomerAreaProps } from '@/types/params/order-params';
 const CustomerArea = ({ formData, onUpdateFormData }: CustomerAreaProps) => {
   const [isSearching, setIsSearching] = useState(false);
   const [provinceSearch, setProvinceSearch] = useState('');
+  const [districtSearch, setDistrictSearch] = useState('');
   const [wardSearch, setWardSearch] = useState('');
   const [selectedProvinceCode, setSelectedProvinceCode] = useState('');
+  const [selectedDistrictCode, setSelectedDistrictCode] = useState('');
 
   const { showSuccess, showError, showInfo } = useToast();
 
@@ -44,10 +50,18 @@ const CustomerArea = ({ formData, onUpdateFormData }: CustomerAreaProps) => {
   } = useGetProvinces(provinceSearch);
 
   const {
+    data: districtsData,
+    isLoading: districtsLoading,
+    error: districtsError,
+  } = useGetDistricts(selectedProvinceCode, districtSearch);
+
+  const {
     data: wardsData,
     isLoading: wardsLoading,
     error: wardsError,
-  } = useGetWards(selectedProvinceCode, wardSearch);
+  } = useGetWards(selectedProvinceCode, selectedDistrictCode, wardSearch);
+
+  console.log('cc', formData);
 
   const handleSearchCustomer = async () => {
     if (!formData.phoneNumberCustomer.trim()) return;
@@ -80,13 +94,13 @@ const CustomerArea = ({ formData, onUpdateFormData }: CustomerAreaProps) => {
           (p: {
             provinceName: string;
             provinceFullName: string;
-            provinceCode: string;
+            provinceId: string;
           }) =>
             p.provinceName === result.customer.location.city ||
             p.provinceFullName === result.customer.location.city
         );
         if (matchedProvince) {
-          setSelectedProvinceCode(matchedProvince.provinceCode);
+          setSelectedProvinceCode(matchedProvince.provinceId);
         }
 
         // Log discount list nếu có
@@ -131,6 +145,20 @@ const CustomerArea = ({ formData, onUpdateFormData }: CustomerAreaProps) => {
     });
   };
 
+  const handleDistrictSelect = (
+    districtCode: string,
+    districtName?: string
+  ) => {
+    setSelectedDistrictCode(districtCode);
+    onUpdateFormData({
+      location: {
+        ...formData.location,
+        district: districtName || districtCode,
+        ward: '', //reset ward
+      },
+    });
+  };
+
   const handleWardSelect = (ward: string) => {
     onUpdateFormData({
       location: {
@@ -144,7 +172,13 @@ const CustomerArea = ({ formData, onUpdateFormData }: CustomerAreaProps) => {
   const provinceOptions =
     provincesData?.result?.map((province) => ({
       label: province.provinceName,
-      value: province.provinceCode,
+      value: province.provinceId,
+    })) || [];
+
+  const districtOptions =
+    districtsData?.result?.map((district) => ({
+      label: district.districtName,
+      value: district.districtCode,
     })) || [];
 
   const wardOptions =
@@ -266,11 +300,11 @@ const CustomerArea = ({ formData, onUpdateFormData }: CustomerAreaProps) => {
                 value: formData.location.district,
                 disabled: !selectedProvinceCode, // Disable if no city selected
               }}
-              options={wardOptions}
-              onSelect={handleWardSelect}
-              onSearch={setWardSearch}
-              isLoading={wardsLoading}
-              error={wardsError?.message}
+              options={districtOptions}
+              onSelect={handleDistrictSelect}
+              onSearch={setDistrictSearch}
+              isLoading={districtsLoading}
+              error={districtsError?.message}
             />
           </div>
           <div className="flex-1">
@@ -286,7 +320,7 @@ const CustomerArea = ({ formData, onUpdateFormData }: CustomerAreaProps) => {
                 className: 'w-full',
                 placeholder: 'Select ward',
                 value: formData.location.ward,
-                disabled: !selectedProvinceCode, // Disable if no city selected
+                disabled: !selectedProvinceCode || !selectedDistrictCode, // Disable if no city and district dc chọn
               }}
               options={wardOptions}
               onSelect={handleWardSelect}

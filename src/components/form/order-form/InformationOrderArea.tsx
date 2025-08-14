@@ -17,7 +17,7 @@ const InformationOrderArea = ({
   formData,
   onUpdateFormData,
 }: CustomerAreaProps) => {
-  console.log(formData, onUpdateFormData);
+  // console.log(formData, onUpdateFormData);
   const [selectedRequestType, setSelectedRequestType] = useState<{
     label: string;
     value: string | number;
@@ -85,7 +85,7 @@ const InformationOrderArea = ({
     });
   };
 
-  // ✅ Handle date range selection (long-term) - now receives formatted strings
+  //  Handle date range selection (long-term) - now receives formatted strings
   const handleDateRangeChange = (range: FormattedDateRange | undefined) => {
     console.log('Selected date range:', range);
 

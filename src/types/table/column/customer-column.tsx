@@ -1,5 +1,5 @@
 // columns/orderColumns.ts
-import OrderStatusBadge from '@/components/common/badge/StatusOrdersBadge';
+// import OrderStatusBadge from '@/components/common/badge/StatusOrdersBadge';
 import TableActions from '@/components/table/TableActions';
 import type { Customers } from '@/types/table/objects/customers';
 import type { ColumnDef } from '@tanstack/react-table';
@@ -26,11 +26,12 @@ export const customerColumn = (
     header: 'Location',
     cell: ({ row }) => {
       const location = row.getValue('location') as Customers['location'];
+
       return (
         <div className="max-w-[200px]">
-          <div className="text-sm">{location.addressNum}</div>
+          <div className="text-sm">{location[0].addressNum}</div>
           <div className="text-muted-foreground text-xs">
-            {location.ward}, {location.city}
+            {location[0].ward}, {location[0].city}
           </div>
         </div>
       );
@@ -42,11 +43,11 @@ export const customerColumn = (
     cell: ({ row }) =>
       new Intl.NumberFormat('vi-VN').format(row.original.point) + ' Ps',
   },
-  {
-    accessorKey: 'status',
-    header: 'Status',
-    cell: ({ row }) => <OrderStatusBadge status={row.original.status} />,
-  },
+  // {
+  //   accessorKey: 'status',
+  //   header: 'Status',
+  //   cell: ({ row }) => <OrderStatusBadge status={row.original.status} />,
+  // },
   {
     id: 'actions',
     header: 'Actions',

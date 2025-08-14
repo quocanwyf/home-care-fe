@@ -24,7 +24,11 @@ import { useCheckCustomerExist } from '@/hooks/api/useOrders.api';
 import { useToast } from '@/hooks/common/useToast';
 import type { CustomerAreaProps } from '@/types/params/order-params';
 
-const CustomerArea = ({ formData, onUpdateFormData }: CustomerAreaProps) => {
+const CustomerArea = ({
+  formData,
+  onUpdateFormData,
+  handleUpdateAvailableDiscounts,
+}: CustomerAreaProps) => {
   const [isSearching, setIsSearching] = useState(false);
   const [provinceSearch, setProvinceSearch] = useState('');
   const [districtSearch, setDistrictSearch] = useState('');
@@ -61,18 +65,16 @@ const CustomerArea = ({ formData, onUpdateFormData }: CustomerAreaProps) => {
     error: wardsError,
   } = useGetWards(selectedProvinceCode, selectedDistrictCode, wardSearch);
 
-  console.log('cc', formData);
-
   const handleSearchCustomer = async () => {
-    if (!formData.phoneNumberCustomer.trim()) return;
+    if (!formData.phone.trim()) return;
 
-    if (!checkPhoneRegex(formData.phoneNumberCustomer.trim(), showError)) {
+    if (!checkPhoneRegex(formData.phone.trim(), showError)) {
       return;
     }
     setIsSearching(true);
     try {
       const result = await checkCustomerExistPhoneMutation.mutateAsync(
-        formData.phoneNumberCustomer
+        formData.phone
       );
 
       console.log('Search result:', result);
@@ -80,38 +82,31 @@ const CustomerArea = ({ formData, onUpdateFormData }: CustomerAreaProps) => {
       if (result.success && result.customer) {
         // Auto fill form data nếu tìm thấy khách hàng
         onUpdateFormData({
-          fullNameCustomer: result.customer.fullName,
-          location: {
-            addressNum: result.customer.location.addressNum,
-            city: result.customer.location.city,
-            district: result.customer.location.district,
-            ward: result.customer.location.ward,
-          },
+          fullName: result.customer.cusName,
+          address: result.customer.addresses[0].detailAddress,
+          province: result.customer.addresses[0].province,
+          district: result.customer.addresses[0].district,
+          ward: result.customer.addresses[0].ward,
+          provinceCode: result.customer.addresses[0].provinceId,
+          districtCode: result.customer.addresses[0].districtId,
+          wardCode: result.customer.addresses[0].wardId,
+          isCusHasAcc: true,
         });
 
-        // Tìm provinceCode từ city name để load wards
-        const matchedProvince = provincesData?.result?.find(
-          (p: {
-            provinceName: string;
-            provinceFullName: string;
-            provinceId: string;
-          }) =>
-            p.provinceName === result.customer.location.city ||
-            p.provinceFullName === result.customer.location.city
-        );
-        if (matchedProvince) {
-          setSelectedProvinceCode(matchedProvince.provinceId);
-        }
+        setSelectedDistrictCode(result.customer.addresses[0].districtId);
+        setSelectedProvinceCode(result.customer.addresses[0].provinceId);
 
         // Log discount list nếu có
-        if (result.discountList?.length > 0) {
-          console.log('Available discounts:', result.discountList);
-          showInfo(`Có ${result.discountList.length} khuyến mãi khả dụng`);
+        if (result?.discounts?.length > 0) {
+          console.log('Available discounts:', result.discounts);
+          showInfo(`Có ${result.discounts.length} khuyến mãi khả dụng`);
+          handleUpdateAvailableDiscounts(result?.discounts);
         }
 
-        showSuccess(`Tìm thấy khách hàng: ${result.customer.fullName}`);
+        showSuccess(`Tìm thấy khách hàng: ${result.customer.cusName}`);
       } else {
         showError('Không tìm thấy thông tin khách hàng');
+        onUpdateFormData({ isCusHasAcc: false });
       }
     } catch (error) {
       console.error('Lỗi khi tìm kiếm khách hàng:', error);
@@ -120,29 +115,22 @@ const CustomerArea = ({ formData, onUpdateFormData }: CustomerAreaProps) => {
       setIsSearching(false);
     }
   };
+
   const handleInputChange = (field: string, value: string) => {
-    if (field.includes('.')) {
-      const [parent, child] = field.split('.');
-      onUpdateFormData({
-        [parent]: {
-          ...formData.location,
-          [child]: value,
-        },
-      });
-    } else {
-      onUpdateFormData({ [field]: value });
-    }
+    onUpdateFormData({ [field]: value });
   };
 
   const handleCitySelect = (provinceCode: string, provinceName?: string) => {
     setSelectedProvinceCode(provinceCode);
     onUpdateFormData({
-      location: {
-        ...formData.location,
-        city: provinceName || provinceCode,
-        ward: '', // Reset ward when city changes
-      },
+      province: provinceName || provinceCode,
+      provinceCode: provinceCode,
+      district: '',
+      ward: '',
+      districtCode: '',
+      wardCode: '',
     });
+    setSelectedDistrictCode('');
   };
 
   const handleDistrictSelect = (
@@ -151,20 +139,17 @@ const CustomerArea = ({ formData, onUpdateFormData }: CustomerAreaProps) => {
   ) => {
     setSelectedDistrictCode(districtCode);
     onUpdateFormData({
-      location: {
-        ...formData.location,
-        district: districtName || districtCode,
-        ward: '', //reset ward
-      },
+      district: districtName || districtCode,
+      districtCode: districtCode,
+      ward: '', // Reset ward
+      wardCode: '',
     });
   };
 
-  const handleWardSelect = (ward: string) => {
+  const handleWardSelect = (wardCode: string, wardName?: string) => {
     onUpdateFormData({
-      location: {
-        ...formData.location,
-        ward: ward,
-      },
+      ward: wardName || wardCode,
+      wardCode: wardCode || '',
     });
   };
 
@@ -184,8 +169,10 @@ const CustomerArea = ({ formData, onUpdateFormData }: CustomerAreaProps) => {
   const wardOptions =
     wardsData?.result?.map((ward) => ({
       label: ward.wardName,
-      value: ward.wardName,
+      value: ward.wardCode || ward.wardName,
     })) || [];
+
+  console.log(formData);
 
   return (
     <>
@@ -206,17 +193,16 @@ const CustomerArea = ({ formData, onUpdateFormData }: CustomerAreaProps) => {
                 icon: <Phone className="h-3 w-3" />,
               }}
               input={{
-                inputId: 'phoneNumberCustomer',
-                inputName: 'phoneNumberCustomer',
+                inputId: 'phone',
+                inputName: 'phone',
                 placeholder: 'Enter phone number',
                 className: 'w-full',
-                value: formData.phoneNumberCustomer,
-                onChange: (e) =>
-                  handleInputChange('phoneNumberCustomer', e.target.value),
+                value: formData.phone,
+                onChange: (e) => handleInputChange('phone', e.target.value),
               }}
               button={{
                 onClick: handleSearchCustomer,
-                disabled: !formData.phoneNumberCustomer.trim() || isSearching,
+                disabled: !formData.phone.trim() || isSearching,
                 isLoading: isSearching,
               }}
             />
@@ -230,13 +216,12 @@ const CustomerArea = ({ formData, onUpdateFormData }: CustomerAreaProps) => {
                 icon: <User className="h-3 w-3" />,
               }}
               input={{
-                inputId: 'fullNameCustomer',
+                inputId: 'fullName',
                 className: 'w-full',
-                inputName: 'fullNameCustomer',
+                inputName: 'fullName',
                 placeholder: 'Enter full name',
-                value: formData.fullNameCustomer,
-                onChange: (e) =>
-                  handleInputChange('fullNameCustomer', e.target.value),
+                value: formData.fullName,
+                onChange: (e) => handleInputChange('fullName', e.target.value),
               }}
             />
           </div>
@@ -256,9 +241,8 @@ const CustomerArea = ({ formData, onUpdateFormData }: CustomerAreaProps) => {
                 className: 'w-full',
                 inputName: 'addressCustomer',
                 placeholder: 'Enter address',
-                value: formData.location.addressNum,
-                onChange: (e) =>
-                  handleInputChange('location.addressNum', e.target.value),
+                value: formData.address,
+                onChange: (e) => handleInputChange('address', e.target.value),
               }}
             />
           </div>
@@ -274,7 +258,7 @@ const CustomerArea = ({ formData, onUpdateFormData }: CustomerAreaProps) => {
                 inputName: 'cityCustomer',
                 className: 'w-full',
                 placeholder: 'Select city',
-                value: formData.location.city,
+                value: formData.province,
               }}
               options={provinceOptions}
               onSelect={handleCitySelect}
@@ -297,7 +281,7 @@ const CustomerArea = ({ formData, onUpdateFormData }: CustomerAreaProps) => {
                 inputName: 'districtCustomer',
                 className: 'w-full',
                 placeholder: 'Select district',
-                value: formData.location.district,
+                value: formData.district,
                 disabled: !selectedProvinceCode, // Disable if no city selected
               }}
               options={districtOptions}
@@ -319,8 +303,8 @@ const CustomerArea = ({ formData, onUpdateFormData }: CustomerAreaProps) => {
                 inputName: 'wardCustomer',
                 className: 'w-full',
                 placeholder: 'Select ward',
-                value: formData.location.ward,
-                disabled: !selectedProvinceCode || !selectedDistrictCode, // Disable if no city and district dc chọn
+                value: formData.ward,
+                disabled: !selectedDistrictCode || !selectedProvinceCode, // Disable if no city and district dc chọn
               }}
               options={wardOptions}
               onSelect={handleWardSelect}

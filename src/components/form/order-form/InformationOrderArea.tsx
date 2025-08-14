@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
+import { on } from 'events';
 import { ClipboardList } from 'lucide-react';
 
 import DatePicker from '@/components/common/date-picker/DatePicker';
@@ -10,13 +11,35 @@ import {
 import LabelDropdown from '@/components/common/dropdowns/LabelDropdown';
 import TimePickerDropdown from '@/components/common/dropdowns/TimePickerDropdown';
 import { Label } from '@/components/ui/label';
+import {
+  calculateOvertimeHours,
+  getActiveCoefficients,
+} from '@/helpers/detect-ot-and-coefficients';
 import { addHoursToTime } from '@/helpers/time-utility';
 import type { CustomerAreaProps } from '@/types/params/order-params';
 
 const InformationOrderArea = ({
   formData,
   onUpdateFormData,
+  serviceList = [],
+  systemSetting,
+  coefficientOther = [],
 }: CustomerAreaProps) => {
+  const serviceTypes = useMemo(() => {
+    return serviceList.map((service) => ({
+      // For dropdown display
+      label: `${service.title} - ${new Intl.NumberFormat('vi-VN').format(service.basicPrice)}₫`,
+      value: service.serviceId,
+
+      // Data structure theo BE
+      serviceData: {
+        title: service.title,
+        cost: service.basicPrice,
+        coefficient_service: service.costFactorType?.value || 1,
+        coefficient_other: 1, // Mặc định = 1
+      },
+    }));
+  }, [serviceList]);
   // console.log(formData, onUpdateFormData);
   const [selectedRequestType, setSelectedRequestType] = useState<{
     label: string;
@@ -31,32 +54,29 @@ const InformationOrderArea = ({
     { label: 'Short-term', value: 'short-term' },
     { label: 'Long-term', value: 'long-term' },
   ];
-  const serviceTypes = [
-    { label: 'Cleaning', value: 'cleaning' },
-    { label: 'Cooking', value: 'cooking' },
-    { label: 'Elderly Care', value: 'elderly-care' },
-  ];
+
+  const minTime = systemSetting?.openHour || '06:00';
+  const maxTime = systemSetting?.closeHour || '22:00';
 
   //  Handle request type change
   const handleSelectRequestType = (value: {
     label: string;
     value: string | number;
   }) => {
-    console.log('Selected request type:', value);
     setSelectedRequestType(value);
-
-    onUpdateFormData({
-      requestType: value.value as string,
-    });
 
     // Reset dates when changing request type
     if (value.value === 'short-term') {
       // Keep only startDate for short-term
       onUpdateFormData({
-        workDates: {
-          startDate: formData.workDates?.startDate || '',
-          endDate: formData.workDates?.startDate || '',
-        },
+        startDate: formData.startDate || '',
+        endDate: formData.startDate || '', // Same date for short-term
+      });
+    } else {
+      // Reset both dates for long-term
+      onUpdateFormData({
+        startDate: '',
+        endDate: '',
       });
     }
   };
@@ -68,20 +88,32 @@ const InformationOrderArea = ({
     console.log('Selected service type:', value);
     setSelectedServiceType(value);
 
-    onUpdateFormData({
-      serviceType: value.value as string,
-    });
+    // Find selected service data
+    const selectedServiceOption = serviceTypes.find(
+      (option) => option.value === value.value
+    );
+
+    if (selectedServiceOption?.serviceData) {
+      onUpdateFormData({
+        serviceTitle: selectedServiceOption.serviceData.title,
+        serviceBasePrice: selectedServiceOption.serviceData.cost,
+        coefficient_service:
+          selectedServiceOption.serviceData.coefficient_service,
+        coefficient_other: selectedServiceOption.serviceData.coefficient_other,
+        // coefficient_ot will be calculated based on time
+      });
+    }
+
+    console.log('Selected service data:', selectedServiceOption?.serviceData);
   };
 
-  //  Handle single date selection (short-term) - now returns string
+  // ✅ Update single date handler
   const handleSingleDateChange = (dateString: string) => {
     console.log('Selected single date:', dateString);
 
     onUpdateFormData({
-      workDates: {
-        startDate: dateString,
-        endDate: dateString, // Same date for short-term
-      },
+      startDate: dateString,
+      endDate: dateString, // Same date for short-term
     });
   };
 
@@ -91,46 +123,82 @@ const InformationOrderArea = ({
 
     if (range) {
       onUpdateFormData({
-        workDates: {
-          startDate: range.startDate,
-          endDate: range.endDate,
-        },
+        startDate: range.startDate,
+        endDate: range.endDate,
       });
     } else {
       onUpdateFormData({
-        workDates: {
-          startDate: '',
-          endDate: '',
-        },
+        startDate: '',
+        endDate: '',
       });
     }
   };
 
   const handleStartTimeChange = (time: string) => {
     onUpdateFormData({
-      workTime: {
-        ...formData.workTime,
-        startTime: time,
-      },
+      startTime: time,
     });
-  };
-  const getSelectedDate = (): string => {
-    // For short-term, use the single date
-    if (selectedRequestType?.value === 'short-term') {
-      return formData.workDates?.startDate || '';
-    }
-    // For long-term, use the start date
-    return formData.workDates?.startDate || '';
   };
 
   const handleEndTimeChange = (time: string) => {
     onUpdateFormData({
-      workTime: {
-        ...formData.workTime,
-        endTime: time,
-      },
+      endTime: time,
     });
   };
+
+  const getSelectedDate = (): string => {
+    // For short-term, use the single date
+    if (selectedRequestType?.value === 'short-term') {
+      return formData.startDate || '';
+    }
+    // For long-term, use the start date
+    return formData.startDate || '';
+  };
+
+  useEffect(() => {
+    if (
+      formData.startTime &&
+      formData.endTime &&
+      systemSetting &&
+      coefficientOther
+    ) {
+      // Get active coefficients
+      const activeCoeffs = getActiveCoefficients(coefficientOther);
+
+      // Calculate OT hours
+      const hoursBreakdown = calculateOvertimeHours(
+        formData.startTime,
+        formData.endTime,
+        systemSetting
+      );
+
+      // ✅ Determine coefficient_ot based on working hours
+      let coefficient_ot = 1;
+
+      // If ANY part of work is during OT hours, apply OT coefficient
+      if (hoursBreakdown.overtimeHours > 0) {
+        coefficient_ot = activeCoeffs.overtime;
+      }
+
+      // Update form data with new coefficient and breakdown
+      onUpdateFormData({
+        coefficient_ot,
+      });
+
+      console.log('OT Calculation:', {
+        timeRange: `${formData.startTime} - ${formData.endTime}`,
+        hoursBreakdown,
+        coefficient_ot,
+        activeCoeffs,
+      });
+    }
+  }, [
+    formData.startTime,
+    formData.endTime,
+    systemSetting,
+    coefficientOther,
+    onUpdateFormData,
+  ]);
 
   return (
     <>
@@ -173,10 +241,10 @@ const InformationOrderArea = ({
         <div className="max-tablet:grid-cols-1 mb-4 grid w-full grid-cols-3 gap-4">
           <TimePickerDropdown
             label="Start Time"
-            value={formData.workTime?.startTime || ''}
+            value={formData.startTime || ''}
             onChange={handleStartTimeChange}
-            minTime="06:00"
-            maxTime="21:00"
+            minTime={minTime}
+            maxTime={maxTime}
             stepMinutes={30}
             selectedDate={getSelectedDate()}
             placeholder="Select start time"
@@ -185,14 +253,14 @@ const InformationOrderArea = ({
           {/*  End Time Picker */}
           <TimePickerDropdown
             label="End Time"
-            value={formData.workTime?.endTime || ''}
+            value={formData.endTime || ''}
             onChange={handleEndTimeChange}
             minTime={
-              formData.workTime?.startTime
-                ? addHoursToTime(formData.workTime?.startTime, 2)
+              formData.startTime
+                ? addHoursToTime(formData.startTime, 2)
                 : '07:00'
             } //  Min is start time + 30 min
-            maxTime="23:00"
+            maxTime={maxTime}
             stepMinutes={30}
             selectedDate={getSelectedDate()}
             placeholder="Select end time"
@@ -210,8 +278,8 @@ const InformationOrderArea = ({
                   classNameTrigger="rounded-md h-10"
                   minDate={new Date()}
                   value={{
-                    startDate: formData.workDates?.startDate || '',
-                    endDate: formData.workDates?.endDate || '',
+                    startDate: formData.startDate || '',
+                    endDate: formData.endDate || '',
                   }}
                   quickSelectionMode="future"
                 />
@@ -222,7 +290,7 @@ const InformationOrderArea = ({
               <DatePicker
                 label="Service Date"
                 classNameTrigger="w-full h-10"
-                value={formData.workDates?.startDate || ''}
+                value={formData.startDate || ''}
                 onChange={handleSingleDateChange}
                 minDate={new Date()}
                 required={true}

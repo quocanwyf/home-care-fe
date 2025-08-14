@@ -1,6 +1,6 @@
 import { Navigate } from 'react-router-dom';
 
-import LoadingFallback from '@/components/fallback/LoadingFallback';
+import LoadingFallback from '@/components/fallback/LoadingFallbackApp';
 import { useAuth } from '@/context/AuthContext';
 
 interface ProtectedRouteProps {

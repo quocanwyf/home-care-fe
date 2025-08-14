@@ -27,7 +27,7 @@ export default function CostSummaryCard() {
     <Card className="w-full overflow-x-auto">
       <CardContent className="mx-auto w-140 space-y-4">
         {/* Tổng chi phí */}
-        <div className="flex justify-between border-b border-gray-100 pb-2">
+        <div className="flex justify-between border-b border-gray-200 pb-2">
           <span className="text-gray-600">Total cost order:</span>
           <span>
             {discountValue === 0 ? (
@@ -46,7 +46,7 @@ export default function CostSummaryCard() {
         </div>
 
         {/* Tổng chi phí NGV */}
-        <div className="flex justify-between border-b border-gray-100 pb-2">
+        <div className="flex justify-between border-b border-gray-200 pb-2">
           <span className="text-gray-600">Total cost for maids:</span>
           <span className="font-medium text-gray-600">
             {formatCurrency(materialCost)}

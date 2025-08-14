@@ -10,9 +10,9 @@ export type Customers = {
 export type CustomerWithStatus = 'active' | 'inactive' | 'banned';
 
 export interface Discount {
-  disId: string;
+  rate: number;
   title: string;
-  desc: string;
-  minCost: string;
-  percentage: string;
+  description: string;
+  applyEndDate: string;
+  applyStartDate: string;
 }

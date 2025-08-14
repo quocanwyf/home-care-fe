@@ -1,4 +1,8 @@
-import { getCheckExistCustomerPhone, getOrdersApi } from '@/apis/orders.api';
+import {
+  getCheckExistCustomerPhone,
+  getOrderAddInfoApi,
+  getOrdersApi,
+} from '@/apis/orders.api';
 import type {
   CustomerCheckResponse,
   OrderParams,
@@ -23,5 +27,15 @@ export const useCheckCustomerExist = () => {
     onError: (error) => {
       showError('Error checking customer: ' + error);
     },
+  });
+};
+
+export const useGetOrderAddInfo = () => {
+  return useQuery({
+    queryKey: ['order-add-info'],
+    queryFn: ({ signal }) => getOrderAddInfoApi(signal),
+    staleTime: 10 * 60 * 1000, // 10 minutes - stable data
+    refetchOnWindowFocus: false,
+    retry: 2,
   });
 };

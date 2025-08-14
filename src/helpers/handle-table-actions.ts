@@ -1,0 +1,40 @@
+export const handleView = ({
+  navigateTo,
+  path,
+}: {
+  navigateTo: (
+    path: string,
+    options?:
+      | {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          state?: any;
+          replace?: boolean | undefined;
+          delay?: number | undefined;
+          toast?:
+            | {
+                type?: 'success' | 'error' | 'info' | 'warning' | undefined;
+                message: string;
+              }
+            | undefined;
+        }
+      | undefined
+  ) => void;
+  path: string;
+}) => {
+  navigateTo(path, {
+    state: { userId: 1 },
+    toast: {
+      type: 'success',
+      message: 'Điều hướng thành công!',
+    },
+    delay: 1000,
+  });
+};
+
+export const handleEdit = () => {
+  console.log('Sửa');
+};
+
+export const handleDelete = () => {
+  console.log('Xoá');
+};

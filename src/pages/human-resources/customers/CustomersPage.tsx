@@ -62,6 +62,7 @@ const CustomersPage = () => {
     isFetching,
   } = useGetCustomers(params);
 
+  console.log(customersData);
   useEffect(() => {
     if (customersData) {
       const test = customersData || [];

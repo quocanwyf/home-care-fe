@@ -2,7 +2,7 @@ import { Suspense, lazy } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
-import LoadingFallback from '@/components/fallback/LoadingFallback';
+import LoadingFallback from '@/components/fallback/LoadingFallbackApp';
 
 const MainLayout = lazy(() => import('@/components/layout/MainLayout'));
 const LoginPage = lazy(() => import('@/pages/auth/LoginPage'));
@@ -24,6 +24,7 @@ const AddStaffPage = lazy(
 
 const OrdersPage = lazy(() => import('@/pages/orders/OrdersPage'));
 const AddOrderPage = lazy(() => import('@/pages/orders/AddOrderPage'));
+const DetailOrderPage = lazy(() => import('@/pages/orders/DetailOrderPage'));
 
 const FinancesPage = lazy(
   () => import('@/pages/inventory/finances/FianancesPage')
@@ -61,6 +62,7 @@ const AppRouter = () => {
 
           <Route path="/orders" element={<OrdersPage />} />
           <Route path="/orders/add" element={<AddOrderPage />} />
+          <Route path="/orders/detail/:id" element={<DetailOrderPage />} />
 
           <Route path="/finances" element={<FinancesPage />} />
           <Route path="/permissions" element={<PermissionsPage />} />

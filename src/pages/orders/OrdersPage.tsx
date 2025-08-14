@@ -2,8 +2,14 @@ import { useEffect, useState } from 'react';
 
 import { AppTable } from '@/components/table/AppTable';
 import { STATUS_ORDERS } from '@/constants/dropdown/status-orders';
+import {
+  handleDelete,
+  handleEdit,
+  handleView,
+} from '@/helpers/handle-table-actions';
 // import { data } from '@/constants/mock-data/mock-data-orders';
 import { useGetOrders } from '@/hooks/api/useOrders.api';
+import { useAppNavigate } from '@/hooks/common/useAppNavigate';
 import { useDateRangeConfig } from '@/hooks/common/useDateRangeConfig';
 import { usePageSize } from '@/hooks/common/usePageSize';
 import { useSearchConfig } from '@/hooks/common/useSearchConfig';
@@ -15,6 +21,10 @@ import type { PaginationState } from '@tanstack/react-table';
 const OrdersPage = () => {
   const { showError } = useToast();
   const [orders, setOrders] = useState([]);
+  const navigateTo = useAppNavigate();
+
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
 
   //có 5 cái mục search cần gọi api là: pagination, status, pageSize, dateRange,search
   const [searchKeyword, setSearchKeyword] = useState('');
@@ -88,9 +98,9 @@ const OrdersPage = () => {
     <AppTable
       data={orders}
       columns={orderColumn(
-        (row) => console.log('Xem', row),
-        (row) => console.log('Sửa', row),
-        (row) => console.log('Xoá', row)
+        (row) => handleView({ navigateTo, path: `/orders/detail/${row.id}` }),
+        (row) => handleEdit(),
+        (row) => handleDelete()
       )}
       pageHeaderTitle="Orders List"
       //status variable and function

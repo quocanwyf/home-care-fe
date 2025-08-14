@@ -1,5 +1,6 @@
 import type {
   CustomerCheckResponse,
+  OrderAddInfoResponse,
   OrderParams,
 } from '@/types/params/order-params';
 import type { Orders } from '@/types/table/objects/orders';
@@ -71,4 +72,32 @@ export const getCheckExistCustomerPhone = async (
 
   const data: CustomerCheckResponse = await response.json();
   return data;
+};
+
+//get add order info
+export const getOrderAddInfoApi = async (
+  signal?: AbortSignal
+): Promise<OrderAddInfoResponse> => {
+  const url = `${import.meta.env.VITE_API_BASE_URL}/admin/requests/create`;
+
+  try {
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      credentials: 'include',
+      signal,
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch order info: ${response.status}`);
+    }
+
+    const data: OrderAddInfoResponse = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Error fetching order add info:', error);
+    throw new Error('Server error');
+  }
 };

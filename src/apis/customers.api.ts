@@ -21,7 +21,9 @@ export const getCustomersApi = async (
   queryParams.append('page', String(params.page ?? 0));
   queryParams.append('limit', String(params.limit ?? 10));
 
-  const url = `${import.meta.env.VITE_API_BASE_URL}/admin/customer?${queryParams.toString()}`;
+  // const url = `${import.meta.env.VITE_API_BASE_URL}/admin/customer?${queryParams.toString()}`;
+  const url = `${import.meta.env.VITE_API_BASE_URL}/admin/customer`;
+
   const response = await fetch(url, {
     method: 'GET',
     headers: {

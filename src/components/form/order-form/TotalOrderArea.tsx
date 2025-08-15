@@ -8,13 +8,19 @@ import type { CustomerAreaProps } from '@/types/params/order-params';
 interface TotalOrderAreaProps {
   formData: CustomerAreaProps['formData'];
   onUpdateFormData: CustomerAreaProps['onUpdateFormData'];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   systemSetting?: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  availableDiscounts?: any;
+  coefficientOther?: number | undefined;
 }
 
 const TotalOrderArea = ({
   formData,
   onUpdateFormData,
   systemSetting,
+  coefficientOther,
+  availableDiscounts,
 }: TotalOrderAreaProps) => {
   // const costCalculation = useMemo(() => {
   //   if (
@@ -102,9 +108,9 @@ const TotalOrderArea = ({
         </div>
         <div className="flex-1">
           <CostSummaryCard
-            // totalCost={formData.totalCost}
-            // serviceCost={costCalculation.serviceCost}
-            detailCost={formData.detailCost}
+          // totalCost={formData.totalCost}
+          // serviceCost={costCalculation.serviceCost}
+          // detailCost={formData.detailCost}
           />
         </div>
       </div>

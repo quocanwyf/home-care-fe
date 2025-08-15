@@ -31,6 +31,7 @@ interface TimePickerDropdownProps {
   stepMinutes?: number; // Default: 30
   selectedDate?: string; // Format: "dd/mm/yyyy" - để check current date
   placeholder?: string;
+  customOptions?: string[];
 }
 
 export default function TimePickerDropdown({
@@ -158,15 +159,6 @@ export default function TimePickerDropdown({
       {selectedDate && isTimeDisabled(value || '') && (
         <p className="text-xs text-red-500">Selected time is in the past</p>
       )}
-
-      {/*  Show available time range */}
-      <p className="text-muted-foreground text-xs">
-        Available: {minTime} - {maxTime} (every {stepMinutes} minutes)
-        {selectedDate &&
-          selectedDate === new Date().toLocaleDateString('en-GB') && (
-            <span className="block">Past times are disabled for today</span>
-          )}
-      </p>
     </div>
   );
 }

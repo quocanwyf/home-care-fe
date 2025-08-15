@@ -84,7 +84,13 @@ export default function OrderForm() {
     setAvailableDiscounts(discounts);
   };
 
-  console.log('Available discounts:', availableDiscounts);
+  const dataForCalculate = {
+    serviceTitle: formData.serviceTitle,
+    serviceBasePrice: formData.serviceBasePrice,
+    coefficient_service: formData.coefficient_service,
+    coefficient_other: formData.coefficient_other,
+    coefficient_ot: formData.coefficient_ot,
+  };
 
   return (
     <div className="h-full w-full overflow-y-auto pb-20">
@@ -104,6 +110,8 @@ export default function OrderForm() {
         formData={formData}
         onUpdateFormData={handleUpdateFormData}
         systemSetting={orderAddInfo?.result?.systemSetting}
+        coefficientOther={orderAddInfo?.result?.coefficientOther}
+        availableDiscounts={availableDiscounts}
       />
       <Button
         className="float-right mr-6 cursor-pointer disabled:cursor-not-allowed"

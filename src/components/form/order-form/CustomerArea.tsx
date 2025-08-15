@@ -98,7 +98,6 @@ const CustomerArea = ({
 
         // Log discount list nếu có
         if (result?.discounts?.length > 0) {
-          console.log('Available discounts:', result.discounts);
           showInfo(`Có ${result.discounts.length} khuyến mãi khả dụng`);
           handleUpdateAvailableDiscounts(result?.discounts);
         }
@@ -171,8 +170,6 @@ const CustomerArea = ({
       label: ward.wardName,
       value: ward.wardCode || ward.wardName,
     })) || [];
-
-  console.log(formData);
 
   return (
     <>

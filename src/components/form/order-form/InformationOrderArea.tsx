@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
 
-import { on } from 'events';
 import { ClipboardList } from 'lucide-react';
 
 import DatePicker from '@/components/common/date-picker/DatePicker';
@@ -40,7 +39,9 @@ const InformationOrderArea = ({
       },
     }));
   }, [serviceList]);
-  // console.log(formData, onUpdateFormData);
+
+  console.log('coefficient other', coefficientOther);
+
   const [selectedRequestType, setSelectedRequestType] = useState<{
     label: string;
     value: string | number;
@@ -85,7 +86,6 @@ const InformationOrderArea = ({
     label: string;
     value: string | number;
   }) => {
-    console.log('Selected service type:', value);
     setSelectedServiceType(value);
 
     // Find selected service data
@@ -103,14 +103,10 @@ const InformationOrderArea = ({
         // coefficient_ot will be calculated based on time
       });
     }
-
-    console.log('Selected service data:', selectedServiceOption?.serviceData);
   };
 
-  // ✅ Update single date handler
+  //   Update single date handler
   const handleSingleDateChange = (dateString: string) => {
-    console.log('Selected single date:', dateString);
-
     onUpdateFormData({
       startDate: dateString,
       endDate: dateString, // Same date for short-term
@@ -119,8 +115,6 @@ const InformationOrderArea = ({
 
   //  Handle date range selection (long-term) - now receives formatted strings
   const handleDateRangeChange = (range: FormattedDateRange | undefined) => {
-    console.log('Selected date range:', range);
-
     if (range) {
       onUpdateFormData({
         startDate: range.startDate,
@@ -145,6 +139,39 @@ const InformationOrderArea = ({
       endTime: time,
     });
   };
+
+  // const handleEndTimeChange = (time: string) => {
+  //   if (formData.startTime && !isEvenHourInterval(formData.startTime, time)) {
+  //     // Auto-correct to nearest even hour
+  //     const [startHour, startMinute] = formData.startTime
+  //       .split(':')
+  //       .map(Number);
+  //     const [endHour, endMinute] = time.split(':').map(Number);
+
+  //     const startTotal = startHour * 60 + startMinute;
+  //     const endTotal = endHour * 60 + endMinute;
+  //     const diffHours = (endTotal - startTotal) / 60;
+
+  //     // Round to nearest whole hour
+  //     const correctedHours = Math.round(diffHours);
+  //     const correctedEndTotal = startTotal + correctedHours * 60;
+
+  //     const correctedHour = Math.floor(correctedEndTotal / 60);
+  //     const correctedMinute = correctedEndTotal % 60;
+
+  //     const correctedTime = `${correctedHour.toString().padStart(2, '0')}:${correctedMinute.toString().padStart(2, '0')}`;
+
+  //     console.log(`Auto-corrected: ${time} → ${correctedTime}`);
+
+  //     onUpdateFormData({
+  //       endTime: correctedTime,
+  //     });
+  //   } else {
+  //     onUpdateFormData({
+  //       endTime: time,
+  //     });
+  //   }
+  // };
 
   const getSelectedDate = (): string => {
     // For short-term, use the single date
@@ -172,7 +199,7 @@ const InformationOrderArea = ({
         systemSetting
       );
 
-      // ✅ Determine coefficient_ot based on working hours
+      //   Determine coefficient_ot based on working hours
       let coefficient_ot = 1;
 
       // If ANY part of work is during OT hours, apply OT coefficient
@@ -181,24 +208,53 @@ const InformationOrderArea = ({
       }
 
       // Update form data with new coefficient and breakdown
-      onUpdateFormData({
-        coefficient_ot,
-      });
+      if (formData.coefficient_ot !== coefficient_ot) {
+        onUpdateFormData({
+          coefficient_ot,
+        });
 
-      console.log('OT Calculation:', {
-        timeRange: `${formData.startTime} - ${formData.endTime}`,
-        hoursBreakdown,
-        coefficient_ot,
-        activeCoeffs,
-      });
+        console.log('OT Calculation:', {
+          timeRange: `${formData.startTime} - ${formData.endTime}`,
+          hoursBreakdown,
+          coefficient_ot,
+          activeCoeffs,
+        });
+      }
     }
   }, [
     formData.startTime,
     formData.endTime,
     systemSetting,
     coefficientOther,
-    onUpdateFormData,
+    formData.coefficient_ot,
   ]);
+
+  const endTimeOptions = useMemo(() => {
+    if (!formData.startTime) return [];
+
+    const [startHour, startMinute] = formData.startTime.split(':').map(Number);
+    const startTotalMinutes = startHour * 60 + startMinute;
+
+    const options = [];
+
+    // Generate options with 1-hour increments only
+    for (let hours = 1; hours <= 10; hours++) {
+      const endTotalMinutes = startTotalMinutes + hours * 60;
+      const endHour = Math.floor(endTotalMinutes / 60);
+      const endMinute = endTotalMinutes % 60;
+
+      // Check if within business hours
+      if (endHour <= 22) {
+        const timeString = `${endHour.toString().padStart(2, '0')}:${endMinute.toString().padStart(2, '0')}`;
+        options.push({
+          label: timeString,
+          value: timeString,
+        });
+      }
+    }
+
+    return options;
+  }, [formData.startTime]);
 
   return (
     <>
@@ -265,6 +321,7 @@ const InformationOrderArea = ({
             selectedDate={getSelectedDate()}
             placeholder="Select end time"
           />
+
           {selectedRequestType?.value === 'long-term' ? (
             <div className="w-full flex-1">
               <div className="flex flex-col gap-3">

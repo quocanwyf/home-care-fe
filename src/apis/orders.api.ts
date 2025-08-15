@@ -31,8 +31,8 @@ export const getOrdersApi = async (
   queryParams.append('page', String(params.page ?? 0));
   queryParams.append('limit', String(params.limit ?? 10));
 
-  // const url = `${import.meta.env.VITE_API_BASE_URL}/admin/order?${queryParams.toString()}`;
-  const url = `${import.meta.env.VITE_API_BASE_URL}/admin/requests`;
+  const url = `${import.meta.env.VITE_API_BASE_URL}/admin/requests?${queryParams.toString()}`;
+  // const url = `${import.meta.env.VITE_API_BASE_URL}/admin/requests`;
 
   const response = await fetch(url, {
     method: 'GET',

@@ -1,7 +1,7 @@
 export interface SystemSetting {
-  openHours: string; // "07:00"
-  closeHours: string; // "21:00"
-  platformFee: number; // VNĐ
-  otherFee: number; // VNĐ
-  helperShare: number; // %
+  openHour: string; // "06:00"
+  closeHour: string; // "20:00"
+  officeStartTime: string; // "08:00"
+  officeEndTime: string; // "18:00"
+  baseSalary: number; // 3000000
 }

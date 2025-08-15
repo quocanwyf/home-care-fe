@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
 
-import { on } from 'events';
 import { ClipboardList } from 'lucide-react';
 
 import DatePicker from '@/components/common/date-picker/DatePicker';
@@ -13,10 +12,11 @@ import TimePickerDropdown from '@/components/common/dropdowns/TimePickerDropdown
 import { Label } from '@/components/ui/label';
 import {
   calculateOvertimeHours,
+  checkDateRangeIsWeekend,
   getActiveCoefficients,
 } from '@/helpers/detect-ot-and-coefficients';
-import { addHoursToTime } from '@/helpers/time-utility';
 import type { CustomerAreaProps } from '@/types/params/order-params';
+import type { ServiceOption } from '@/types/table/objects/services';
 
 const InformationOrderArea = ({
   formData,
@@ -24,9 +24,11 @@ const InformationOrderArea = ({
   serviceList = [],
   systemSetting,
   coefficientOther = [],
+  onSetDataForCalculate,
 }: CustomerAreaProps) => {
-  const serviceTypes = useMemo(() => {
-    return serviceList.map((service) => ({
+  const serviceTypes = useMemo((): ServiceOption[] => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return serviceList.map((service: any) => ({
       // For dropdown display
       label: `${service.title} - ${new Intl.NumberFormat('vi-VN').format(service.basicPrice)}₫`,
       value: service.serviceId,
@@ -36,11 +38,10 @@ const InformationOrderArea = ({
         title: service.title,
         cost: service.basicPrice,
         coefficient_service: service.costFactorType?.value || 1,
-        coefficient_other: 1, // Mặc định = 1
       },
     }));
   }, [serviceList]);
-  // console.log(formData, onUpdateFormData);
+
   const [selectedRequestType, setSelectedRequestType] = useState<{
     label: string;
     value: string | number;
@@ -56,7 +57,6 @@ const InformationOrderArea = ({
   ];
 
   const minTime = systemSetting?.openHour || '06:00';
-  const maxTime = systemSetting?.closeHour || '22:00';
 
   //  Handle request type change
   const handleSelectRequestType = (value: {
@@ -85,7 +85,6 @@ const InformationOrderArea = ({
     label: string;
     value: string | number;
   }) => {
-    console.log('Selected service type:', value);
     setSelectedServiceType(value);
 
     // Find selected service data
@@ -99,18 +98,12 @@ const InformationOrderArea = ({
         serviceBasePrice: selectedServiceOption.serviceData.cost,
         coefficient_service:
           selectedServiceOption.serviceData.coefficient_service,
-        coefficient_other: selectedServiceOption.serviceData.coefficient_other,
-        // coefficient_ot will be calculated based on time
       });
     }
-
-    console.log('Selected service data:', selectedServiceOption?.serviceData);
   };
 
-  // ✅ Update single date handler
+  //   Update single date handler
   const handleSingleDateChange = (dateString: string) => {
-    console.log('Selected single date:', dateString);
-
     onUpdateFormData({
       startDate: dateString,
       endDate: dateString, // Same date for short-term
@@ -119,8 +112,6 @@ const InformationOrderArea = ({
 
   //  Handle date range selection (long-term) - now receives formatted strings
   const handleDateRangeChange = (range: FormattedDateRange | undefined) => {
-    console.log('Selected date range:', range);
-
     if (range) {
       onUpdateFormData({
         startDate: range.startDate,
@@ -137,6 +128,7 @@ const InformationOrderArea = ({
   const handleStartTimeChange = (time: string) => {
     onUpdateFormData({
       startTime: time,
+      endTime: '', // Reset end time when start time changes
     });
   };
 
@@ -146,19 +138,17 @@ const InformationOrderArea = ({
     });
   };
 
-  const getSelectedDate = (): string => {
-    // For short-term, use the single date
-    if (selectedRequestType?.value === 'short-term') {
-      return formData.startDate || '';
-    }
-    // For long-term, use the start date
+  const checkSelectedDateInPastTime = (): string => {
     return formData.startDate || '';
   };
 
   useEffect(() => {
     if (
+      formData.coefficient_service &&
       formData.startTime &&
       formData.endTime &&
+      formData.startDate &&
+      formData.endDate &&
       systemSetting &&
       coefficientOther
     ) {
@@ -172,33 +162,109 @@ const InformationOrderArea = ({
         systemSetting
       );
 
-      // ✅ Determine coefficient_ot based on working hours
+      //   Determine coefficient_ot based on working hours
       let coefficient_ot = 1;
+      let coefficient_other = 1;
+      const isWeekend = checkDateRangeIsWeekend(
+        formData.startDate,
+        formData.endDate
+      );
 
       // If ANY part of work is during OT hours, apply OT coefficient
       if (hoursBreakdown.overtimeHours > 0) {
         coefficient_ot = activeCoeffs.overtime;
       }
 
-      // Update form data with new coefficient and breakdown
-      onUpdateFormData({
-        coefficient_ot,
-      });
+      if (isWeekend) {
+        coefficient_other = activeCoeffs.weekend;
+      }
 
-      console.log('OT Calculation:', {
-        timeRange: `${formData.startTime} - ${formData.endTime}`,
-        hoursBreakdown,
+      // Update form data with new coefficient and breakdown
+      if (
+        formData.coefficient_ot !== coefficient_ot ||
+        formData.coefficient_other !== coefficient_other
+      ) {
+        onUpdateFormData({
+          coefficient_ot,
+          coefficient_other,
+        });
+      }
+      const updatedFormData = {
+        ...formData,
         coefficient_ot,
+        coefficient_other,
+      };
+      const dataForCalculation = {
+        hoursBreakdown,
         activeCoeffs,
+        formData: updatedFormData,
+      };
+      console.log('Coefficient Calculation:', {
+        dataForCalculation,
       });
+      if (onSetDataForCalculate) {
+        onSetDataForCalculate(dataForCalculation);
+      }
+    } else {
+      // ✅ Clear calculation data when requirements not met
+      if (onSetDataForCalculate) {
+        onSetDataForCalculate(null);
+      }
     }
   }, [
+    formData.coefficient_service,
+    formData.coefficient_other,
     formData.startTime,
     formData.endTime,
+    formData.startDate,
+    formData.endDate,
     systemSetting,
     coefficientOther,
-    onUpdateFormData,
+    formData.serviceBasePrice,
+    onSetDataForCalculate,
   ]);
+
+  //   REPLACE generateEndTimeOptions with this corrected logic
+  const generateEndTimeOptions = useMemo(() => {
+    if (!formData.startTime) return [];
+
+    const [startHour, startMinute] = formData.startTime.split(':').map(Number);
+    const startTotalMinutes = startHour * 60 + startMinute;
+
+    const closeTime = systemSetting?.closeHour || '22:00';
+    const [closeHour, closeMinute] = closeTime.split(':').map(Number);
+    const maxTotalMinutes = closeHour * 60 + closeMinute;
+
+    const options: string[] = [];
+
+    // Start from 2 hours after start time, then increment by 1 hour
+    for (let hourIncrement = 2; hourIncrement <= 12; hourIncrement += 1) {
+      const endTotalMinutes = startTotalMinutes + hourIncrement * 60;
+
+      // Stop if exceeds close time
+      if (endTotalMinutes > maxTotalMinutes) break;
+
+      const endHour = Math.floor(endTotalMinutes / 60);
+      // Keep the same minute pattern as start time
+      const endMinute = startMinute;
+
+      const timeString = `${endHour.toString().padStart(2, '0')}:${endMinute.toString().padStart(2, '0')}`;
+      options.push(timeString);
+    }
+
+    return options;
+  }, [formData.startTime, systemSetting?.closeHour]);
+
+  const getMaxStartTime = useMemo(() => {
+    const closeTime = systemSetting?.closeHour || '22:00';
+    const [closeHour, closeMinute] = closeTime.split(':').map(Number);
+
+    // ✅ Max start time is 2 hours before close time
+    const maxStartHour = closeHour - 2;
+    const maxStartMinute = closeMinute;
+
+    return `${maxStartHour.toString().padStart(2, '0')}:${maxStartMinute.toString().padStart(2, '0')}`;
+  }, [systemSetting?.closeHour]);
 
   return (
     <>
@@ -244,9 +310,9 @@ const InformationOrderArea = ({
             value={formData.startTime || ''}
             onChange={handleStartTimeChange}
             minTime={minTime}
-            maxTime={maxTime}
+            maxTime={getMaxStartTime}
             stepMinutes={30}
-            selectedDate={getSelectedDate()}
+            checkSelectedDateInPastTime={checkSelectedDateInPastTime()}
             placeholder="Select start time"
           />
 
@@ -255,16 +321,14 @@ const InformationOrderArea = ({
             label="End Time"
             value={formData.endTime || ''}
             onChange={handleEndTimeChange}
-            minTime={
-              formData.startTime
-                ? addHoursToTime(formData.startTime, 2)
-                : '07:00'
-            } //  Min is start time + 30 min
-            maxTime={maxTime}
-            stepMinutes={30}
-            selectedDate={getSelectedDate()}
-            placeholder="Select end time"
+            disabled={!formData.startTime}
+            customOptions={generateEndTimeOptions}
+            placeholder={
+              formData.startTime ? 'Select end time' : 'Select start time first'
+            }
+            className="w-full"
           />
+
           {selectedRequestType?.value === 'long-term' ? (
             <div className="w-full flex-1">
               <div className="flex flex-col gap-3">

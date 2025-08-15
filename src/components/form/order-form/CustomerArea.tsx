@@ -77,8 +77,6 @@ const CustomerArea = ({
         formData.phone
       );
 
-      console.log('Search result:', result);
-
       if (result.success && result.customer) {
         // Auto fill form data nếu tìm thấy khách hàng
         onUpdateFormData({
@@ -98,7 +96,6 @@ const CustomerArea = ({
 
         // Log discount list nếu có
         if (result?.discounts?.length > 0) {
-          console.log('Available discounts:', result.discounts);
           showInfo(`Có ${result.discounts.length} khuyến mãi khả dụng`);
           handleUpdateAvailableDiscounts(result?.discounts);
         }
@@ -171,8 +168,6 @@ const CustomerArea = ({
       label: ward.wardName,
       value: ward.wardCode || ward.wardName,
     })) || [];
-
-  console.log(formData);
 
   return (
     <>

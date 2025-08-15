@@ -62,7 +62,6 @@ const CustomersPage = () => {
     isFetching,
   } = useGetCustomers(params);
 
-  console.log(customersData);
   useEffect(() => {
     if (customersData) {
       const test = customersData || [];
@@ -75,8 +74,6 @@ const CustomersPage = () => {
       showError(error?.message || 'An error occurred while fetching orders.');
     }
   }, [isError, error, showError]);
-
-  console.log('customers', customersData);
 
   return (
     <AppTable

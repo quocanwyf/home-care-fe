@@ -67,8 +67,8 @@ const OrdersPage = () => {
   const params = {
     status: statusFilter ?? 'all',
     limit: pageSize ?? 10,
-    fromDate: dateRange.from ?? '',
-    toDate: dateRange.to ?? '',
+    fromDate: dateRange.startDate ?? '',
+    toDate: dateRange.endDate ?? '',
     page: currentPagination.pageIndex + 1,
     search: searchKeyword ?? '',
   };

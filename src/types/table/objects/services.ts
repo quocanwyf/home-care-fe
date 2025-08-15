@@ -26,7 +26,6 @@ export interface ServiceOption {
     title: string;
     cost: number;
     coefficient_service: number;
-    coefficient_other: number;
   };
 }
 

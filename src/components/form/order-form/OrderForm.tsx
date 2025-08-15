@@ -16,6 +16,8 @@ import TotalOrderArea from './TotalOrderArea';
 export default function OrderForm() {
   const { showError } = useToast();
   const [availableDiscounts, setAvailableDiscounts] = useState<Discount[]>([]);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [dataForCalculate, setDataForCalculate] = useState<any>(null);
   const [formData, setFormData] = useState<OrderFormData>({
     // Service information
     serviceTitle: '',
@@ -59,8 +61,6 @@ export default function OrderForm() {
     error: orderInfoError,
   } = useGetOrderAddInfo();
 
-  console.log('orderAddInfo', orderAddInfo);
-
   useEffect(() => {
     if (orderInfoError) {
       showError('Failed to load order information');
@@ -84,7 +84,7 @@ export default function OrderForm() {
     setAvailableDiscounts(discounts);
   };
 
-  console.log('formData', formData);
+  console.log('Order Form Data:', formData);
 
   return (
     <div className="h-full w-full overflow-y-auto pb-20">
@@ -99,13 +99,13 @@ export default function OrderForm() {
         serviceList={orderAddInfo?.result?.serviceList}
         systemSetting={orderAddInfo?.result?.systemSetting}
         coefficientOther={orderAddInfo?.result?.coefficientOther}
+        onSetDataForCalculate={setDataForCalculate}
       />
       <TotalOrderArea
         formData={formData}
         onUpdateFormData={handleUpdateFormData}
-        systemSetting={orderAddInfo?.result?.systemSetting}
-        coefficientOther={orderAddInfo?.result?.coefficientOther}
         availableDiscounts={availableDiscounts}
+        dataForCalculate={dataForCalculate}
       />
       <Button
         className="float-right mr-6 cursor-pointer disabled:cursor-not-allowed"

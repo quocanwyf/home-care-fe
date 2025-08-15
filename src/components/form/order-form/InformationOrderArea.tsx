@@ -15,7 +15,6 @@ import {
   checkDateRangeIsWeekend,
   getActiveCoefficients,
 } from '@/helpers/detect-ot-and-coefficients';
-import { addHoursToTime } from '@/helpers/time-utility';
 import type { CustomerAreaProps } from '@/types/params/order-params';
 import type { ServiceOption } from '@/types/table/objects/services';
 
@@ -25,6 +24,7 @@ const InformationOrderArea = ({
   serviceList = [],
   systemSetting,
   coefficientOther = [],
+  onSetDataForCalculate,
 }: CustomerAreaProps) => {
   const serviceTypes = useMemo((): ServiceOption[] => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -38,7 +38,6 @@ const InformationOrderArea = ({
         title: service.title,
         cost: service.basicPrice,
         coefficient_service: service.costFactorType?.value || 1,
-        coefficient_other: 1, // Mặc định = 1
       },
     }));
   }, [serviceList]);
@@ -190,11 +189,27 @@ const InformationOrderArea = ({
           coefficient_other,
         });
       }
-
-      console.log('Coefficient Calculation:', {
+      const updatedFormData = {
+        ...formData,
+        coefficient_ot,
+        coefficient_other,
+      };
+      const dataForCalculation = {
         hoursBreakdown,
         activeCoeffs,
+        formData: updatedFormData,
+      };
+      console.log('Coefficient Calculation:', {
+        dataForCalculation,
       });
+      if (onSetDataForCalculate) {
+        onSetDataForCalculate(dataForCalculation);
+      }
+    } else {
+      // ✅ Clear calculation data when requirements not met
+      if (onSetDataForCalculate) {
+        onSetDataForCalculate(null);
+      }
     }
   }, [
     formData.coefficient_service,
@@ -205,8 +220,8 @@ const InformationOrderArea = ({
     formData.endDate,
     systemSetting,
     coefficientOther,
-    formData.coefficient_ot,
-    onUpdateFormData,
+    formData.serviceBasePrice,
+    onSetDataForCalculate,
   ]);
 
   //   REPLACE generateEndTimeOptions with this corrected logic

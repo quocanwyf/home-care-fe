@@ -1,24 +1,89 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 
 import { ChevronDown } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import { calculateOrderCost } from '@/helpers/calculate-total-cost';
 import { formatCurrency } from '@/helpers/format-currency';
+import type { OrderFormData } from '@/types/params/order-params';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from '@radix-ui/react-popover';
 
-export default function CostSummaryCard() {
+interface DiscountOption {
+  id: string;
+  label: string;
+  value: number;
+  type: 'percentage' | 'fixed';
+  title: string;
+}
+
+export default function CostSummaryCard({
+  onUpdateFormData,
+  availableDiscounts,
+  dataForCalculate,
+}: {
+  onUpdateFormData: (newData: Partial<OrderFormData>) => void;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  availableDiscounts: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  dataForCalculate: any;
+}) {
+  const result = calculateOrderCost(dataForCalculate);
+
   const [selectedDiscount, setSelectedDiscount] = useState('0%');
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
 
-  const discountOptions = ['0%', '5%', '10%', '15%', '20%', '25%'];
+  const discountOptions = useMemo((): DiscountOption[] => {
+    const options: DiscountOption[] = [
+      {
+        id: 'no-discount',
+        label: '0%',
+        value: 0,
+        type: 'percentage',
+        title: 'No discount',
+      },
+    ];
 
-  const totalCost = 15000000;
-  const materialCost = 8500000;
+    if (availableDiscounts && Array.isArray(availableDiscounts)) {
+      availableDiscounts.forEach((discount) => {
+        const now = new Date();
+        const startDate = new Date(discount.applyStartDate);
+        const endDate = new Date(discount.applyEndDate);
+
+        if (now >= startDate && now <= endDate) {
+          if (discount.rate <= 100) {
+            // Likely percentage
+            options.push({
+              id: discount._id,
+              label: `${discount.rate}%`,
+              value: discount.rate,
+              type: 'percentage',
+              title: discount.title,
+            });
+          } else {
+            // Fixed amount (like 50k)
+            options.push({
+              id: discount._id,
+              label: `${formatCurrency(discount.rate)}`,
+              value: discount.rate,
+              type: 'fixed',
+              title: discount.title,
+            });
+          }
+        }
+      });
+    }
+
+    return options;
+  }, [availableDiscounts]);
+
+  console.log('caaaacc', discountOptions);
+
+  const totalCost = result.totalCost || 0;
 
   const discountValue = parseInt(selectedDiscount.replace('%', '')) / 100;
   const finalCost = totalCost * (1 - discountValue);
@@ -42,14 +107,6 @@ export default function CostSummaryCard() {
                 </span>
               </>
             )}
-          </span>
-        </div>
-
-        {/* Tổng chi phí NGV */}
-        <div className="flex justify-between border-b border-gray-200 pb-2">
-          <span className="text-gray-600">Total cost for maids:</span>
-          <span className="font-medium text-gray-600">
-            {formatCurrency(materialCost)}
           </span>
         </div>
 

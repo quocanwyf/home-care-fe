@@ -77,6 +77,7 @@ export type CustomerAreaProps = {
   serviceList?: ServiceCategory[];
   systemSetting?: SystemSetting;
   coefficientOther?: CoefficientOther[];
+  onSetDataForCalculate?: (data: any) => void;
 };
 
 //order-add-info-get

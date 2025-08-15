@@ -76,9 +76,6 @@ const MaidsPage = () => {
     }
   }, [isError, error, showError]);
 
-  console.log('maidsData', params);
-  console.log('maids', maidsData);
-
   return (
     <AppTable
       data={maids}

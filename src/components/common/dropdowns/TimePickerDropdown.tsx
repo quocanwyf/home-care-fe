@@ -29,7 +29,7 @@ interface TimePickerDropdownProps {
   minTime?: string; // Format: "HH:MM"
   maxTime?: string; // Format: "HH:MM"
   stepMinutes?: number; // Default: 30
-  selectedDate?: string; // Format: "dd/mm/yyyy" - để check current date
+  checkSelectedDateInPastTime?: string; // Format: "dd/mm/yyyy" - để check current date
   placeholder?: string;
   customOptions?: string[];
 }
@@ -43,13 +43,18 @@ export default function TimePickerDropdown({
   minTime = '06:00',
   maxTime = '22:00',
   stepMinutes = 30,
-  selectedDate,
+  checkSelectedDateInPastTime,
   placeholder = 'Select time',
+  customOptions,
 }: TimePickerDropdownProps) {
   const [open, setOpen] = useState(false);
 
   //  Generate time options
   const timeOptions = useMemo(() => {
+    if (customOptions && customOptions.length > 0) {
+      return customOptions;
+    }
+
     const options: string[] = [];
     const [minHour, minMinute] = minTime.split(':').map(Number);
     const [maxHour, maxMinute] = maxTime.split(':').map(Number);
@@ -69,17 +74,17 @@ export default function TimePickerDropdown({
     }
 
     return options;
-  }, [minTime, maxTime, stepMinutes]);
+  }, [minTime, maxTime, stepMinutes, customOptions]);
 
   //  Check if time is disabled based on current date/time
   const isTimeDisabled = (timeString: string): boolean => {
-    if (!selectedDate) return false;
+    if (!checkSelectedDateInPastTime) return false;
 
     // Check if selected date is today
     const today = new Date();
     const todayString = today.toLocaleDateString('en-GB'); // dd/mm/yyyy format
 
-    if (selectedDate === todayString) {
+    if (checkSelectedDateInPastTime === todayString) {
       // If it's today, disable past times
       const now = new Date();
       const currentTime = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
@@ -156,7 +161,7 @@ export default function TimePickerDropdown({
       </Popover>
 
       {/*  Show info about disabled times */}
-      {selectedDate && isTimeDisabled(value || '') && (
+      {checkSelectedDateInPastTime && isTimeDisabled(value || '') && (
         <p className="text-xs text-red-500">Selected time is in the past</p>
       )}
     </div>

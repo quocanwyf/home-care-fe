@@ -16,7 +16,7 @@ const PageHeader = ({ pageHeaderTitle }: { pageHeaderTitle: string }) => {
   };
 
   return (
-    <div className="my-4 flex items-center justify-between bg-gray-50">
+    <div className="my-4 flex items-center justify-between">
       <div className="text-overlay-slider font-bold opacity-80">
         {pageHeaderTitle}
       </div>

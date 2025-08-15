@@ -82,6 +82,8 @@ const Header = ({
               <DateRangePicker
                 onChange={config.onDateRangeChange}
                 className="min-w-[240px] rounded-full"
+                quickSelectionMode="past"
+                constraintChooseDate={false}
               />
             )}
           </div>

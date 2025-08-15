@@ -33,9 +33,10 @@ export type QuickSelectionMode = 'none' | 'past' | 'future';
 
 interface DateRangePickerProps {
   className?: string;
-  onChange?: (range: FormattedDateRange | undefined) => void; // ✅ Return formatted strings
+  onChange?: (range: FormattedDateRange | undefined) => void; //   Return formatted strings
   placeholder?: string;
   disabled?: boolean;
+  constraintChooseDate?: boolean;
   numberOfMonths?: number;
   classNameTrigger?: string;
   initialRange?: DateRange;
@@ -51,6 +52,7 @@ export function DateRangePicker({
   placeholder = 'Choose date range',
   numberOfMonths = 2,
   disabled = false,
+  constraintChooseDate = true,
   initialRange = { from: undefined, to: undefined },
   quickSelectionMode = 'none',
   minDate = new Date(),
@@ -171,8 +173,8 @@ export function DateRangePicker({
               selected={date}
               onSelect={handleSelect}
               numberOfMonths={numberOfMonths}
-              className="rounded-2xl border shadow-sm"
-              disabled={isDateDisabled} // ✅ Use date utility for validation
+              className="shadow-sm"
+              disabled={constraintChooseDate ? isDateDisabled : false} //   Use date utility for validation
             />
             {/* Quick selection buttons */}
             {numberOfMonths !== 1 && (

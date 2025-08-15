@@ -84,13 +84,7 @@ export default function OrderForm() {
     setAvailableDiscounts(discounts);
   };
 
-  const dataForCalculate = {
-    serviceTitle: formData.serviceTitle,
-    serviceBasePrice: formData.serviceBasePrice,
-    coefficient_service: formData.coefficient_service,
-    coefficient_other: formData.coefficient_other,
-    coefficient_ot: formData.coefficient_ot,
-  };
+  console.log('formData', formData);
 
   return (
     <div className="h-full w-full overflow-y-auto pb-20">

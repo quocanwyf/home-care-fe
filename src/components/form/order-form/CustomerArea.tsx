@@ -77,8 +77,6 @@ const CustomerArea = ({
         formData.phone
       );
 
-      console.log('Search result:', result);
-
       if (result.success && result.customer) {
         // Auto fill form data nếu tìm thấy khách hàng
         onUpdateFormData({

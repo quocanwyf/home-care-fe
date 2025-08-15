@@ -76,8 +76,6 @@ const StaffsPage = () => {
     }
   }, [isError, error, showError]);
 
-  console.log('staffs', staffsData);
-
   return (
     <AppTable
       data={staffs}

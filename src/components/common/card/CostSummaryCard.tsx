@@ -33,6 +33,7 @@ export default function CostSummaryCard({
   dataForCalculate: any;
 }) {
   const result = calculateOrderCost(dataForCalculate);
+  console.log(result);
 
   const [selectedDiscount, setSelectedDiscount] = useState('0%');
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);

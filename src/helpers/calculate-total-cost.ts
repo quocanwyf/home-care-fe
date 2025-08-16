@@ -87,6 +87,8 @@ export const calculateTotalCost = (
   }
   const { hoursBreakdown, activeCoeffs, formData } = data;
 
+  console.log('Calculating total cost with data:', data);
+
   const {
     serviceBasePrice,
     coefficient_service,
@@ -104,6 +106,8 @@ export const calculateTotalCost = (
   let totalDays = 0;
   let weekendDays = 0;
   let normalDays = 0;
+  let dailyCostT1 = 0; //OT and WeeekendOT
+  let dailyCostT2 = 0; //Weekend and normal (without OT)
 
   //   Iterate through each day in the range
   const currentDate = new Date(start);
@@ -121,22 +125,18 @@ export const calculateTotalCost = (
     //  Calculate cost for this day
     const baseCost = serviceBasePrice * coefficient_service;
 
-    // Apply the cost formula based on day type
-    let dailyCostMultiplier = 1;
-
+    //if weekend then nhân hs weekend dô
     if (isWeekendDay) {
-      // Weekend: Apply weekend coefficient
-      dailyCostMultiplier = coefficient_other || activeCoeffs.weekend;
+      dailyCostT1 =
+        coefficient_ot * hoursBreakdown.overtimeHours * coefficient_other;
+      dailyCostT2 = coefficient_other * hoursBreakdown.officeHours;
     } else {
-      // Weekday: Apply overtime coefficient if there are overtime hours
-      if (hoursBreakdown.overtimeHours > 0) {
-        dailyCostMultiplier = coefficient_ot || activeCoeffs.overtime;
-      }
+      //if k có weekend then  khỏi nhân hs weekend dô
+      dailyCostT1 = coefficient_ot * hoursBreakdown.overtimeHours;
+      dailyCostT2 = hoursBreakdown.officeHours;
     }
-
     //   Calculate final cost
-    const dailyCost =
-      baseCost * hoursBreakdown.totalHours * dailyCostMultiplier;
+    const dailyCost = baseCost * (dailyCostT1 + dailyCostT2);
 
     totalCost += dailyCost;
 

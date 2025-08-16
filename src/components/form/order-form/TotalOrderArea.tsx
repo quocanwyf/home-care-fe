@@ -1,5 +1,3 @@
-import { useMemo } from 'react';
-
 import { CircleDollarSign } from 'lucide-react';
 
 import CostSummaryCard from '@/components/common/card/CostSummaryCard';

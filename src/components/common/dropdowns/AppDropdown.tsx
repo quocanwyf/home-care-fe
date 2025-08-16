@@ -84,7 +84,7 @@ export default function AppDropdown({
             {children}
           </div>
         ) : (
-          // ✅ Default button trigger
+          //   Default button trigger
           <Button
             variant="outline"
             className={`flex w-full items-center justify-between gap-2 ${triggerClassName}`}

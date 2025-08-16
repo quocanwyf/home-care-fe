@@ -143,7 +143,7 @@ const SearchableDropdown = ({
             name={input?.inputName}
             className={`${input?.className} focus:border-overlay-slider hover:border-overlay-slider/50 h-10 bg-white pr-8 focus:shadow-xs ${
               input?.disabled
-                ? 'border-gray-400 bg-gray-400/20'
+                ? 'border-gray-400 bg-gray-200/80'
                 : 'hover:border-overlay-slider/50 cursor-pointer border-gray-400/60'
             }`}
             placeholder={input?.placeholder}

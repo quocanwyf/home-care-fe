@@ -53,6 +53,9 @@ export interface OrderFormData {
   district: string;
   province: string;
 
+  //selectedDiscountId:
+  selectedDiscountId: null;
+
   // Account status
   isCusHasAcc: boolean;
 }
@@ -88,4 +91,8 @@ export interface OrderAddInfoResponse {
     systemSetting: SystemSetting;
     coefficientOrder: CoefficientOther[];
   };
+}
+
+export interface AddOrderResponse {
+  success: boolean;
 }

@@ -1,10 +1,13 @@
 import {
+  addOrderApi,
   getCheckExistCustomerPhone,
   getOrderAddInfoApi,
   getOrdersApi,
 } from '@/apis/orders.api';
 import type {
+  AddOrderResponse,
   CustomerCheckResponse,
+  OrderFormData,
   OrderParams,
 } from '@/types/params/order-params';
 import { useMutation, useQuery } from '@tanstack/react-query';
@@ -37,5 +40,15 @@ export const useGetOrderAddInfo = () => {
     staleTime: 10 * 60 * 1000, // 10 minutes - stable data
     refetchOnWindowFocus: false,
     retry: 2,
+  });
+};
+
+export const useAddOrder = () => {
+  const { showError } = useToast();
+  return useMutation<AddOrderResponse, Error, OrderFormData>({
+    mutationFn: (orderData: OrderFormData) => addOrderApi(orderData),
+    onError: (error) => {
+      showError('Error adding order: ' + error.message);
+    },
   });
 };

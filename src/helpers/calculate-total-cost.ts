@@ -3,24 +3,24 @@ import { isWeekend, parseDate } from './detect-ot-and-coefficients';
 export interface DailyCostDetail {
   date: string; // "dd-mm-yyyy" format
   cost: number;
-  breakdown: {
-    isWeekend: boolean;
-    overtimeHours: number;
-    officeHours: number;
-    totalHours: number;
-    baseCost: number;
-    finalCost: number;
-  };
+  // breakdown: {
+  //   isWeekend: boolean;
+  //   overtimeHours: number;
+  //   officeHours: number;
+  //   totalHours: number;
+  //   baseCost: number;
+  //   finalCost: number;
+  // };
 }
 
 export interface TotalCostResult {
   totalCost: number;
   detailCost: DailyCostDetail[];
-  summary: {
-    totalDays: number;
-    weekendDays: number;
-    normalDays: number;
-  };
+  // summary: {
+  //   totalDays: number;
+  //   weekendDays: number;
+  //   normalDays: number;
+  // };
 }
 
 export interface CostCalculationData {
@@ -65,11 +65,11 @@ export const calculateTotalCost = (
     return {
       totalCost: 0,
       detailCost: [],
-      summary: {
-        totalDays: 0,
-        weekendDays: 0,
-        normalDays: 0,
-      },
+      // summary: {
+      //   totalDays: 0,
+      //   weekendDays: 0,
+      //   normalDays: 0,
+      // },
     };
   }
 
@@ -78,16 +78,14 @@ export const calculateTotalCost = (
     return {
       totalCost: 0,
       detailCost: [],
-      summary: {
-        totalDays: 0,
-        weekendDays: 0,
-        normalDays: 0,
-      },
+      // summary: {
+      //   totalDays: 0,
+      //   weekendDays: 0,
+      //   normalDays: 0,
+      // },
     };
   }
-  const { hoursBreakdown, activeCoeffs, formData } = data;
-
-  console.log('Calculating total cost with data:', data);
+  const { hoursBreakdown, formData } = data;
 
   const {
     serviceBasePrice,
@@ -103,9 +101,9 @@ export const calculateTotalCost = (
 
   const detailCost: DailyCostDetail[] = [];
   let totalCost = 0;
-  let totalDays = 0;
-  let weekendDays = 0;
-  let normalDays = 0;
+  // let totalDays = 0;
+  // let weekendDays = 0;
+  // let normalDays = 0;
   let dailyCostT1 = 0; //OT and WeeekendOT
   let dailyCostT2 = 0; //Weekend and normal (without OT)
 
@@ -113,14 +111,14 @@ export const calculateTotalCost = (
   const currentDate = new Date(start);
 
   while (currentDate <= end) {
-    totalDays++;
+    // totalDays++;
     const isWeekendDay = isWeekend(currentDate);
 
-    if (isWeekendDay) {
-      weekendDays++;
-    } else {
-      normalDays++;
-    }
+    // if (isWeekendDay) {
+    //   weekendDays++;
+    // } else {
+    //   normalDays++;
+    // }
 
     //  Calculate cost for this day
     const baseCost = serviceBasePrice * coefficient_service;
@@ -144,14 +142,14 @@ export const calculateTotalCost = (
     detailCost.push({
       date: formatDateForOutput(currentDate),
       cost: Math.round(dailyCost),
-      breakdown: {
-        isWeekend: isWeekendDay,
-        overtimeHours: hoursBreakdown.overtimeHours,
-        officeHours: hoursBreakdown.officeHours,
-        totalHours: hoursBreakdown.totalHours,
-        baseCost: baseCost,
-        finalCost: Math.round(dailyCost),
-      },
+      // breakdown: {
+      //   isWeekend: isWeekendDay,
+      //   overtimeHours: hoursBreakdown.overtimeHours,
+      //   officeHours: hoursBreakdown.officeHours,
+      //   totalHours: hoursBreakdown.totalHours,
+      //   baseCost: baseCost,
+      //   finalCost: Math.round(dailyCost),
+      // },
     });
 
     //  Move to next day
@@ -161,11 +159,11 @@ export const calculateTotalCost = (
   return {
     totalCost: Math.round(totalCost),
     detailCost,
-    summary: {
-      totalDays,
-      weekendDays,
-      normalDays,
-    },
+    // summary: {
+    //   totalDays,
+    //   weekendDays,
+    //   normalDays,
+    // },
   };
 };
 

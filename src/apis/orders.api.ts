@@ -1,6 +1,8 @@
 import type {
+  AddOrderResponse,
   CustomerCheckResponse,
   OrderAddInfoResponse,
+  OrderFormData,
   OrderParams,
 } from '@/types/params/order-params';
 import type { Orders } from '@/types/table/objects/orders';
@@ -98,6 +100,35 @@ export const getOrderAddInfoApi = async (
     return data;
   } catch (error) {
     console.error('Error fetching order add info:', error);
+    throw new Error('Server error');
+  }
+};
+
+export const addOrderApi = async (
+  orderData: OrderFormData,
+  signal?: AbortSignal
+): Promise<AddOrderResponse> => {
+  const url = `${import.meta.env.VITE_API_BASE_URL}/admin/order/add`;
+
+  try {
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      credentials: 'include',
+      body: JSON.stringify(orderData),
+      signal,
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to add order: ${response.status}`);
+    }
+
+    const data: AddOrderResponse = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Error adding order:', error);
     throw new Error('Server error');
   }
 };

@@ -199,9 +199,6 @@ const InformationOrderArea = ({
         activeCoeffs,
         formData: updatedFormData,
       };
-      console.log('Coefficient Calculation:', {
-        dataForCalculation,
-      });
       if (onSetDataForCalculate) {
         onSetDataForCalculate(dataForCalculation);
       }

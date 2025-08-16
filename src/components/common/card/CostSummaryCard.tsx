@@ -33,9 +33,8 @@ export default function CostSummaryCard({
   dataForCalculate: any;
 }) {
   const result = calculateOrderCost(dataForCalculate);
-  console.log(result);
 
-  const [selectedDiscount, setSelectedDiscount] = useState('0%');
+  const [selectedDiscountId, setSelectedDiscountId] = useState('no-discount');
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
 
   const discountOptions = useMemo((): DiscountOption[] => {
@@ -82,12 +81,57 @@ export default function CostSummaryCard({
     return options;
   }, [availableDiscounts]);
 
-  console.log('caaaacc', discountOptions);
+  const selectedDiscount = useMemo(() => {
+    return (
+      discountOptions.find((option) => option.id === selectedDiscountId) ||
+      discountOptions[0]
+    );
+  }, [selectedDiscountId, discountOptions]);
 
   const totalCost = result.totalCost || 0;
 
-  const discountValue = parseInt(selectedDiscount.replace('%', '')) / 100;
-  const finalCost = totalCost * (1 - discountValue);
+  const { discountAmount, finalCost } = useMemo(() => {
+    let discountAmount = 0;
+    let finalCost = totalCost;
+
+    if (selectedDiscount.type === 'percentage') {
+      discountAmount = totalCost * (selectedDiscount.value / 100);
+      finalCost = totalCost - discountAmount;
+    } else if (selectedDiscount.type === 'fixed') {
+      discountAmount = Math.min(selectedDiscount.value, totalCost);
+      finalCost = totalCost - discountAmount;
+    }
+
+    return {
+      discountAmount: Math.max(0, discountAmount),
+      finalCost: Math.max(0, finalCost),
+    };
+  }, [totalCost, selectedDiscount]);
+
+  const handleDiscountChange = (optionId: string) => {
+    setSelectedDiscountId(optionId);
+    setIsPopoverOpen(false);
+
+    const option = discountOptions.find((opt) => opt.id === optionId);
+    if (option && onUpdateFormData) {
+      let calculatedDiscountAmount = 0;
+      let calculatedFinalCost = totalCost;
+
+      if (option.type === 'percentage') {
+        calculatedDiscountAmount = totalCost * (option.value / 100);
+        calculatedFinalCost = totalCost - calculatedDiscountAmount;
+      } else if (option.type === 'fixed') {
+        calculatedDiscountAmount = Math.min(option.value, totalCost);
+        calculatedFinalCost = totalCost - calculatedDiscountAmount;
+      }
+
+      onUpdateFormData({
+        selectedDiscountId: optionId,
+        totalCost: calculatedFinalCost,
+        detailCost: result.detailCost,
+      });
+    }
+  };
 
   return (
     <Card className="w-full overflow-x-auto">
@@ -96,7 +140,7 @@ export default function CostSummaryCard({
         <div className="flex justify-between border-b border-gray-200 pb-2">
           <span className="text-gray-600">Total cost order:</span>
           <span>
-            {discountValue === 0 ? (
+            {discountAmount === 0 ? (
               <span className="text-blue-500">{formatCurrency(totalCost)}</span>
             ) : (
               <>
@@ -117,7 +161,7 @@ export default function CostSummaryCard({
 
           <div className="flex items-center gap-4">
             <span className="text-red-600">
-              -{formatCurrency(totalCost * discountValue)}
+              -{formatCurrency(discountAmount)}
             </span>
 
             {/*  Use Popover instead of manual dropdown */}
@@ -129,7 +173,7 @@ export default function CostSummaryCard({
                   className="flex items-center space-x-2 px-3 py-1.5"
                 >
                   <span className="font-medium text-red-600">
-                    {selectedDiscount}
+                    {selectedDiscount.label}
                   </span>
                   <ChevronDown
                     className={`h-4 w-4 text-gray-400 transition-transform duration-200 ${
@@ -139,24 +183,42 @@ export default function CostSummaryCard({
                 </Button>
               </PopoverTrigger>
 
-              <PopoverContent className="w-20 p-1" align="end" side="bottom">
+              <PopoverContent
+                className="my-2 max-h-60 max-w-60 overflow-auto"
+                align="center"
+                side="bottom"
+              >
                 <div className="space-y-1 rounded-md border bg-white">
                   {discountOptions.map((option) => (
                     <Button
-                      key={option}
+                      key={option.id}
                       variant="ghost"
                       size="sm"
-                      onClick={() => {
-                        setSelectedDiscount(option);
-                        setIsPopoverOpen(false);
-                      }}
-                      className={`w-full justify-start px-3 py-2 text-sm ${
-                        selectedDiscount === option
-                          ? 'bg-blue-50 font-medium text-red-600'
-                          : 'text-gray-700 hover:bg-blue-50'
-                      }`}
+                      onClick={() => handleDiscountChange(option.id)}
+                      className={`w-full cursor-pointer justify-start px-3 py-6 text-sm`}
                     >
-                      {option}
+                      <div className="flex w-full flex-col items-start">
+                        <div className="flex w-full justify-between">
+                          <span
+                            className={`${
+                              selectedDiscountId === option.id
+                                ? 'font-medium text-red-600 hover:text-red-600'
+                                : 'text-gray-700'
+                            }`}
+                          >
+                            {option.label}
+                          </span>
+                        </div>
+                        <span
+                          className={`w-full text-left text-xs ${
+                            selectedDiscountId === option.id
+                              ? 'font-medium text-red-600 hover:text-red-600'
+                              : 'text-gray-700'
+                          }`}
+                        >
+                          {option.title}
+                        </span>
+                      </div>
                     </Button>
                   ))}
                 </div>

@@ -104,6 +104,7 @@ export default function TimePickerDropdown({
     onChange?.(timeString);
     setOpen(false);
   };
+  console.log('disabled', disabled);
 
   return (
     <div className={cn('flex flex-col gap-3', className)}>
@@ -115,10 +116,19 @@ export default function TimePickerDropdown({
             variant="outline"
             role="combobox"
             aria-expanded={open}
-            disabled={disabled}
+            onClick={(e) => {
+              if (disabled) {
+                e.preventDefault();
+                e.stopPropagation();
+                return;
+              }
+            }}
             className={cn(
               'h-10 w-full justify-between font-normal',
-              !value && 'text-muted-foreground'
+              !value && 'text-muted-foreground',
+              disabled
+                ? 'hover:text-muted-foreground cursor-not-allowed bg-gray-100 opacity-80 hover:bg-gray-100'
+                : 'cursor-pointer'
             )}
           >
             <div className="flex items-center gap-2">

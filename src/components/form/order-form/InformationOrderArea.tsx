@@ -363,7 +363,7 @@ const InformationOrderArea = ({
           ) : (
             <div className="max-desktop:mt-6 flex w-full flex-1 items-center justify-center">
               <div className="text-muted-foreground text-center">
-                <p className="max-desktop:mt-6 max-tablet:-mt-4 text-sm">
+                <p className="desktop:mt-6 text-sm">
                   Please select request type first
                 </p>
               </div>

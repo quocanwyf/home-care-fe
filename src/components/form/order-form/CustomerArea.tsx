@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useMediaQuery } from 'react-responsive';
+import { Controller } from 'react-hook-form';
 
 import {
   Factory,
@@ -21,30 +21,38 @@ import {
   useGetWards,
 } from '@/hooks/api/useLocations.api';
 import { useCheckCustomerExist } from '@/hooks/api/useOrders.api';
+import { useIsTabletOrMobile } from '@/hooks/common/useIsTabletOrMobile';
 import { useToast } from '@/hooks/common/useToast';
 import type { CustomerAreaProps } from '@/types/params/order-params';
 
 const CustomerArea = ({
-  formData,
-  onUpdateFormData,
+  form,
   handleUpdateAvailableDiscounts,
 }: CustomerAreaProps) => {
+  const {
+    control,
+    watch,
+    setValue,
+    getValues,
+    formState: { errors },
+  } = form;
+  const watchedPhone = watch('phone');
+  const watchedProvince = watch('province');
+  const watchedDistrict = watch('district');
+  const watchedProvinceCode = watch('provinceCode');
+  const watchedDistrictCode = watch('districtCode');
+
+  const selectedProvinceCode = getValues('provinceCode');
+  const selectedDistrictCode = getValues('districtCode');
+
   const [isSearching, setIsSearching] = useState(false);
   const [provinceSearch, setProvinceSearch] = useState('');
   const [districtSearch, setDistrictSearch] = useState('');
   const [wardSearch, setWardSearch] = useState('');
-  const [selectedProvinceCode, setSelectedProvinceCode] = useState('');
-  const [selectedDistrictCode, setSelectedDistrictCode] = useState('');
 
   const { showSuccess, showError, showInfo } = useToast();
-
-  //api check exist phone customer
   const checkCustomerExistPhoneMutation = useCheckCustomerExist();
-
-  const isTabletOrMobile = useMediaQuery({ maxWidth: 1024 });
-  const labelTitle = isTabletOrMobile
-    ? 'Address'
-    : 'Address (House number, street)';
+  const isTabletOrMobile = useIsTabletOrMobile();
 
   // Location API calls
   const {
@@ -66,44 +74,39 @@ const CustomerArea = ({
   } = useGetWards(selectedProvinceCode, selectedDistrictCode, wardSearch);
 
   const handleSearchCustomer = async () => {
-    if (!formData.phone.trim()) return;
+    if (!watchedPhone?.trim()) return;
 
-    if (!checkPhoneRegex(formData.phone.trim(), showError)) {
+    if (!checkPhoneRegex(watchedPhone.trim(), showError)) {
       return;
     }
     setIsSearching(true);
     try {
-      const result = await checkCustomerExistPhoneMutation.mutateAsync(
-        formData.phone
-      );
+      const result =
+        await checkCustomerExistPhoneMutation.mutateAsync(watchedPhone);
 
       if (result.success && result.customer) {
-        // Auto fill form data nếu tìm thấy khách hàng
-        onUpdateFormData({
-          fullName: result.customer.cusName,
-          address: result.customer.addresses[0].detailAddress,
-          province: result.customer.addresses[0].province,
-          district: result.customer.addresses[0].district,
-          ward: result.customer.addresses[0].ward,
-          provinceCode: result.customer.addresses[0].provinceId,
-          districtCode: result.customer.addresses[0].districtId,
-          wardCode: result.customer.addresses[0].wardId,
-          isCusHasAcc: true,
-        });
+        const customerData = result.customer;
+        const address = customerData.addresses[0];
 
-        setSelectedDistrictCode(result.customer.addresses[0].districtId);
-        setSelectedProvinceCode(result.customer.addresses[0].provinceId);
+        setValue('fullName', customerData.cusName, { shouldValidate: true });
+        setValue('address', address.detailAddress, { shouldValidate: true });
+        setValue('province', address.province, { shouldValidate: true });
+        setValue('district', address.district, { shouldValidate: true });
+        setValue('ward', address.ward, { shouldValidate: true });
+        setValue('provinceCode', address.provinceId, { shouldValidate: true });
+        setValue('districtCode', address.districtId, { shouldValidate: true });
+        setValue('wardCode', address.wardId, { shouldValidate: true });
+        setValue('isCusHasAcc', true, { shouldValidate: true });
 
-        // Log discount list nếu có
         if (result?.discounts?.length > 0) {
           showInfo(`Có ${result.discounts.length} khuyến mãi khả dụng`);
           handleUpdateAvailableDiscounts(result?.discounts);
         }
 
-        showSuccess(`Tìm thấy khách hàng: ${result.customer.cusName}`);
+        showSuccess(`Tìm thấy khách hàng: ${customerData.cusName}`);
       } else {
         showError('Không tìm thấy thông tin khách hàng');
-        onUpdateFormData({ isCusHasAcc: false });
+        setValue('isCusHasAcc', false, { shouldValidate: true });
       }
     } catch (error) {
       console.error('Lỗi khi tìm kiếm khách hàng:', error);
@@ -113,41 +116,34 @@ const CustomerArea = ({
     }
   };
 
-  const handleInputChange = (field: string, value: string) => {
-    onUpdateFormData({ [field]: value });
-  };
-
   const handleCitySelect = (provinceCode: string, provinceName?: string) => {
-    setSelectedProvinceCode(provinceCode);
-    onUpdateFormData({
-      province: provinceName || provinceCode,
-      provinceCode: provinceCode,
-      district: '',
-      ward: '',
-      districtCode: '',
-      wardCode: '',
+    setValue('province', provinceName || provinceCode, {
+      shouldValidate: true,
     });
-    setSelectedDistrictCode('');
+    setValue('provinceCode', provinceCode, { shouldValidate: true });
+    // Reset dependent fields
+    setValue('district', '', { shouldValidate: true });
+    setValue('ward', '', { shouldValidate: true });
+    setValue('districtCode', '', { shouldValidate: true });
+    setValue('wardCode', '', { shouldValidate: true });
   };
 
   const handleDistrictSelect = (
     districtCode: string,
     districtName?: string
   ) => {
-    setSelectedDistrictCode(districtCode);
-    onUpdateFormData({
-      district: districtName || districtCode,
-      districtCode: districtCode,
-      ward: '', // Reset ward
-      wardCode: '',
+    setValue('district', districtName || districtCode, {
+      shouldValidate: true,
     });
+    setValue('districtCode', districtCode, { shouldValidate: true });
+    // Reset ward
+    setValue('ward', '', { shouldValidate: true });
+    setValue('wardCode', '', { shouldValidate: true });
   };
 
   const handleWardSelect = (wardCode: string, wardName?: string) => {
-    onUpdateFormData({
-      ward: wardName || wardCode,
-      wardCode: wardCode || '',
-    });
+    setValue('ward', wardName || wardCode, { shouldValidate: true });
+    setValue('wardCode', wardCode || '', { shouldValidate: true });
   };
 
   // Convert API data to dropdown options
@@ -168,7 +164,6 @@ const CustomerArea = ({
       label: ward.wardName,
       value: ward.wardCode || ward.wardName,
     })) || [];
-
   return (
     <>
       {/* Vùng khách hàng */}
@@ -181,43 +176,70 @@ const CustomerArea = ({
         {/* INPUTS Phone, Full Name */}
         <div className="max-tablet:grid-cols-1 mb-4 grid w-full grid-cols-2 gap-4">
           <div className="flex-1">
-            <InputButtonSearch
-              className="px-2"
-              label={{
-                labelTitle: 'Search customer by phone number',
-                icon: <Phone className="h-3 w-3" />,
-              }}
-              input={{
-                inputId: 'phone',
-                inputName: 'phone',
-                placeholder: 'Enter phone number',
-                className: 'w-full',
-                value: formData.phone,
-                onChange: (e) => handleInputChange('phone', e.target.value),
-              }}
-              button={{
-                onClick: handleSearchCustomer,
-                disabled: !formData.phone.trim() || isSearching,
-                isLoading: isSearching,
-              }}
+            <Controller
+              name="phone"
+              control={control}
+              render={({ field, fieldState: { error } }) => (
+                <InputButtonSearch
+                  className="px-2"
+                  label={{
+                    labelTitle: 'Search customer by phone number',
+                    icon: <Phone className="h-3 w-3" />,
+                  }}
+                  input={{
+                    type: 'tel',
+                    inputId: 'phone',
+                    inputName: 'phone',
+                    placeholder: 'Enter phone number (10 digits)',
+                    className: 'w-full',
+                    value: field.value || '',
+                    onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+                      //   Chỉ cho phép nhập số
+                      const numericValue = e.target.value.replace(/\D/g, '');
+                      const limitedValue = numericValue.slice(0, 10);
+                      field.onChange(limitedValue);
+                    },
+                    maxLength: 10,
+                  }}
+                  button={{
+                    onClick: handleSearchCustomer,
+                    disabled: !field.value?.trim() || isSearching,
+                    isLoading: isSearching,
+                  }}
+                  error={error?.message}
+                />
+              )}
             />
           </div>
 
           <div className="mb-2 flex-1">
-            <InputLabel
-              className="px-2"
-              label={{
-                labelTitle: 'Full name',
-                icon: <User className="h-3 w-3" />,
-              }}
-              input={{
-                inputId: 'fullName',
-                className: 'w-full',
-                inputName: 'fullName',
-                placeholder: 'Enter full name',
-                value: formData.fullName,
-                onChange: (e) => handleInputChange('fullName', e.target.value),
-              }}
+            <Controller
+              name="fullName"
+              control={control}
+              render={({ field, fieldState: { error } }) => (
+                <InputLabel
+                  className="px-2"
+                  label={{
+                    labelTitle: 'Full name',
+                    icon: <User className="h-3 w-3" />,
+                  }}
+                  input={{
+                    inputId: 'fullName',
+                    className: 'w-full',
+                    inputName: 'fullName',
+                    placeholder: 'Enter full name',
+                    value: field.value || '',
+                    onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+                      //   Normalize spaces while typing
+                      const normalizedValue = e.target.value
+                        .replace(/^\s+/, '') // Remove leading spaces
+                        .replace(/\s{2,}/g, ' '); // Replace multiple spaces with single space
+                      field.onChange(normalizedValue);
+                    },
+                  }}
+                  error={error?.message}
+                />
+              )}
             />
           </div>
         </div>
@@ -225,20 +247,35 @@ const CustomerArea = ({
         {/* INPUTS Location */}
         <div className="max-tablet:grid-cols-1 mb-4 grid w-full grid-cols-2 gap-4">
           <div className="flex-1">
-            <InputLabel
-              className="px-2"
-              label={{
-                labelTitle: labelTitle,
-                icon: <House className="h-3 w-3" />,
-              }}
-              input={{
-                inputId: 'addressCustomer',
-                className: 'w-full',
-                inputName: 'addressCustomer',
-                placeholder: 'Enter address',
-                value: formData.address,
-                onChange: (e) => handleInputChange('address', e.target.value),
-              }}
+            <Controller
+              name="address"
+              control={control}
+              render={({ field, fieldState: { error } }) => (
+                <InputLabel
+                  className="px-2"
+                  label={{
+                    labelTitle: isTabletOrMobile
+                      ? 'Address'
+                      : 'Address (House number, street)',
+                    icon: <House className="h-3 w-3" />,
+                  }}
+                  input={{
+                    inputId: 'address',
+                    className: 'w-full',
+                    inputName: 'address',
+                    placeholder: 'Enter address',
+                    value: field.value || '',
+                    onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+                      //   Normalize spaces while typing
+                      const normalizedValue = e.target.value
+                        .replace(/^\s+/, '') // Remove leading spaces
+                        .replace(/\s{2,}/g, ' '); // Replace multiple spaces with single space
+                      field.onChange(normalizedValue);
+                    },
+                  }}
+                  error={error?.message}
+                />
+              )}
             />
           </div>
           <div className="flex-1">
@@ -253,13 +290,13 @@ const CustomerArea = ({
                 inputName: 'cityCustomer',
                 className: 'w-full',
                 placeholder: 'Select city',
-                value: formData.province,
+                value: watchedProvince || '',
               }}
               options={provinceOptions}
               onSelect={handleCitySelect}
               onSearch={setProvinceSearch}
               isLoading={provincesLoading}
-              error={provincesError?.message}
+              error={errors.province?.message || provincesError?.message}
             />
           </div>
         </div>
@@ -276,14 +313,14 @@ const CustomerArea = ({
                 inputName: 'districtCustomer',
                 className: 'w-full',
                 placeholder: 'Select district',
-                value: formData.district,
-                disabled: !selectedProvinceCode, // Disable if no city selected
+                value: watchedDistrict || '',
+                disabled: !watchedProvinceCode,
               }}
               options={districtOptions}
               onSelect={handleDistrictSelect}
               onSearch={setDistrictSearch}
               isLoading={districtsLoading}
-              error={districtsError?.message}
+              error={errors.district?.message || districtsError?.message}
             />
           </div>
           <div className="flex-1">
@@ -298,14 +335,14 @@ const CustomerArea = ({
                 inputName: 'wardCustomer',
                 className: 'w-full',
                 placeholder: 'Select ward',
-                value: formData.ward,
-                disabled: !selectedDistrictCode || !selectedProvinceCode, // Disable if no city and district dc chọn
+                value: watch('ward') || '',
+                disabled: !watchedDistrictCode || !watchedProvinceCode,
               }}
               options={wardOptions}
               onSelect={handleWardSelect}
               onSearch={setWardSearch}
               isLoading={wardsLoading}
-              error={wardsError?.message}
+              error={errors.ward?.message || wardsError?.message}
             />
           </div>
         </div>

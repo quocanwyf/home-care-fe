@@ -5,6 +5,7 @@ const InputLabel = ({
   label,
   input,
   className = '',
+  error,
 }: {
   className?: string;
   label?: {
@@ -21,6 +22,7 @@ const InputLabel = ({
     value?: string;
     onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   };
+  error?: string;
 }) => {
   return (
     <div className={`flex flex-col gap-2 ${className}`}>
@@ -41,6 +43,7 @@ const InputLabel = ({
         value={input?.value}
         onChange={input?.onChange}
       />
+      {error && <p className="mt-2 text-sm text-red-500">{error}</p>}
     </div>
   );
 };

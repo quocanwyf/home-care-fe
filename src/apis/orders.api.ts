@@ -108,7 +108,7 @@ export const addOrderApi = async (
   orderData: OrderFormData,
   signal?: AbortSignal
 ): Promise<AddOrderResponse> => {
-  const url = `${import.meta.env.VITE_API_BASE_URL}/admin/order/add`;
+  const url = `${import.meta.env.VITE_API_BASE_URL}/admin/requests/create`;
 
   try {
     const response = await fetch(url, {

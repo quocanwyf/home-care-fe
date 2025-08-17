@@ -1,19 +1,26 @@
-// src/components/UserForm.jsx
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
 
 import FailLoadingAndEntry from '@/components/fallback/FailLoadingAndEntry';
 import LoadingFallback from '@/components/fallback/LoadingFallback';
 import { Button } from '@/components/ui/button';
 import { useAddOrder, useGetOrderAddInfo } from '@/hooks/api/useOrders.api';
+import { useAppNavigate } from '@/hooks/common/useAppNavigate';
 import { useToast } from '@/hooks/common/useToast';
-import type { OrderFormData } from '@/types/params/order-params';
+import { orderFormSchema } from '@/schema/order-form-schema';
+import {
+  type OrderFormSchemaType,
+  defaultOrderFormValues,
+} from '@/types/schema/order-form-schema-type';
 import type { Discount } from '@/types/table/objects/customers';
+import { zodResolver } from '@hookform/resolvers/zod';
 
 import CustomerArea from './CustomerArea';
 import InformationOrderArea from './InformationOrderArea';
 import TotalOrderArea from './TotalOrderArea';
 
 export default function OrderForm() {
+  const navigateTo = useAppNavigate<{ from: string }>();
   const { showError, showSuccess } = useToast();
   const [availableDiscounts, setAvailableDiscounts] = useState<Discount[]>([]);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -21,45 +28,22 @@ export default function OrderForm() {
 
   const addOrderMutation = useAddOrder();
 
-  const [formData, setFormData] = useState<OrderFormData>({
-    // Service information
-    serviceTitle: '',
-    serviceBasePrice: 0,
-    coefficient_service: 0,
-    coefficient_other: 1,
-    coefficient_ot: 1,
-
-    // Date and time
-    startDate: '',
-    endDate: '',
-    startTime: '',
-    endTime: '',
-
-    // Cost calculation
-    totalCost: 0,
-    detailCost: [],
-
-    // Customer information
-    fullName: '',
-    phone: '',
-    address: '',
-
-    // Location codes
-    wardCode: '',
-    districtCode: '',
-    provinceCode: '',
-
-    // Location names
-    ward: '',
-    district: '',
-    province: '',
-
-    //selectedDiscountId:
-    selectedDiscountId: null,
-
-    // Account status
-    isCusHasAcc: false,
+  const form = useForm<OrderFormSchemaType>({
+    resolver: zodResolver(orderFormSchema),
+    defaultValues: defaultOrderFormValues,
+    mode: 'onChange', // Validate on change for   UX
+    criteriaMode: 'all', // Show all validation errors
   });
+
+  const {
+    handleSubmit,
+    watch,
+    setValue,
+    getValues,
+    formState: { errors, isValid, isSubmitting },
+  } = form;
+
+  const formData = watch();
 
   const {
     data: orderAddInfo,
@@ -73,121 +57,80 @@ export default function OrderForm() {
     }
   }, [orderInfoError, showError]);
 
-  const resetForm = () => {
-    setFormData({
-      // Service information
-      serviceTitle: '',
-      serviceBasePrice: 0,
-      coefficient_service: 0,
-      coefficient_other: 1,
-      coefficient_ot: 1,
+  const handleUpdateFormData = useCallback(
+    (newData: Partial<OrderFormSchemaType>) => {
+      Object.entries(newData).forEach(([key, value]) => {
+        setValue(key as keyof OrderFormSchemaType, value, {
+          shouldValidate: true,
+          shouldDirty: true,
+          shouldTouch: true,
+        });
+      });
+    },
+    [setValue]
+  );
 
-      // Date and time
-      startDate: '',
-      endDate: '',
-      startTime: '',
-      endTime: '',
-
-      // Cost calculation
-      totalCost: 0,
-      detailCost: [],
-
-      // Customer information
-      fullName: '',
-      phone: '',
-      address: '',
-
-      // Location codes
-      wardCode: '',
-      districtCode: '',
-      provinceCode: '',
-
-      // Location names
-      ward: '',
-      district: '',
-      province: '',
-
-      //selectedDiscountId:
-      selectedDiscountId: null,
-
-      // Account status
-      isCusHasAcc: false,
-    });
-  };
-
-  const handleSubmitOrder = async () => {
+  const handleSubmitOrder = handleSubmit(async (data: OrderFormSchemaType) => {
     try {
-      const validationErrors: string[] = [];
-
-      if (!formData.fullName?.trim())
-        validationErrors.push('Full name is required');
-      if (!formData.phone?.trim())
-        validationErrors.push('Phone number is required');
-      if (!formData.address?.trim())
-        validationErrors.push('Address is required');
-      if (!formData.serviceTitle)
-        validationErrors.push('Service must be selected');
-      if (!formData.startDate) validationErrors.push('Start date is required');
-      if (!formData.endDate) validationErrors.push('End date is required');
-      if (!formData.startTime) validationErrors.push('Start time is required');
-      if (!formData.endTime) validationErrors.push('End time is required');
-
-      if (validationErrors.length > 0) {
-        showError(`Please fix the following:\n${validationErrors.join('\n')}`);
-        return;
-      }
-
       const orderPayload = {
         // Service info
-        serviceTitle: formData.serviceTitle,
-        serviceBasePrice: formData.serviceBasePrice,
-        coefficient_service: formData.coefficient_service,
-        coefficient_other: formData.coefficient_other,
-        coefficient_ot: formData.coefficient_ot,
+        serviceTitle: data.serviceTitle,
+        serviceBasePrice: data.serviceBasePrice,
+        coefficient_service: data.coefficient_service,
+        coefficient_other: data.coefficient_other,
+        coefficient_ot: data.coefficient_ot,
 
-        startDate: formData.startDate,
-        startTime: formData.startTime,
-        endDate: formData.endDate,
-        endTime: formData.endTime,
+        // Date and time
+        startDate: data.startDate,
+        startTime: data.startTime,
+        endDate: data.endDate,
+        endTime: data.endTime,
 
-        // Cost (use final cost if discount applied)
-        totalCost: formData.totalCost || 0,
+        // Cost calculation
+        totalCost: data.totalCost,
+        detailCost: data.detailCost,
 
-        // Customer info
-        fullName: formData.fullName.trim(),
-        phone: formData.phone.trim(),
-        address: formData.address.trim(),
-        wardCode: formData.wardCode || '',
-        districtCode: formData.districtCode || '',
-        provinceCode: formData.provinceCode || '',
-        ward: formData.ward || '',
-        district: formData.district || '',
-        province: formData.province || '',
+        // Customer information
+        fullName: data.fullName.trim(),
+        phone: data.phone.trim(),
+        address: data.address.trim(),
 
-        // selectedDiscountId: formData.selectedDiscountId || null,
+        // Location codes
+        wardCode: data.wardCode,
+        districtCode: data.districtCode,
+        provinceCode: data.provinceCode,
 
-        // Detail cost
-        detailCost: formData.detailCost,
+        // Location names
+        ward: data.ward,
+        district: data.district,
+        province: data.province,
 
-        // Customer account status
-        isCusHasAcc: formData.isCusHasAcc || false,
+        // Account status
+        isCusHasAcc: data.isCusHasAcc,
       };
 
-      console.log('Submitting orderrrrrrrrrrrrrrrr:', orderPayload);
+      console.log('Submitting order:', orderPayload);
 
       const response = await addOrderMutation.mutateAsync(orderPayload);
 
       if (response.success) {
         showSuccess('Order added successfully!');
-        // resetForm();
+        navigateTo('/orders', {
+          state: { from: 'login' },
+          delay: 700,
+        });
       } else {
-        showError('Failed to add order');
+        showError(response.message || 'Failed to add order');
       }
     } catch (error: any) {
       console.error('Submit order error:', error);
-      // Error already handled by the hook's onError
+      showError(
+        error?.response?.data?.message ||
+          error?.message ||
+          'An unexpected error occurred while adding the order'
+      );
     }
-  };
+  });
 
   if (isLoadingOrderInfo) {
     return <LoadingFallback content="Loading order information..." />;
@@ -198,51 +141,52 @@ export default function OrderForm() {
     return <FailLoadingAndEntry content="Failed to load order information" />;
   }
 
-  const handleUpdateFormData = (newData: Partial<typeof formData>) => {
-    setFormData((prev) => ({ ...prev, ...newData }));
-  };
-
   const handleUpdateAvailableDiscounts = (discounts: Discount[]) => {
     setAvailableDiscounts(discounts);
   };
 
+  console.log('Order form errors:', getValues());
+
   return (
-    <div className="h-full w-full overflow-y-auto pb-20">
-      <CustomerArea
-        formData={formData}
-        onUpdateFormData={handleUpdateFormData}
-        handleUpdateAvailableDiscounts={handleUpdateAvailableDiscounts}
-      />
-      <InformationOrderArea
-        formData={formData}
-        onUpdateFormData={handleUpdateFormData}
-        serviceList={orderAddInfo?.result?.serviceList}
-        systemSetting={orderAddInfo?.result?.systemSetting}
-        coefficientOther={orderAddInfo?.result?.coefficientOther}
-        onSetDataForCalculate={setDataForCalculate}
-      />
-      <TotalOrderArea
-        formData={formData}
-        onUpdateFormData={handleUpdateFormData}
-        availableDiscounts={availableDiscounts}
-        dataForCalculate={dataForCalculate}
-      />
-      <Button
-        className="float-right mr-6 cursor-pointer disabled:cursor-not-allowed"
-        disabled={
-          !formData.phone || !formData.fullName || addOrderMutation.isPending
-        }
-        onClick={handleSubmitOrder}
-      >
-        {addOrderMutation.isPending ? (
-          <div className="flex items-center gap-2">
-            <div className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
-            Adding...
-          </div>
-        ) : (
-          'Add order'
-        )}
-      </Button>
+    <div className="h-full w-full overflow-y-auto pb-26">
+      <form onSubmit={handleSubmitOrder}>
+        <CustomerArea
+          formData={formData}
+          onUpdateFormData={handleUpdateFormData}
+          handleUpdateAvailableDiscounts={handleUpdateAvailableDiscounts}
+          form={form} // Pass form object for direct field control
+        />
+        <InformationOrderArea
+          formData={formData}
+          onUpdateFormData={handleUpdateFormData}
+          serviceList={orderAddInfo?.result?.serviceList}
+          systemSetting={orderAddInfo?.result?.systemSetting}
+          coefficientOther={orderAddInfo?.result?.coefficientOther}
+          onSetDataForCalculate={setDataForCalculate}
+          form={form} // Pass form object
+        />
+        <TotalOrderArea
+          formData={formData}
+          onUpdateFormData={handleUpdateFormData}
+          availableDiscounts={availableDiscounts}
+          dataForCalculate={dataForCalculate}
+          form={form} // Pass form object
+        />
+        <Button
+          type="submit"
+          className="float-right mr-6 cursor-pointer disabled:cursor-not-allowed"
+          disabled={!isValid || isSubmitting}
+        >
+          {addOrderMutation.isPending ? (
+            <div className="flex items-center gap-2">
+              <div className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+              Adding...
+            </div>
+          ) : (
+            'Add order'
+          )}
+        </Button>
+      </form>
     </div>
   );
 }

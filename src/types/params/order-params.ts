@@ -1,3 +1,6 @@
+import type { UseFormReturn } from 'react-hook-form';
+
+import type { OrderFormSchema } from '../schema/order-form-schema-type';
 import type { CoefficientOther } from '../table/objects/coefficient';
 import type { Discount } from '../table/objects/customers';
 import type { Location } from '../table/objects/locations';
@@ -54,7 +57,7 @@ export interface OrderFormData {
   province: string;
 
   //selectedDiscountId:
-  selectedDiscountId: null;
+  // selectedDiscountId: null;
 
   // Account status
   isCusHasAcc: boolean;
@@ -74,6 +77,7 @@ export interface CustomerCheckResponse {
 
 // customer area form data
 export type CustomerAreaProps = {
+  form: UseFormReturn<OrderFormSchema>;
   formData: OrderFormData;
   onUpdateFormData: (newData: Partial<OrderFormData>) => void;
   handleUpdateAvailableDiscounts?: (discounts: Discount[]) => void;

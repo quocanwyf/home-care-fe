@@ -69,7 +69,8 @@ export const getCheckExistCustomerPhone = async (
   });
 
   if (!response.ok) {
-    throw new Error(`Customer check failed: ${response.status}`);
+    const error = await response.json();
+    throw new Error(error.message);
   }
 
   const data: CustomerCheckResponse = await response.json();

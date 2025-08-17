@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { Controller } from 'react-hook-form';
 
 import { ClipboardList } from 'lucide-react';
 
@@ -19,21 +20,32 @@ import type { CustomerAreaProps } from '@/types/params/order-params';
 import type { ServiceOption } from '@/types/table/objects/services';
 
 const InformationOrderArea = ({
-  formData,
-  onUpdateFormData,
+  form,
   serviceList = [],
   systemSetting,
   coefficientOther = [],
   onSetDataForCalculate,
 }: CustomerAreaProps) => {
+  const {
+    control,
+    watch,
+    setValue,
+    formState: { errors },
+  } = form;
+
+  const watchedServiceTitle = watch('serviceTitle');
+  const watchedServiceBasePrice = watch('serviceBasePrice');
+  const watchedStartDate = watch('startDate');
+  const watchedEndDate = watch('endDate');
+  const watchedStartTime = watch('startTime');
+  const watchedEndTime = watch('endTime');
+  const watchedCoefficientService = watch('coefficient_service');
+  const watchedCoefficientOther = watch('coefficient_other');
+
   const serviceTypes = useMemo((): ServiceOption[] => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return serviceList.map((service: any) => ({
-      // For dropdown display
       label: `${service.title} - ${new Intl.NumberFormat('vi-VN').format(service.basicPrice)}₫`,
       value: service.serviceId,
-
-      // Data structure theo BE
       serviceData: {
         title: service.title,
         cost: service.basicPrice,
@@ -65,19 +77,14 @@ const InformationOrderArea = ({
   }) => {
     setSelectedRequestType(value);
 
-    // Reset dates when changing request type
     if (value.value === 'short-term') {
       // Keep only startDate for short-term
-      onUpdateFormData({
-        startDate: formData.startDate || '',
-        endDate: formData.startDate || '', // Same date for short-term
-      });
+      setValue('startDate', watchedStartDate || '', { shouldValidate: true });
+      setValue('endDate', watchedStartDate || '', { shouldValidate: true });
     } else {
       // Reset both dates for long-term
-      onUpdateFormData({
-        startDate: '',
-        endDate: '',
-      });
+      setValue('startDate', '', { shouldValidate: true });
+      setValue('endDate', '', { shouldValidate: true });
     }
   };
 
@@ -87,90 +94,81 @@ const InformationOrderArea = ({
   }) => {
     setSelectedServiceType(value);
 
-    // Find selected service data
     const selectedServiceOption = serviceTypes.find(
       (option) => option.value === value.value
     );
 
     if (selectedServiceOption?.serviceData) {
-      onUpdateFormData({
-        serviceTitle: selectedServiceOption.serviceData.title,
-        serviceBasePrice: selectedServiceOption.serviceData.cost,
-        coefficient_service:
-          selectedServiceOption.serviceData.coefficient_service,
+      setValue('serviceTitle', selectedServiceOption.serviceData.title, {
+        shouldValidate: true,
       });
+      setValue('serviceBasePrice', selectedServiceOption.serviceData.cost, {
+        shouldValidate: true,
+      });
+      setValue(
+        'coefficient_service',
+        selectedServiceOption.serviceData.coefficient_service,
+        {
+          shouldValidate: true,
+        }
+      );
     }
   };
 
   //   Update single date handler
   const handleSingleDateChange = (dateString: string) => {
-    onUpdateFormData({
-      startDate: dateString,
-      endDate: dateString, // Same date for short-term
-    });
+    setValue('startDate', dateString, { shouldValidate: true });
+    setValue('endDate', dateString, { shouldValidate: true }); // Same date for short-term
   };
 
-  //  Handle date range selection (long-term) - now receives formatted strings
   const handleDateRangeChange = (range: FormattedDateRange | undefined) => {
     if (range) {
-      onUpdateFormData({
-        startDate: range.startDate,
-        endDate: range.endDate,
-      });
+      setValue('startDate', range.startDate, { shouldValidate: true });
+      setValue('endDate', range.endDate, { shouldValidate: true });
     } else {
-      onUpdateFormData({
-        startDate: '',
-        endDate: '',
-      });
+      setValue('startDate', '', { shouldValidate: true });
+      setValue('endDate', '', { shouldValidate: true });
     }
   };
 
   const handleStartTimeChange = (time: string) => {
-    onUpdateFormData({
-      startTime: time,
-      endTime: '', // Reset end time when start time changes
-    });
+    setValue('startTime', time, { shouldValidate: true });
+    setValue('endTime', '', { shouldValidate: true }); // Reset end time when start time changes
   };
 
   const handleEndTimeChange = (time: string) => {
-    onUpdateFormData({
-      endTime: time,
-    });
+    setValue('endTime', time, { shouldValidate: true });
   };
 
   const checkSelectedDateInPastTime = (): string => {
-    return formData.startDate || '';
+    return watchedStartDate || '';
   };
 
   useEffect(() => {
     if (
-      formData.coefficient_service &&
-      formData.startTime &&
-      formData.endTime &&
-      formData.startDate &&
-      formData.endDate &&
+      watchedCoefficientService &&
+      watchedStartTime &&
+      watchedEndTime &&
+      watchedStartDate &&
+      watchedEndDate &&
       systemSetting &&
       coefficientOther
     ) {
-      // Get active coefficients
       const activeCoeffs = getActiveCoefficients(coefficientOther);
 
-      // Calculate OT hours
       const hoursBreakdown = calculateOvertimeHours(
-        formData.startTime,
-        formData.endTime,
+        watchedStartTime,
+        watchedEndTime,
         systemSetting
       );
 
-      //   Determine coefficient_ot based on working hours
       let coefficient_ot = 1;
       let coefficient_other = 1;
       const isWeekend = checkDateRangeIsWeekend(
-        formData.startDate,
-        formData.endDate
+        watchedStartDate,
+        watchedEndDate
       );
 
-      // If ANY part of work is during OT hours, apply OT coefficient
       if (hoursBreakdown.overtimeHours > 0) {
         coefficient_ot = activeCoeffs.overtime;
       }
@@ -179,53 +177,64 @@ const InformationOrderArea = ({
         coefficient_other = activeCoeffs.weekend;
       }
 
-      // Update form data with new coefficient and breakdown
+      // ✅ Update coefficients using setValue
       if (
-        formData.coefficient_ot !== coefficient_ot ||
-        formData.coefficient_other !== coefficient_other
+        watch('coefficient_ot') !== coefficient_ot ||
+        watchedCoefficientOther !== coefficient_other
       ) {
-        onUpdateFormData({
-          coefficient_ot,
-          coefficient_other,
+        setValue('coefficient_ot', coefficient_ot, { shouldValidate: true });
+        setValue('coefficient_other', coefficient_other, {
+          shouldValidate: true,
         });
       }
-      const updatedFormData = {
-        ...formData,
+
+      // ✅ Prepare calculation data with current form values
+      const currentFormData = {
+        serviceTitle: watchedServiceTitle,
+        serviceBasePrice: watchedServiceBasePrice,
+        coefficient_service: watchedCoefficientService,
         coefficient_ot,
         coefficient_other,
+        startDate: watchedStartDate,
+        endDate: watchedEndDate,
+        startTime: watchedStartTime,
+        endTime: watchedEndTime,
       };
+
       const dataForCalculation = {
         hoursBreakdown,
         activeCoeffs,
-        formData: updatedFormData,
+        formData: currentFormData,
       };
+
       if (onSetDataForCalculate) {
         onSetDataForCalculate(dataForCalculation);
       }
     } else {
-      // ✅ Clear calculation data when requirements not met
       if (onSetDataForCalculate) {
         onSetDataForCalculate(null);
       }
     }
   }, [
-    formData.coefficient_service,
-    formData.coefficient_other,
-    formData.startTime,
-    formData.endTime,
-    formData.startDate,
-    formData.endDate,
+    watchedCoefficientService,
+    watchedCoefficientOther,
+    watchedStartTime,
+    watchedEndTime,
+    watchedStartDate,
+    watchedEndDate,
+    watchedServiceBasePrice,
     systemSetting,
     coefficientOther,
-    formData.serviceBasePrice,
     onSetDataForCalculate,
+    setValue,
+    watch,
   ]);
 
   //   REPLACE generateEndTimeOptions with this corrected logic
   const generateEndTimeOptions = useMemo(() => {
-    if (!formData.startTime) return [];
+    if (!watchedStartTime) return [];
 
-    const [startHour, startMinute] = formData.startTime.split(':').map(Number);
+    const [startHour, startMinute] = watchedStartTime.split(':').map(Number);
     const startTotalMinutes = startHour * 60 + startMinute;
 
     const closeTime = systemSetting?.closeHour || '22:00';
@@ -234,15 +243,12 @@ const InformationOrderArea = ({
 
     const options: string[] = [];
 
-    // Start from 2 hours after start time, then increment by 1 hour
     for (let hourIncrement = 2; hourIncrement <= 12; hourIncrement += 1) {
       const endTotalMinutes = startTotalMinutes + hourIncrement * 60;
 
-      // Stop if exceeds close time
       if (endTotalMinutes > maxTotalMinutes) break;
 
       const endHour = Math.floor(endTotalMinutes / 60);
-      // Keep the same minute pattern as start time
       const endMinute = startMinute;
 
       const timeString = `${endHour.toString().padStart(2, '0')}:${endMinute.toString().padStart(2, '0')}`;
@@ -250,13 +256,12 @@ const InformationOrderArea = ({
     }
 
     return options;
-  }, [formData.startTime, systemSetting?.closeHour]);
+  }, [watchedStartTime, systemSetting?.closeHour]);
 
   const getMaxStartTime = useMemo(() => {
     const closeTime = systemSetting?.closeHour || '22:00';
     const [closeHour, closeMinute] = closeTime.split(':').map(Number);
 
-    // ✅ Max start time is 2 hours before close time
     const maxStartHour = closeHour - 2;
     const maxStartMinute = closeMinute;
 
@@ -275,20 +280,31 @@ const InformationOrderArea = ({
         {/* INPUTS Phone, Full Name */}
         <div className="max-tablet:grid-cols-1 mb-4 grid w-full grid-cols-2 gap-4">
           <div className="flex-1">
-            <LabelDropdown
-              label="Service Type"
-              options={serviceTypes}
-              handleSelect={handleSelectServiceType}
-              className="w-full"
-              labelClassName="w-full"
-              triggerLabel="Choose service type"
-              triggerClassName="h-10 cursor-pointer"
-              selectedValue={selectedServiceType}
+            <Controller
+              name="serviceTitle"
+              control={control}
+              render={({ fieldState: { error } }) => (
+                <>
+                  <LabelDropdown
+                    label="Service Type"
+                    options={serviceTypes}
+                    handleSelect={handleSelectServiceType}
+                    className="w-full"
+                    labelClassName="w-full"
+                    triggerLabel="Choose service type"
+                    triggerClassName="h-10 cursor-pointer"
+                    selectedValue={selectedServiceType}
+                  />
+                  {error && (
+                    <p className="mt-1 text-sm text-red-500">{error.message}</p>
+                  )}
+                </>
+              )}
             />
           </div>
 
           <div className="flex-1">
-            {' '}
+            {/* Request Type doesn't need Controller as it's not a form field */}
             <LabelDropdown
               label="Request Type"
               options={requestTypes}
@@ -302,61 +318,102 @@ const InformationOrderArea = ({
           </div>
         </div>{' '}
         <div className="max-tablet:grid-cols-1 mb-4 grid w-full grid-cols-3 gap-4">
-          <TimePickerDropdown
-            label="Start Time"
-            value={formData.startTime || ''}
-            onChange={handleStartTimeChange}
-            minTime={minTime}
-            maxTime={getMaxStartTime}
-            stepMinutes={30}
-            checkSelectedDateInPastTime={checkSelectedDateInPastTime()}
-            placeholder="Select start time"
+          <Controller
+            name="startTime"
+            control={control}
+            render={({ fieldState: { error } }) => (
+              <>
+                <TimePickerDropdown
+                  label="Start Time"
+                  value={watchedStartTime || ''}
+                  onChange={handleStartTimeChange}
+                  minTime={minTime}
+                  maxTime={getMaxStartTime}
+                  stepMinutes={30}
+                  checkSelectedDateInPastTime={checkSelectedDateInPastTime()}
+                  placeholder="Select start time"
+                />
+              </>
+            )}
           />
 
           {/*  End Time Picker */}
-          <TimePickerDropdown
-            label="End Time"
-            value={formData.endTime || ''}
-            onChange={handleEndTimeChange}
-            disabled={!formData.startTime}
-            customOptions={generateEndTimeOptions}
-            placeholder={
-              formData.startTime ? 'Select end time' : 'Select start time first'
-            }
-            className="w-full"
+          <Controller
+            name="endTime"
+            control={control}
+            render={({ fieldState: { error } }) => (
+              <div className="flex-1">
+                <TimePickerDropdown
+                  label="End Time"
+                  value={watchedEndTime || ''}
+                  onChange={handleEndTimeChange}
+                  disabled={!watchedStartTime}
+                  customOptions={generateEndTimeOptions}
+                  placeholder={
+                    watchedStartTime
+                      ? 'Select end time'
+                      : 'Select start time first'
+                  }
+                  className="w-full"
+                />
+                {error && (
+                  <p className="mt-4 text-sm text-red-500">{error.message}</p>
+                )}
+              </div>
+            )}
           />
 
           {selectedRequestType?.value === 'long-term' ? (
-            <div className="w-full flex-1">
-              <div className="flex flex-col gap-3">
-                <Label htmlFor="date-range" className="px-1">
-                  Select Date Range
-                </Label>
-                <DateRangePicker
-                  placeholder="Select date range"
-                  onChange={handleDateRangeChange}
-                  className="cursor-pointer"
-                  classNameTrigger="rounded-md h-10"
-                  minDate={new Date()}
-                  value={{
-                    startDate: formData.startDate || '',
-                    endDate: formData.endDate || '',
-                  }}
-                  quickSelectionMode="future"
-                />
-              </div>
-            </div>
+            <Controller
+              name="startDate"
+              control={control}
+              render={({ fieldState: { error } }) => (
+                <div className="w-full flex-1">
+                  <div className="flex flex-col gap-3">
+                    <Label htmlFor="date-range" className="px-1">
+                      Select Date Range
+                    </Label>
+                    <DateRangePicker
+                      placeholder="Select date range"
+                      onChange={handleDateRangeChange}
+                      className="cursor-pointer"
+                      classNameTrigger="rounded-md h-10"
+                      minDate={new Date()}
+                      value={{
+                        startDate: watchedStartDate || '',
+                        endDate: watchedEndDate || '',
+                      }}
+                      quickSelectionMode="future"
+                    />
+                    {error && (
+                      <p className="mt-1 text-sm text-red-500">
+                        {error.message}
+                      </p>
+                    )}
+                  </div>
+                </div>
+              )}
+            />
           ) : selectedRequestType?.value === 'short-term' ? (
-            <div className="w-full flex-1">
-              <DatePicker
-                label="Service Date"
-                classNameTrigger="w-full h-10"
-                value={formData.startDate || ''}
-                onChange={handleSingleDateChange}
-                minDate={new Date()}
-                required={true}
-              />
-            </div>
+            <Controller
+              name="startDate"
+              control={control}
+              render={({ fieldState: { error } }) => (
+                <div className="w-full flex-1">
+                  <DatePicker
+                    label="Service Date"
+                    classNameTrigger="w-full h-10"
+                    value={watchedStartDate || ''}
+                    onChange={handleSingleDateChange}
+                    minDate={new Date()}
+                    required={true}
+                  />
+                  {error && (
+                    <p className="mt-1 text-sm text-red-500">{error.message}</p>
+                  )}
+                </div>
+              )}
+            />
           ) : (
             <div className="max-desktop:mt-6 flex w-full flex-1 items-center justify-center">
               <div className="text-muted-foreground text-center">

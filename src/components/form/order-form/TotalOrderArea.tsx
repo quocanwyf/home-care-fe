@@ -4,7 +4,7 @@ import CostSummaryCard from '@/components/common/card/CostSummaryCard';
 import type { CustomerAreaProps } from '@/types/params/order-params';
 
 interface TotalOrderAreaProps {
-  onUpdateFormData: CustomerAreaProps['onUpdateFormData'];
+  form: CustomerAreaProps['form'];
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   availableDiscounts?: any;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -12,7 +12,7 @@ interface TotalOrderAreaProps {
 }
 
 const TotalOrderArea = ({
-  onUpdateFormData,
+  form,
   availableDiscounts,
   dataForCalculate,
 }: TotalOrderAreaProps) => {
@@ -27,7 +27,7 @@ const TotalOrderArea = ({
         </div>
         <div className="flex-1">
           <CostSummaryCard
-            onUpdateFormData={onUpdateFormData}
+            form={form}
             availableDiscounts={availableDiscounts}
             dataForCalculate={dataForCalculate}
           />

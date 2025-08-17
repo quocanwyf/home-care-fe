@@ -84,6 +84,8 @@ const CustomerArea = ({
       const result =
         await checkCustomerExistPhoneMutation.mutateAsync(watchedPhone);
 
+      console.log('Search result:', result);
+
       if (result.success && result.customer) {
         const customerData = result.customer;
         const address = customerData.addresses[0];
@@ -109,8 +111,8 @@ const CustomerArea = ({
         setValue('isCusHasAcc', false, { shouldValidate: true });
       }
     } catch (error) {
-      console.error('Lỗi khi tìm kiếm khách hàng:', error);
-      showError('Lỗi khi tìm kiếm khách hàng: ' + error);
+      console.error(error);
+      showError(String(error));
     } finally {
       setIsSearching(false);
     }

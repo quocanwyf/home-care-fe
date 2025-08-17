@@ -111,17 +111,17 @@ export default function OrderForm() {
 
       console.log('Submitting order:', orderPayload);
 
-      const response = await addOrderMutation.mutateAsync(orderPayload);
+      // const response = await addOrderMutation.mutateAsync(orderPayload);
 
-      if (response.success) {
-        showSuccess('Order added successfully!');
-        navigateTo('/orders', {
-          state: { from: 'login' },
-          delay: 700,
-        });
-      } else {
-        showError(response.message || 'Failed to add order');
-      }
+      // if (response.success) {
+      //   showSuccess('Order added successfully!');
+      //   // navigateTo('/orders', {
+      //   //   state: { from: 'login' },
+      //   //   delay: 700,
+      //   // });
+      // } else {
+      //   showError(response.message || 'Failed to add order');
+      // }
     } catch (error: any) {
       console.error('Submit order error:', error);
       showError(

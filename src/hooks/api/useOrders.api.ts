@@ -25,12 +25,8 @@ export const useGetOrders = (params: OrderParams) => {
 };
 
 export const useCheckCustomerExist = () => {
-  const { showError } = useToast();
   return useMutation<CustomerCheckResponse, Error, string>({
     mutationFn: (phone: string) => getCheckExistCustomerPhone(phone),
-    onError: (error) => {
-      showError('Error checking customer: ' + error);
-    },
   });
 };
 

@@ -5,9 +5,6 @@ import type { Customers } from '@/types/table/objects/customers';
 import type { ColumnDef } from '@tanstack/react-table';
 
 export const customerColumn = (
-  onView?: (row: Customers) => void | undefined,
-  onEdit?: (row: Customers) => void | undefined,
-  onDelete?: (row: Customers) => void | undefined,
   onBan?: (row: Customers) => void | undefined,
   onUnban?: (row: Customers) => void | undefined,
   onViewHistory?: (row: Customers) => void | undefined

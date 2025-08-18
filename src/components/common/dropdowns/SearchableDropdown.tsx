@@ -118,7 +118,7 @@ const SearchableDropdown = ({
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const rawValue = e.target.value;
-    const numericValue = rawValue.replace(/\D/g, ''); // Loại bỏ mọi ký tự không phải số
+    const numericValue = rawValue.replace(/\d/g, ''); //loai bo ky tu so
     setSearchTerm(numericValue);
     debouncedSearch(numericValue);
   };

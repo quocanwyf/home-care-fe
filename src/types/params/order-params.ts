@@ -100,3 +100,10 @@ export interface OrderAddInfoResponse {
 export interface AddOrderResponse {
   success: boolean;
 }
+
+export interface DeleteOrderResponse {
+  success: boolean;
+  message: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  data?: any;
+}

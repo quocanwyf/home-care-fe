@@ -5,7 +5,7 @@ import type { ColumnDef } from '@tanstack/react-table';
 
 export const orderColumn = (
   onView?: (row: Orders) => void,
-  onEdit?: (row: Orders) => void,
+  // onEdit?: (row: Orders) => void,
   onDelete?: (row: Orders) => void
 ): ColumnDef<Orders, unknown>[] => [
   {
@@ -52,13 +52,22 @@ export const orderColumn = (
   {
     id: 'actions',
     header: 'Actions',
-    cell: ({ row }) => (
-      <TableActions
-        onView={onView}
-        onEdit={onEdit}
-        onDelete={onDelete}
-        row={row.original}
-      />
-    ),
+    cell: ({ row }) => {
+      const orderData = row.original;
+
+      const canCancel = ['pending', 'assigned'].includes(
+        orderData.status?.toLowerCase()
+      );
+
+      return (
+        <TableActions
+          onView={onView}
+          // onEdit={onEdit}
+          onDelete={onDelete}
+          row={row.original}
+          canCancel={canCancel}
+        />
+      );
+    },
   },
 ];

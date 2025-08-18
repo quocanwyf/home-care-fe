@@ -1,5 +1,6 @@
 import {
   addOrderApi,
+  deleteOrderApi,
   getCheckExistCustomerPhone,
   getOrderAddInfoApi,
   getOrdersApi,
@@ -7,6 +8,7 @@ import {
 import type {
   AddOrderResponse,
   CustomerCheckResponse,
+  DeleteOrderResponse,
   OrderFormData,
   OrderParams,
 } from '@/types/params/order-params';
@@ -46,6 +48,35 @@ export const useAddOrder = () => {
     mutationFn: (orderData: OrderFormData) => addOrderApi(orderData),
     onError: (error) => {
       showError('Error adding order: ' + error.message);
+    },
+  });
+};
+
+export const useDeleteOrder = () => {
+  const { showError, showSuccess } = useToast();
+
+  return useMutation<DeleteOrderResponse, Error, string>({
+    mutationFn: (requestId: string) => deleteOrderApi(requestId),
+    onSuccess: (data) => {
+      if (data.success) {
+        showSuccess(data.message || 'Request cancelled successfully!');
+      } else {
+        showError(data.message || 'Request cancelled fail!');
+      }
+    },
+    onError: (error) => {
+      // Handle different error messages từ API spec
+      let errorMessage = 'An error occurred while fetching requests';
+
+      if (error.message === 'Request not found') {
+        errorMessage = 'Request not found';
+      } else if (error.message === 'Request cancelled fail!') {
+        errorMessage = 'Request cancelled fail!';
+      } else if (error.message.includes('Request cancelled successfully')) {
+        errorMessage = 'Request cancelled successfully!';
+      }
+
+      showError(errorMessage);
     },
   });
 };

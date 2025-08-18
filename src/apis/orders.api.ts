@@ -1,6 +1,7 @@
 import type {
   AddOrderResponse,
   CustomerCheckResponse,
+  DeleteOrderResponse,
   OrderAddInfoResponse,
   OrderFormData,
   OrderParams,
@@ -131,5 +132,48 @@ export const addOrderApi = async (
   } catch (error) {
     console.error('Error adding order:', error);
     throw new Error('Server error');
+  }
+};
+
+export const deleteOrderApi = async (
+  requestId: string,
+  signal?: AbortSignal
+): Promise<DeleteOrderResponse> => {
+  const url = `${import.meta.env.VITE_API_BASE_URL}/admin/requests/cancelAll/${requestId}`;
+
+  try {
+    const response = await fetch(url, {
+      method: 'PATCH', // ✅ Using PATCH as specified
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      credentials: 'include',
+      signal,
+    });
+
+    if (!response.ok) {
+      // Handle different error status codes
+      if (response.status === 404) {
+        throw new Error('Request not found');
+      } else if (response.status >= 500) {
+        throw new Error('An error occurred while fetching requests');
+      } else {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || 'Request cancelled fail!');
+      }
+    }
+
+    const data: DeleteOrderResponse = await response.json();
+    return data;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
+    console.error('Error deleting order:', error);
+
+    // Re-throw với message phù hợp
+    if (error.name === 'AbortError') {
+      throw new Error('Request was cancelled');
+    }
+
+    throw error;
   }
 };

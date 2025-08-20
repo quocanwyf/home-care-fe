@@ -107,3 +107,40 @@ export interface DeleteOrderResponse {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   data?: any;
 }
+
+// add order detail
+export interface OrderDetailResponse {
+  success: boolean;
+  request: {
+    orderId: string;
+    orderDate: string;
+    status: string;
+    customerInfo: {
+      fullName: string;
+      phone: string;
+      address: string;
+      usedPoint: number;
+    };
+    service: {
+      title: string;
+      coefficient_service: number;
+      coefficient_other: number;
+      cost: number;
+    };
+    totalCost: number;
+  };
+  requestDetails: Array<{
+    detailId: string;
+    workingDate: string;
+    startTime: string;
+    endTime: string;
+    status: string;
+    cost: number;
+    helper_cost: number;
+    helper: {
+      _id: string;
+      fullName: string;
+      phone: string;
+    };
+  }>;
+}

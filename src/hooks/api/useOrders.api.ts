@@ -3,12 +3,14 @@ import {
   deleteOrderApi,
   getCheckExistCustomerPhone,
   getOrderAddInfoApi,
+  getOrderDetailApi,
   getOrdersApi,
 } from '@/apis/orders.api';
 import type {
   AddOrderResponse,
   CustomerCheckResponse,
   DeleteOrderResponse,
+  OrderDetailResponse,
   OrderFormData,
   OrderParams,
 } from '@/types/params/order-params';
@@ -22,7 +24,7 @@ export const useGetOrders = (params: OrderParams) => {
     queryFn: ({ signal }) => getOrdersApi(params, signal),
     placeholderData: undefined,
     staleTime: 1 * 60 * 1000,
-    refetchOnWindowFocus: false,
+    refetchOnWindowFocus: true,
   });
 };
 
@@ -53,17 +55,11 @@ export const useAddOrder = () => {
 };
 
 export const useDeleteOrder = () => {
-  const { showError, showSuccess } = useToast();
+  const { showError } = useToast();
 
   return useMutation<DeleteOrderResponse, Error, string>({
     mutationFn: (requestId: string) => deleteOrderApi(requestId),
-    onSuccess: (data) => {
-      if (data.success) {
-        showSuccess(data.message || 'Request cancelled successfully!');
-      } else {
-        showError(data.message || 'Request cancelled fail!');
-      }
-    },
+
     onError: (error) => {
       // Handle different error messages từ API spec
       let errorMessage = 'An error occurred while fetching requests';
@@ -77,6 +73,28 @@ export const useDeleteOrder = () => {
       }
 
       showError(errorMessage);
+    },
+  });
+};
+
+export const useGetOrderDetail = (requestId: string | undefined) => {
+  return useQuery<OrderDetailResponse, Error>({
+    queryKey: ['order-detail', requestId],
+    queryFn: ({ signal }) => {
+      if (!requestId) {
+        throw new Error('Request ID is required');
+      }
+      return getOrderDetailApi(requestId, signal);
+    },
+    enabled: !!requestId, // Only run query if requestId exists
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    refetchOnWindowFocus: false,
+    retry: (failureCount, error) => {
+      // Don't retry for 404 errors
+      if (error.message === 'Order not found!') {
+        return false;
+      }
+      return failureCount < 2;
     },
   });
 };

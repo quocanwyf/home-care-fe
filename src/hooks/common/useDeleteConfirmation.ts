@@ -38,7 +38,6 @@ export const useDeleteConfirmation = ({
 
   const openDeleteConfirmation = (id: string, entityInfo?: EntityInfo) => {
     setSelectedId(id);
-    console.log('Opening delete confirmation for:', id, entityInfo);
     setSelectedEntityInfo(entityInfo || null);
     setIsDialogOpen(true);
   };
@@ -51,7 +50,9 @@ export const useDeleteConfirmation = ({
 
   const handleDeleteConfirm = async (): Promise<void> => {
     if (!selectedId) {
-      throw new Error(`No ${entityName.toLowerCase()} selected for deletion`);
+      throw new Error(
+        `No ${entityName.toLowerCase()} selected for cancellation`
+      );
     }
 
     setIsDeleting(true);
@@ -62,11 +63,11 @@ export const useDeleteConfirmation = ({
       // Handle different response formats
       if (response?.success !== false) {
         // Consider success if not explicitly false
-        showSuccess(successMessage || `${entityName} deleted successfully!`);
+        showSuccess(successMessage || `${entityName} cancelled successfully!`);
         onDeleteSuccess?.();
       } else {
         throw new Error(
-          response?.message || `Failed to delete ${entityName.toLowerCase()}`
+          response?.message || `Failed to cancel ${entityName.toLowerCase()}`
         );
       }
     } catch (error: any) {
@@ -74,7 +75,7 @@ export const useDeleteConfirmation = ({
         error?.response?.data?.message ||
         error?.message ||
         errorMessage ||
-        `Failed to delete ${entityName.toLowerCase()}`;
+        `Failed to cancel ${entityName.toLowerCase()}`;
 
       showError(errorMsg);
       onDeleteError?.(error);

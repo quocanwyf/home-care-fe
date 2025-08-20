@@ -1,7 +1,33 @@
-import { useParams } from 'react-router-dom';
+import { useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+
+import { SquareUser } from 'lucide-react';
+
+import OrderStatusBadge from '@/components/common/badge/StatusOrdersBadge';
+import OrderInformation from '@/components/form/order-form/detail/OrderInformation';
+import { useGetOrderDetail } from '@/hooks/api/useOrders.api';
+import { useToast } from '@/hooks/common/useToast';
 
 const DetailOrderPage = () => {
-  const { id } = useParams(); // lấy id từ /orders/detail/:id
+  const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
+  const { showError } = useToast();
+
+  const {
+    data: orderDetailData,
+    isLoading,
+    isError,
+    error,
+    isFetching,
+  } = useGetOrderDetail(id);
+
+  console.log(orderDetailData);
+
+  useEffect(() => {
+    if (isError && error) {
+      showError(error.message);
+    }
+  }, [isError, error, showError]);
 
   return (
     <div className="h-full w-full rounded-xl bg-white px-8 py-2">
@@ -17,7 +43,8 @@ const DetailOrderPage = () => {
                    className="focus:border-border-primary/50 shadow-sm"
                    required
                  /> */}
-      {id}
+
+      <OrderInformation orderData={orderDetailData} />
     </div>
   );
 };

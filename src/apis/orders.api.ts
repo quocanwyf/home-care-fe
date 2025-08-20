@@ -3,6 +3,7 @@ import type {
   CustomerCheckResponse,
   DeleteOrderResponse,
   OrderAddInfoResponse,
+  OrderDetailResponse,
   OrderFormData,
   OrderParams,
 } from '@/types/params/order-params';
@@ -175,5 +176,64 @@ export const deleteOrderApi = async (
     }
 
     throw error;
+  }
+};
+
+//order detail get
+export const getOrderDetailApi = async (
+  requestId: string,
+  signal?: AbortSignal
+): Promise<OrderDetailResponse> => {
+  const url = `${import.meta.env.VITE_API_BASE_URL}/admin/requests/detail/${requestId}`;
+
+  try {
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      credentials: 'include',
+      signal,
+    });
+
+    if (!response.ok) {
+      // Handle specific error cases
+      if (response.status === 404) {
+        throw new Error('Order not found!');
+      } else if (response.status >= 500) {
+        throw new Error('Server error');
+      } else {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || 'Failed to fetch order details');
+      }
+    }
+
+    const data: OrderDetailResponse = await response.json();
+
+    // Validate response structure
+    if (!data.success) {
+      throw new Error('Order not found!');
+    }
+
+    return data;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
+    console.error('Error fetching order detail:', error);
+
+    // Re-throw with appropriate message
+    if (error.name === 'AbortError') {
+      throw new Error('Request was cancelled');
+    }
+
+    // If it's already our custom error message, keep it
+    if (
+      error.message === 'Order not found!' ||
+      error.message === 'Server error'
+    ) {
+      throw error;
+    }
+
+    // Default to server error for unknown issues
+    throw new Error('Server error');
   }
 };

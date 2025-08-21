@@ -1,6 +1,6 @@
 // columns/orderColumns.ts
 // import OrderStatusBadge from '@/components/common/badge/StatusOrdersBadge';
-import TableActions from '@/components/table/TableActions';
+import TableActions from '@/components/common/button/TableActions';
 import type { Customers } from '@/types/table/objects/customers';
 import type { ColumnDef } from '@tanstack/react-table';
 

@@ -8,7 +8,7 @@ import {
   Trash2,
 } from 'lucide-react';
 
-import TooltipInfo from '../common/primitives/TooltipInfo';
+import TooltipInfo from '../primitives/TooltipInfo';
 
 interface TableActionsProps<T> {
   onView?: (row: T) => void | undefined;

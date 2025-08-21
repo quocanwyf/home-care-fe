@@ -1,7 +1,10 @@
 import OrderStatusBadge from '@/components/common/badge/StatusOrdersBadge';
-import TableActions from '@/components/table/TableActions';
-import type { Orders } from '@/types/table/objects/orders';
+import TableActions from '@/components/common/button/TableActions';
+import TableDetailActions from '@/components/common/button/TableDetailActions';
+import type { Orders, RequestDetail } from '@/types/table/objects/orders';
 import type { ColumnDef } from '@tanstack/react-table';
+
+import type { ObjectsWithStatus } from '../objects/union-objects';
 
 export const orderColumn = (
   onView?: (row: Orders) => void,
@@ -66,6 +69,84 @@ export const orderColumn = (
           onDelete={onDelete}
           row={row.original}
           canCancel={canCancel}
+        />
+      );
+    },
+  },
+];
+
+export const orderDetailColumns: ColumnDef<RequestDetail>[] = [
+  {
+    accessorKey: 'startTime',
+    header: 'Start Time',
+    cell: ({ row }) => (
+      <span className="font-medium">{row.getValue('startTime')}</span>
+    ),
+  },
+  {
+    accessorKey: 'endTime',
+    header: 'End Time',
+    cell: ({ row }) => (
+      <span className="font-medium">{row.getValue('endTime')}</span>
+    ),
+  },
+  {
+    accessorKey: 'workingDate',
+    header: 'Working Date',
+    cell: ({ row }) => (
+      <span className="font-medium">{row.getValue('workingDate')}</span>
+    ),
+  },
+  {
+    accessorKey: 'helper',
+    header: 'Helper',
+    cell: ({ row }) => {
+      const helper = row.getValue('helper') as {
+        fullName: string;
+        phone: string;
+      };
+      return (
+        <span className="font-medium">{helper?.fullName || 'Chưa có'}</span>
+      );
+    },
+  },
+  {
+    accessorKey: 'status',
+    header: 'Status',
+    cell: ({ row }) => {
+      const status = row.getValue('status') as string;
+      return <OrderStatusBadge status={status as ObjectsWithStatus} />;
+    },
+  },
+  {
+    id: 'actions',
+    header: 'Actions',
+    cell: ({ row }) => {
+      const status = row.getValue('status') as string;
+      const detailId = row.original.detailId;
+
+      // ✅ Action handlers
+      const handleCancel = () => {
+        console.log('Cancel work for detail:', detailId);
+        // TODO: Implement cancel logic
+      };
+
+      const handleStartWork = () => {
+        console.log('Start work for detail:', detailId);
+        // TODO: Implement start work logic
+      };
+
+      const handleCompleteWork = () => {
+        console.log('Complete work for detail:', detailId);
+        // TODO: Implement complete work logic
+      };
+
+      return (
+        <TableDetailActions
+          status={status}
+          onCancel={handleCancel}
+          onStartWork={handleStartWork}
+          onCompleteWork={handleCompleteWork}
         />
       );
     },

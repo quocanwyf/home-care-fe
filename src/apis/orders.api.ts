@@ -237,3 +237,48 @@ export const getOrderDetailApi = async (
     throw new Error('Server error');
   }
 };
+
+export const cancelOrderDetailApi = async (
+  requestDetailId: string,
+  signal?: AbortSignal
+): Promise<{ success: boolean; message: string }> => {
+  const url = `${import.meta.env.VITE_API_BASE_URL}/admin/requests/cancelDetail/${requestDetailId}`;
+
+  try {
+    const response = await fetch(url, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      credentials: 'include',
+      signal,
+    });
+
+    if (!response.ok) {
+      // Handle different error status codes
+      if (response.status === 404) {
+        throw new Error('Request detail not found');
+      } else if (response.status === 400) {
+        throw new Error('Cannot cancel this request detail');
+      } else if (response.status >= 500) {
+        throw new Error('Server error occurred');
+      } else {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || 'Failed to cancel request detail');
+      }
+    }
+
+    const data = await response.json();
+    return data;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
+    console.error('Error canceling order detail:', error);
+
+    // Re-throw with appropriate message
+    if (error.name === 'AbortError') {
+      throw new Error('Request was cancelled');
+    }
+
+    throw error;
+  }
+};

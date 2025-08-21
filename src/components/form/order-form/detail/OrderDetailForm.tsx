@@ -19,6 +19,7 @@ const OrderDetailForm = () => {
     isError,
     error,
     isFetching,
+    refetch,
   } = useGetOrderDetail(id);
 
   console.log(orderDetailData);
@@ -28,6 +29,10 @@ const OrderDetailForm = () => {
       showError(error.message);
     }
   }, [isError, error, showError]);
+
+  const handleRefresh = () => {
+    refetch();
+  };
 
   if (isLoading) {
     return <LoadingFallback content="Loading order information..." />;
@@ -39,13 +44,14 @@ const OrderDetailForm = () => {
   }
 
   return (
-    <>
+    <div className="h-screen overflow-auto">
       <OrderInformation orderData={orderDetailData} />
       <OrderDetailInformation
         requestDetails={orderDetailData?.requestDetails}
         isLoading={isLoading || isFetching}
+        onRefresh={handleRefresh}
       />
-    </>
+    </div>
   );
 };
 

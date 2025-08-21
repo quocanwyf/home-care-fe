@@ -1,12 +1,4 @@
-import {
-  Ban,
-  CircleX,
-  Edit,
-  Eye,
-  FileClock,
-  ShieldBan,
-  Trash2,
-} from 'lucide-react';
+import { Ban, CircleX, Edit, Eye, FileClock, ShieldBan } from 'lucide-react';
 
 import TooltipInfo from '../primitives/TooltipInfo';
 

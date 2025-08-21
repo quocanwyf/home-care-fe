@@ -4,10 +4,12 @@ import TooltipInfo from '../primitives/TooltipInfo';
 
 interface TableDetailActionsProps {
   status: string;
-  onCancel?: () => void;
-  onStartWork?: () => void;
-  onCompleteWork?: () => void;
+  onCancel?: (detailId: string) => void;
+  onStartWork?: (detailId: string) => void;
+  onCompleteWork?: (detailId: string) => void;
   isLoading?: boolean;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  row?: any;
 }
 
 const TableDetailActions = ({
@@ -15,7 +17,7 @@ const TableDetailActions = ({
   onCancel,
   onStartWork,
   onCompleteWork,
-  isLoading = false,
+  row,
 }: TableDetailActionsProps) => {
   return (
     <div className="flex flex-wrap gap-2">
@@ -23,7 +25,7 @@ const TableDetailActions = ({
       {status === 'assigned' && (
         <TooltipInfo content="Start Work">
           <button
-            onClick={() => onStartWork?.()}
+            onClick={() => onStartWork?.(row)}
             className="cursor-pointer p-1 text-yellow-400 transition-colors hover:text-yellow-600"
             title="Start Work"
           >
@@ -36,7 +38,7 @@ const TableDetailActions = ({
       {status === 'in_progress' && (
         <TooltipInfo content="Complete Work">
           <button
-            onClick={() => onCompleteWork?.()}
+            onClick={() => onCompleteWork?.(row)}
             className="cursor-pointer p-1 text-yellow-400 transition-colors hover:text-yellow-600"
             title="Complete Work"
           >
@@ -49,7 +51,7 @@ const TableDetailActions = ({
       {(status === 'pending' || status === 'assigned') && (
         <TooltipInfo content="Cancel Work">
           <button
-            onClick={() => onCancel?.()}
+            onClick={() => onCancel?.(row)}
             className="cursor-pointer p-1 text-yellow-400 transition-colors hover:text-yellow-600"
             title="Cancel Work"
           >

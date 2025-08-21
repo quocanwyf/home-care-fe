@@ -75,7 +75,12 @@ export const orderColumn = (
   },
 ];
 
-export const orderDetailColumns: ColumnDef<RequestDetail>[] = [
+export const orderDetailColumns = (
+  onCancel: (detailId: string) => void,
+  onStart: (detailId: string) => void,
+  onComplete: (detailId: string) => void,
+  isActionLoading: boolean = false
+): ColumnDef<RequestDetail>[] => [
   {
     accessorKey: 'startTime',
     header: 'Start Time',
@@ -106,7 +111,9 @@ export const orderDetailColumns: ColumnDef<RequestDetail>[] = [
         phone: string;
       };
       return (
-        <span className="font-medium">{helper?.fullName || 'Chưa có'}</span>
+        <span className="font-medium">
+          {helper?.fullName || 'Has not assigned'}
+        </span>
       );
     },
   },
@@ -125,28 +132,28 @@ export const orderDetailColumns: ColumnDef<RequestDetail>[] = [
       const status = row.getValue('status') as string;
       const detailId = row.original.detailId;
 
-      // ✅ Action handlers
       const handleCancel = () => {
-        console.log('Cancel work for detail:', detailId);
-        // TODO: Implement cancel logic
+        console.log('Calling onCancel with:', detailId);
+        onCancel(detailId);
       };
 
-      const handleStartWork = () => {
-        console.log('Start work for detail:', detailId);
-        // TODO: Implement start work logic
+      const handleStart = () => {
+        console.log('Calling onStart with:', detailId);
+        onStart(detailId);
       };
 
-      const handleCompleteWork = () => {
-        console.log('Complete work for detail:', detailId);
-        // TODO: Implement complete work logic
+      const handleComplete = () => {
+        console.log('Calling onComplete with:', detailId);
+        onComplete(detailId);
       };
 
       return (
         <TableDetailActions
           status={status}
           onCancel={handleCancel}
-          onStartWork={handleStartWork}
-          onCompleteWork={handleCompleteWork}
+          onStartWork={handleStart}
+          onCompleteWork={handleComplete}
+          isLoading={isActionLoading}
         />
       );
     },

@@ -109,8 +109,6 @@ export default function OrderForm() {
         isCusHasAcc: data.isCusHasAcc,
       };
 
-      console.log('Submitting order:', orderPayload);
-
       const response = await addOrderMutation.mutateAsync(orderPayload);
 
       if (response.success) {
@@ -144,8 +142,6 @@ export default function OrderForm() {
   const handleUpdateAvailableDiscounts = (discounts: Discount[]) => {
     setAvailableDiscounts(discounts);
   };
-
-  console.log('Order form errors:', getValues());
 
   return (
     <div className="h-full w-full overflow-y-auto pb-26">

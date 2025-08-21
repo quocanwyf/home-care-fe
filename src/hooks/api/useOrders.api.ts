@@ -1,5 +1,6 @@
 import {
   addOrderApi,
+  cancelOrderDetailApi,
   deleteOrderApi,
   getCheckExistCustomerPhone,
   getOrderAddInfoApi,
@@ -95,6 +96,35 @@ export const useGetOrderDetail = (requestId: string | undefined) => {
         return false;
       }
       return failureCount < 2;
+    },
+  });
+};
+
+export const useCancelOrderDetail = () => {
+  const { showSuccess, showError } = useToast();
+
+  return useMutation<{ success: boolean; message: string }, Error, string>({
+    mutationFn: (requestDetailId: string) =>
+      cancelOrderDetailApi(requestDetailId),
+
+    onSuccess: (data) => {
+      showSuccess(data.message || 'Request detail cancelled successfully!');
+    },
+
+    onError: (error) => {
+      // Handle different error messages
+      let errorMessage = 'An error occurred while canceling request detail';
+
+      if (error.message === 'Request detail not found') {
+        errorMessage = 'Request detail not found';
+      } else if (error.message === 'Cannot cancel this request detail') {
+        errorMessage =
+          'Cannot cancel this request detail. Check status requirements.';
+      } else if (error.message === 'Server error occurred') {
+        errorMessage = 'Server error occurred';
+      }
+
+      showError(errorMessage);
     },
   });
 };

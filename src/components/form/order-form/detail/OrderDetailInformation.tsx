@@ -76,6 +76,14 @@ const OrderDetailInformation = ({
     entityName: 'Request',
     onDeleteSuccess: () => {
       onRefresh?.();
+      console.log('cdaicaon di mêmya');
+      navigateTo('/orders', {
+        toast: {
+          type: 'success',
+          message: 'Điều hướng thành công!',
+        },
+        delay: 1000,
+      });
     },
     successMessage: 'Payment processed successfully!',
     errorMessage: 'Failed to process payment!',
@@ -134,16 +142,6 @@ const OrderDetailInformation = ({
         totalDetails: requestDetails?.length || 0,
         completedDetails:
           requestDetails?.filter((d) => d.status === 'completed').length || 0,
-        onDeleteSuccess: () => {
-          console.log('cdaicaon di mêmya');
-          navigateTo('/dashboard', {
-            toast: {
-              type: 'success',
-              message: 'Điều hướng thành công!',
-            },
-            delay: 1000,
-          });
-        },
       });
     }
   };

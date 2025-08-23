@@ -22,6 +22,7 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { useToast } from '../common/useToast';
 
 export const useGetOrders = (params: OrderParams) => {
+  console.log('cc param', params);
   return useQuery({
     queryKey: ['orders', params], // `params` là một phần của key, khi nó thay đổi, query sẽ fetch lại
     queryFn: ({ signal }) => getOrdersApi(params, signal),
@@ -88,7 +89,7 @@ export const useGetOrderDetail = (requestId: string | undefined) => {
       return getOrderDetailApi(requestId, signal);
     },
     enabled: !!requestId, // Only run query if requestId exists
-    staleTime: 5 * 60 * 1000, // 5 minutes
+    // staleTime: 5 * 60 * 1000, // 5 minutes
     refetchOnWindowFocus: false,
     retry: (failureCount, error) => {
       // Don't retry for 404 errors
@@ -126,7 +127,7 @@ export const useCancelOrderDetail = () => {
 };
 
 export const useChangeRequestDetailStatus = () => {
-  const { showSuccess, showError } = useToast();
+  const { showError } = useToast();
 
   return useMutation<
     { success: boolean; message: string },
@@ -135,10 +136,6 @@ export const useChangeRequestDetailStatus = () => {
   >({
     mutationFn: ({ detailId, status }) =>
       changeRequestDetailStatusApi(detailId, status),
-
-    onSuccess: (data) => {
-      showSuccess(data.message || 'Status updated successfully!');
-    },
 
     onError: (error) => {
       let errorMessage = 'An error occurred while fetching requests';
@@ -161,7 +158,7 @@ export const useChangeRequestDetailStatus = () => {
 };
 
 export const useChangeRequestStatus = () => {
-  const { showSuccess, showError } = useToast();
+  const { showError } = useToast();
 
   return useMutation<
     { success: boolean; message: string },
@@ -170,10 +167,6 @@ export const useChangeRequestStatus = () => {
   >({
     mutationFn: ({ requestId, status }) =>
       changeRequestStatusApi(requestId, status),
-
-    onSuccess: (data) => {
-      showSuccess(data.message || 'Payment processed successfully!');
-    },
 
     onError: (error) => {
       let errorMessage = 'An error occurred while processing payment';

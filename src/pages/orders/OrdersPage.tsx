@@ -99,6 +99,8 @@ const OrdersPage = () => {
     search: searchKeyword ?? '',
   };
 
+  console.log('par', params);
+
   const {
     data: ordersFetchData,
     isLoading,

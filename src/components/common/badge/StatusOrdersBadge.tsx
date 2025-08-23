@@ -10,9 +10,9 @@ const OrderStatusBadge = ({ status }: { status: ObjectsWithStatus }) => {
     >
       {status === 'inProgress'
         ? 'in progress'
-        : // : status === 'waitPayment'
-          //   ? 'wait payment'
-          status}
+        : status === 'waitPayment'
+          ? 'wait payment'
+          : status}
     </span>
   );
 };

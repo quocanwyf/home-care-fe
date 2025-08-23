@@ -11,7 +11,6 @@ import './index.css';
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 1000 * 60 * 5, // Dữ liệu sẽ được coi là "tươi" trong 5 phút
       refetchOnWindowFocus: false, // Tắt tính năng tự động fetch lại khi focus vào tab
       retry: 0, // Thử gọi lại API 2 lần nếu thất bại
     },

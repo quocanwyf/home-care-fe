@@ -39,8 +39,7 @@ export default function OrderForm() {
     handleSubmit,
     watch,
     setValue,
-    getValues,
-    formState: { errors, isValid, isSubmitting },
+    formState: { isValid, isSubmitting },
   } = form;
 
   const formData = watch();

@@ -3,16 +3,12 @@ import { useEffect, useState } from 'react';
 import ConfirmDialog from '@/components/common/float-display/ConfirmDialog';
 import { AppTable } from '@/components/table/AppTable';
 import { STATUS_ORDERS } from '@/constants/dropdown/status-orders';
-import {
-  handleDelete,
-  handleEdit,
-  handleView,
-} from '@/helpers/handle-table-actions';
+import { handleView } from '@/helpers/handle-table-actions';
 // import { data } from '@/constants/mock-data/mock-data-orders';
 import { useDeleteOrder, useGetOrders } from '@/hooks/api/useOrders.api';
 import { useAppNavigate } from '@/hooks/common/useAppNavigate';
+import { useConfirmation } from '@/hooks/common/useConfirmation';
 import { useDateRangeConfig } from '@/hooks/common/useDateRangeConfig';
-import { useDeleteConfirmation } from '@/hooks/common/useDeleteConfirmation';
 import { usePageSize } from '@/hooks/common/usePageSize';
 import { useSearchConfig } from '@/hooks/common/useSearchConfig';
 import { useStatusFilter } from '@/hooks/common/useStatusFilter';
@@ -27,7 +23,7 @@ const OrdersPage = () => {
 
   const deleteOrderMutation = useDeleteOrder();
 
-  const orderDeleteConfirmation = useDeleteConfirmation({
+  const orderDeleteConfirmation = useConfirmation({
     deleteFunction: (requestId: string) =>
       deleteOrderMutation.mutateAsync(requestId),
     entityName: 'Order',
@@ -42,8 +38,8 @@ const OrdersPage = () => {
     errorMessage: 'Request cancelled fail!',
   });
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleDeleteOrder = (row: any) => {
-    console.log('row ccc :::', row);
     orderDeleteConfirmation.openDeleteConfirmation(
       row.requestId || row.orderId,
       {

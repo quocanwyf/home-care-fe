@@ -8,26 +8,29 @@ interface EntityInfo {
   phoneNumberCustomers?: string;
   serviceCategory?: string;
   status?: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [key: string]: any; // Allow any additional fields
 }
 
-interface UseDeleteConfirmationProps {
+interface UseConfirmationProps {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   deleteFunction: (id: string) => Promise<any>; // Generic delete function
   entityName: string; // "Order", "Staff", "Maid", etc.
   onDeleteSuccess?: () => void;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   onDeleteError?: (error: any) => void;
   successMessage?: string;
   errorMessage?: string;
 }
 
-export const useDeleteConfirmation = ({
+export const useConfirmation = ({
   deleteFunction,
   entityName,
   onDeleteSuccess,
   onDeleteError,
   successMessage,
   errorMessage,
-}: UseDeleteConfirmationProps) => {
+}: UseConfirmationProps) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [selectedEntityInfo, setSelectedEntityInfo] =
@@ -62,6 +65,7 @@ export const useDeleteConfirmation = ({
 
       // Handle different response formats
       if (response?.success !== false) {
+        console.log('trếp', response);
         // Consider success if not explicitly false
         showSuccess(successMessage || `${entityName} cancelled successfully!`);
         onDeleteSuccess?.();
@@ -70,6 +74,7 @@ export const useDeleteConfirmation = ({
           response?.message || `Failed to cancel ${entityName.toLowerCase()}`
         );
       }
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       const errorMsg =
         error?.response?.data?.message ||

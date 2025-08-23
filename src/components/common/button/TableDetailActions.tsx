@@ -35,7 +35,7 @@ const TableDetailActions = ({
       )}
 
       {/* Complete Work Button */}
-      {status === 'in_progress' && (
+      {status === 'inProgress' && (
         <TooltipInfo content="Complete Work">
           <button
             onClick={() => onCompleteWork?.(row)}

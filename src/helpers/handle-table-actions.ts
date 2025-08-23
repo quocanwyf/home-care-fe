@@ -30,11 +30,3 @@ export const handleView = ({
     delay: 1000,
   });
 };
-
-export const handleEdit = () => {
-  console.log('Sửa');
-};
-
-export const handleDelete = () => {
-  console.log('Xoá');
-};

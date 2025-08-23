@@ -282,3 +282,93 @@ export const cancelOrderDetailApi = async (
     throw error;
   }
 };
+
+export const changeRequestDetailStatusApi = async (
+  detailId: string,
+  status: 'inProgress' | 'completed',
+  signal?: AbortSignal
+): Promise<{ success: boolean; message: string }> => {
+  const url = `${import.meta.env.VITE_API_BASE_URL}/admin/requests/changeStatus/${detailId}?status=${status}&type=requestDetail`;
+
+  try {
+    const response = await fetch(url, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      credentials: 'include',
+      signal,
+    });
+
+    if (!response.ok) {
+      if (response.status === 404) {
+        throw new Error('Request detail not found');
+      } else if (response.status === 400) {
+        throw new Error('Cannot change status of this request detail');
+      } else if (response.status >= 500) {
+        throw new Error('An error occurred while fetching requests');
+      } else {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(
+          errorData.message || 'Failed to change request detail status'
+        );
+      }
+    }
+
+    const data = await response.json();
+    return data;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
+    console.error('Error changing request detail status:', error);
+
+    if (error.name === 'AbortError') {
+      throw new Error('Request was cancelled');
+    }
+
+    throw error;
+  }
+};
+
+export const changeRequestStatusApi = async (
+  requestId: string,
+  status: 'completed',
+  signal?: AbortSignal
+): Promise<{ success: boolean; message: string }> => {
+  const url = `${import.meta.env.VITE_API_BASE_URL}/admin/requests/changeStatus/${requestId}?status=${status}&type=request`;
+
+  try {
+    const response = await fetch(url, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      credentials: 'include',
+      signal,
+    });
+
+    if (!response.ok) {
+      if (response.status === 404) {
+        throw new Error('Request not found');
+      } else if (response.status === 400) {
+        throw new Error('Cannot change status of this request');
+      } else if (response.status >= 500) {
+        throw new Error('An error occurred while processing payment');
+      } else {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || 'Failed to process payment');
+      }
+    }
+
+    const data = await response.json();
+    return data;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
+    console.error('Error changing request status:', error);
+
+    if (error.name === 'AbortError') {
+      throw new Error('Request was cancelled');
+    }
+
+    throw error;
+  }
+};

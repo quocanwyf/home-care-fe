@@ -1,6 +1,8 @@
 import {
   addOrderApi,
   cancelOrderDetailApi,
+  changeRequestDetailStatusApi,
+  changeRequestStatusApi,
   deleteOrderApi,
   getCheckExistCustomerPhone,
   getOrderAddInfoApi,
@@ -23,8 +25,6 @@ export const useGetOrders = (params: OrderParams) => {
   return useQuery({
     queryKey: ['orders', params], // `params` là một phần của key, khi nó thay đổi, query sẽ fetch lại
     queryFn: ({ signal }) => getOrdersApi(params, signal),
-    placeholderData: undefined,
-    staleTime: 1 * 60 * 1000,
     refetchOnWindowFocus: true,
   });
 };
@@ -101,15 +101,11 @@ export const useGetOrderDetail = (requestId: string | undefined) => {
 };
 
 export const useCancelOrderDetail = () => {
-  const { showSuccess, showError } = useToast();
+  const { showError } = useToast();
 
   return useMutation<{ success: boolean; message: string }, Error, string>({
     mutationFn: (requestDetailId: string) =>
       cancelOrderDetailApi(requestDetailId),
-
-    onSuccess: (data) => {
-      showSuccess(data.message || 'Request detail cancelled successfully!');
-    },
 
     onError: (error) => {
       // Handle different error messages
@@ -122,6 +118,74 @@ export const useCancelOrderDetail = () => {
           'Cannot cancel this request detail. Check status requirements.';
       } else if (error.message === 'Server error occurred') {
         errorMessage = 'Server error occurred';
+      }
+
+      showError(errorMessage);
+    },
+  });
+};
+
+export const useChangeRequestDetailStatus = () => {
+  const { showSuccess, showError } = useToast();
+
+  return useMutation<
+    { success: boolean; message: string },
+    Error,
+    { detailId: string; status: 'inProgress' | 'completed' }
+  >({
+    mutationFn: ({ detailId, status }) =>
+      changeRequestDetailStatusApi(detailId, status),
+
+    onSuccess: (data) => {
+      showSuccess(data.message || 'Status updated successfully!');
+    },
+
+    onError: (error) => {
+      let errorMessage = 'An error occurred while fetching requests';
+
+      if (error.message === 'Request detail not found') {
+        errorMessage = 'Request detail not found';
+      } else if (
+        error.message === 'Cannot change status of this request detail'
+      ) {
+        errorMessage = 'Cannot change status of this request detail';
+      } else if (
+        error.message === 'An error occurred while fetching requests'
+      ) {
+        errorMessage = 'An error occurred while fetching requests';
+      }
+
+      showError(errorMessage);
+    },
+  });
+};
+
+export const useChangeRequestStatus = () => {
+  const { showSuccess, showError } = useToast();
+
+  return useMutation<
+    { success: boolean; message: string },
+    Error,
+    { requestId: string; status: 'completed' }
+  >({
+    mutationFn: ({ requestId, status }) =>
+      changeRequestStatusApi(requestId, status),
+
+    onSuccess: (data) => {
+      showSuccess(data.message || 'Payment processed successfully!');
+    },
+
+    onError: (error) => {
+      let errorMessage = 'An error occurred while processing payment';
+
+      if (error.message === 'Request not found') {
+        errorMessage = 'Request not found';
+      } else if (error.message === 'Cannot change status of this request') {
+        errorMessage = 'Cannot process payment for this request';
+      } else if (
+        error.message === 'An error occurred while processing payment'
+      ) {
+        errorMessage = 'An error occurred while processing payment';
       }
 
       showError(errorMessage);

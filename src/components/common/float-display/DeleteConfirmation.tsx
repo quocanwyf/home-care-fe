@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 
 import ConfirmDialog from '@/components/common/float-display/ConfirmDialog';
-import { useDeleteConfirmation } from '@/hooks/common/useDeleteConfirmation';
+import { useConfirmation } from '@/hooks/common/useConfirmation';
 
 interface EntityInfo {
   name?: string;
@@ -49,7 +49,7 @@ export default function GenericDeleteConfirmDialog({
     closeDeleteConfirmation,
     handleDeleteConfirm,
     getDeleteDescription,
-  } = useDeleteConfirmation({
+  } = useConfirmation({
     deleteFunction,
     entityName,
     onDeleteSuccess,

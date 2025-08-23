@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
 import FailLoadingAndEntry from '@/components/fallback/FailLoadingAndEntry';
 import LoadingFallback from '@/components/fallback/LoadingFallback';
@@ -10,7 +10,6 @@ import { useToast } from '@/hooks/common/useToast';
 
 const OrderDetailForm = () => {
   const { id } = useParams<{ id: string }>();
-  const navigate = useNavigate();
   const { showError } = useToast();
 
   const {
@@ -38,7 +37,6 @@ const OrderDetailForm = () => {
     return <LoadingFallback content="Loading order information..." />;
   }
 
-  //  Show error state
   if (error && !isError) {
     return <FailLoadingAndEntry content="Failed to load order information" />;
   }
@@ -50,6 +48,8 @@ const OrderDetailForm = () => {
         requestDetails={orderDetailData?.requestDetails}
         isLoading={isLoading || isFetching}
         onRefresh={handleRefresh}
+        status={orderDetailData?.request.status}
+        requestId={orderDetailData?.request.orderId}
       />
     </div>
   );

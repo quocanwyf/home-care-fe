@@ -1,7 +1,7 @@
 import { useAppNavigate } from '@/hooks/common/useAppNavigate';
 
-import TooltipInfo from '../common/primitives/TooltipInfo';
-import { Button } from '../ui/button';
+import TooltipInfo from '../../common/primitives/TooltipInfo';
+import { Button } from '../../ui/button';
 
 const PageHeader = ({ pageHeaderTitle }: { pageHeaderTitle: string }) => {
   const navigateTo = useAppNavigate();

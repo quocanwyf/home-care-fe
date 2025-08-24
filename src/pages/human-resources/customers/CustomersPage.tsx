@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import { AppTable } from '@/components/table/AppTable';
+import { AppTable } from '@/components/table/app-table/AppTable';
 import { STATUS_CUSTOMER } from '@/constants/dropdown/status-customers';
 // import { data } from '@/constants/mock-data/mock-data-customers';
 import { useGetCustomers } from '@/hooks/api/useCustomers.api';
@@ -79,9 +79,6 @@ const CustomersPage = () => {
     <AppTable
       data={customers}
       columns={customerColumn(
-        (row) => console.log('Xem', row),
-        (row) => console.log('Sửa', row),
-        (row) => console.log('Xoá', row),
         (row) => console.log('Xoá', row),
         (row) => console.log('Bỏ cấm', row),
         (row) => console.log('Xem lịch sử', row)

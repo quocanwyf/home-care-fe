@@ -4,7 +4,7 @@ import { useMemo } from 'react';
 
 import { RefreshCw } from 'lucide-react';
 
-import TooltipInfo from '../common/primitives/TooltipInfo';
+import TooltipInfo from '../../common/primitives/TooltipInfo';
 import AppPagination from './AppPagination';
 import PageSizeDropdown from './PageSizeDropdown';
 import StatusFilterDropdown from './StatusFilterDropdown';

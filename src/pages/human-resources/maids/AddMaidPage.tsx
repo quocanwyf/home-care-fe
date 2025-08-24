@@ -1,4 +1,4 @@
-import OrderForm from '@/components/form/order-form/OrderForm';
+// import OrderForm from '@/components/form/order-form/OrderForm';
 
 const AddOrderPage = () => {
   return (
@@ -15,8 +15,7 @@ const AddOrderPage = () => {
             className="focus:border-border-primary/50 shadow-sm"
             required
           /> */}
-
-      <OrderForm />
+      cc
       <p>cc </p>
     </div>
   );

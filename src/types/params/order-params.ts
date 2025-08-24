@@ -1,3 +1,6 @@
+import type { UseFormReturn } from 'react-hook-form';
+
+import type { OrderFormSchema } from '../schema/order-form-schema-type';
 import type { CoefficientOther } from '../table/objects/coefficient';
 import type { Discount } from '../table/objects/customers';
 import type { Location } from '../table/objects/locations';
@@ -54,7 +57,7 @@ export interface OrderFormData {
   province: string;
 
   //selectedDiscountId:
-  selectedDiscountId: null;
+  // selectedDiscountId: null;
 
   // Account status
   isCusHasAcc: boolean;
@@ -74,6 +77,7 @@ export interface CustomerCheckResponse {
 
 // customer area form data
 export type CustomerAreaProps = {
+  form: UseFormReturn<OrderFormSchema>;
   formData: OrderFormData;
   onUpdateFormData: (newData: Partial<OrderFormData>) => void;
   handleUpdateAvailableDiscounts?: (discounts: Discount[]) => void;
@@ -95,4 +99,48 @@ export interface OrderAddInfoResponse {
 
 export interface AddOrderResponse {
   success: boolean;
+}
+
+export interface DeleteOrderResponse {
+  success: boolean;
+  message: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  data?: any;
+}
+
+// add order detail
+export interface OrderDetailResponse {
+  success: boolean;
+  request: {
+    orderId: string;
+    orderDate: string;
+    status: string;
+    customerInfo: {
+      fullName: string;
+      phone: string;
+      address: string;
+      usedPoint: number;
+    };
+    service: {
+      title: string;
+      coefficient_service: number;
+      coefficient_other: number;
+      cost: number;
+    };
+    totalCost: number;
+  };
+  requestDetails: Array<{
+    detailId: string;
+    workingDate: string;
+    startTime: string;
+    endTime: string;
+    status: string;
+    cost: number;
+    helper_cost: number;
+    helper: {
+      _id: string;
+      fullName: string;
+      phone: string;
+    };
+  }>;
 }

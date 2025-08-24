@@ -104,7 +104,6 @@ export default function TimePickerDropdown({
     onChange?.(timeString);
     setOpen(false);
   };
-  console.log('disabled', disabled);
 
   return (
     <div className={cn('flex flex-col gap-3', className)}>

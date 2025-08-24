@@ -1,15 +1,13 @@
 import { useEffect, useState } from 'react';
 
+import ConfirmDialog from '@/components/common/float-display/ConfirmDialog';
 import { AppTable } from '@/components/table/AppTable';
 import { STATUS_ORDERS } from '@/constants/dropdown/status-orders';
-import {
-  handleDelete,
-  handleEdit,
-  handleView,
-} from '@/helpers/handle-table-actions';
+import { handleView } from '@/helpers/handle-table-actions';
 // import { data } from '@/constants/mock-data/mock-data-orders';
-import { useGetOrders } from '@/hooks/api/useOrders.api';
+import { useDeleteOrder, useGetOrders } from '@/hooks/api/useOrders.api';
 import { useAppNavigate } from '@/hooks/common/useAppNavigate';
+import { useConfirmation } from '@/hooks/common/useConfirmation';
 import { useDateRangeConfig } from '@/hooks/common/useDateRangeConfig';
 import { usePageSize } from '@/hooks/common/usePageSize';
 import { useSearchConfig } from '@/hooks/common/useSearchConfig';
@@ -23,8 +21,36 @@ const OrdersPage = () => {
   const [orders, setOrders] = useState([]);
   const navigateTo = useAppNavigate();
 
-  const [dialogOpen, setDialogOpen] = useState(false);
-  const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
+  const deleteOrderMutation = useDeleteOrder();
+
+  const orderDeleteConfirmation = useConfirmation({
+    deleteFunction: (requestId: string) =>
+      deleteOrderMutation.mutateAsync(requestId),
+    entityName: 'Order',
+    onDeleteSuccess: () => {
+      console.log('Order cancelled successfully, refreshing list...');
+      refetchOrders();
+    },
+    onDeleteError: (error) => {
+      console.error('Failed to cancel order:', error);
+    },
+    successMessage: 'Request cancelled successfully!',
+    errorMessage: 'Request cancelled fail!',
+  });
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const handleDeleteOrder = (row: any) => {
+    orderDeleteConfirmation.openDeleteConfirmation(
+      row.requestId || row.orderId,
+      {
+        cost: row.cost,
+        orderDate: row.orderDate,
+        phoneNumberCustomer: row.phoneNumberCustomers,
+        serviceCategory: row.serviceCategory,
+        status: row.status,
+      }
+    );
+  };
 
   //có 5 cái mục search cần gọi api là: pagination, status, pageSize, dateRange,search
   const [searchKeyword, setSearchKeyword] = useState('');
@@ -73,12 +99,15 @@ const OrdersPage = () => {
     search: searchKeyword ?? '',
   };
 
+  console.log('par', params);
+
   const {
     data: ordersFetchData,
     isLoading,
     isError,
     error,
     isFetching,
+    refetch: refetchOrders,
   } = useGetOrders(params);
 
   useEffect(() => {
@@ -95,28 +124,45 @@ const OrdersPage = () => {
   }, [isError, error, showError]);
 
   return (
-    <AppTable
-      data={orders}
-      columns={orderColumn(
-        (row) => handleView({ navigateTo, path: `/orders/detail/${row.id}` }),
-        (row) => handleEdit(),
-        (row) => handleDelete()
-      )}
-      pageHeaderTitle="Orders List"
-      //status variable and function
-      statusFilter={statusFilter}
-      onStatusFilterChange={handleStatusChange}
-      listStatusFilter={STATUS_ORDERS}
-      //pagesize variable and function
-      pageSize={pageSize}
-      onPageSizeChange={handlePageSizeChange}
-      //pagination variable and function
-      onPaginationChange={handlePaginationChange}
-      //reset filters
-      onResetFilters={resetAllFilters}
-      isLoading={isLoading || isFetching}
-      totalData={ordersFetchData?.totalOrders || 1}
-    />
+    <>
+      <AppTable
+        data={orders}
+        columns={orderColumn(
+          (row) =>
+            handleView({ navigateTo, path: `/orders/detail/${row.orderId}` }),
+          handleDeleteOrder
+        )}
+        pageHeaderTitle="Orders List"
+        //status variable and function
+        statusFilter={statusFilter}
+        onStatusFilterChange={handleStatusChange}
+        listStatusFilter={STATUS_ORDERS}
+        //pagesize variable and function
+        pageSize={pageSize}
+        onPageSizeChange={handlePageSizeChange}
+        //pagination variable and function
+        onPaginationChange={handlePaginationChange}
+        //reset filters
+        onResetFilters={resetAllFilters}
+        isLoading={isLoading || isFetching}
+        totalData={ordersFetchData?.totalOrders || 1}
+      />
+      <ConfirmDialog
+        open={orderDeleteConfirmation.isDialogOpen}
+        onOpenChange={orderDeleteConfirmation.closeDeleteConfirmation}
+        title="Cancel Order"
+        description={orderDeleteConfirmation
+          .getDeleteDescription()
+          .replace('delete', 'cancel')} // ✅ Change wording to "cancel"
+        icon={true}
+        danger={true}
+        confirmText="Cancel Order"
+        cancelText="Keep Order"
+        onConfirm={orderDeleteConfirmation.handleDeleteConfirm}
+      >
+        <div />
+      </ConfirmDialog>
+    </>
   );
 };
 

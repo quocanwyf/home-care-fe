@@ -1,11 +1,14 @@
 import OrderStatusBadge from '@/components/common/badge/StatusOrdersBadge';
-import TableActions from '@/components/table/TableActions';
-import type { Orders } from '@/types/table/objects/orders';
+import TableActions from '@/components/common/button/TableActions';
+import TableDetailActions from '@/components/common/button/TableDetailActions';
+import type { Orders, RequestDetail } from '@/types/table/objects/orders';
 import type { ColumnDef } from '@tanstack/react-table';
+
+import type { ObjectsWithStatus } from '../objects/union-objects';
 
 export const orderColumn = (
   onView?: (row: Orders) => void,
-  onEdit?: (row: Orders) => void,
+  // onEdit?: (row: Orders) => void,
   onDelete?: (row: Orders) => void
 ): ColumnDef<Orders, unknown>[] => [
   {
@@ -52,13 +55,107 @@ export const orderColumn = (
   {
     id: 'actions',
     header: 'Actions',
+    cell: ({ row }) => {
+      const orderData = row.original;
+
+      const canCancel = ['pending', 'assigned'].includes(
+        orderData.status?.toLowerCase()
+      );
+
+      return (
+        <TableActions
+          onView={onView}
+          // onEdit={onEdit}
+          onDelete={onDelete}
+          row={row.original}
+          canCancel={canCancel}
+        />
+      );
+    },
+  },
+];
+
+export const orderDetailColumns = (
+  onCancel: (detailId: string) => void,
+  onStart: (detailId: string) => void,
+  onComplete: (detailId: string) => void,
+  isActionLoading: boolean = false
+): ColumnDef<RequestDetail>[] => [
+  {
+    accessorKey: 'startTime',
+    header: 'Start Time',
     cell: ({ row }) => (
-      <TableActions
-        onView={onView}
-        onEdit={onEdit}
-        onDelete={onDelete}
-        row={row.original}
-      />
+      <span className="font-medium">{row.getValue('startTime')}</span>
     ),
+  },
+  {
+    accessorKey: 'endTime',
+    header: 'End Time',
+    cell: ({ row }) => (
+      <span className="font-medium">{row.getValue('endTime')}</span>
+    ),
+  },
+  {
+    accessorKey: 'workingDate',
+    header: 'Working Date',
+    cell: ({ row }) => (
+      <span className="font-medium">{row.getValue('workingDate')}</span>
+    ),
+  },
+  {
+    accessorKey: 'helper',
+    header: 'Helper',
+    cell: ({ row }) => {
+      const helper = row.getValue('helper') as {
+        fullName: string;
+        phone: string;
+      };
+      return (
+        <span className="font-medium">
+          {helper?.fullName || 'Has not assigned'}
+        </span>
+      );
+    },
+  },
+  {
+    accessorKey: 'status',
+    header: 'Status',
+    cell: ({ row }) => {
+      const status = row.getValue('status') as string;
+      return <OrderStatusBadge status={status as ObjectsWithStatus} />;
+    },
+  },
+  {
+    id: 'actions',
+    header: 'Actions',
+    cell: ({ row }) => {
+      const status = row.getValue('status') as string;
+      const detailId = row.original.detailId;
+
+      const handleCancel = () => {
+        console.log('Calling onCancel with:', detailId);
+        onCancel(detailId);
+      };
+
+      const handleStart = () => {
+        console.log('Calling onStart with:', detailId);
+        onStart(detailId);
+      };
+
+      const handleComplete = () => {
+        console.log('Calling onComplete with:', detailId);
+        onComplete(detailId);
+      };
+
+      return (
+        <TableDetailActions
+          status={status}
+          onCancel={handleCancel}
+          onStartWork={handleStart}
+          onCompleteWork={handleComplete}
+          isLoading={isActionLoading}
+        />
+      );
+    },
   },
 ];

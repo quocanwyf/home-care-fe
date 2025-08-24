@@ -21,20 +21,12 @@ export const handleView = ({
   ) => void;
   path: string;
 }) => {
+  console.log('Xem chi tiết');
   navigateTo(path, {
-    state: { userId: 1 },
     toast: {
       type: 'success',
       message: 'Điều hướng thành công!',
     },
     delay: 1000,
   });
-};
-
-export const handleEdit = () => {
-  console.log('Sửa');
-};
-
-export const handleDelete = () => {
-  console.log('Xoá');
 };

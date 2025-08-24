@@ -117,9 +117,10 @@ const SearchableDropdown = ({
   };
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setSearchTerm(value);
-    debouncedSearch(value);
+    const rawValue = e.target.value;
+    const numericValue = rawValue.replace(/\d/g, ''); //loai bo ky tu so
+    setSearchTerm(numericValue);
+    debouncedSearch(numericValue);
   };
 
   return (
@@ -186,10 +187,6 @@ const SearchableDropdown = ({
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   <span className="text-sm text-gray-500">Loading...</span>
                 </div>
-              ) : error ? (
-                <div className="p-4 text-center text-sm text-red-500">
-                  {error}
-                </div>
               ) : filteredOptions.length > 0 ? (
                 filteredOptions.map((option, index) => (
                   <div
@@ -209,6 +206,7 @@ const SearchableDropdown = ({
           </div>
         )}
       </div>
+      {error && <p className="mt-1 text-sm text-red-500">{error}</p>}
     </div>
   );
 };

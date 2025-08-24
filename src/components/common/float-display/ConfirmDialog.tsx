@@ -40,14 +40,14 @@ export default function ConfirmDialog({
   ban?: boolean;
 }) {
   const [isLoading, setIsLoading] = useState(false);
-  const { showSuccess, showError } = useToast();
+  const { showError } = useToast();
 
   const handleConfirm = async () => {
     try {
       setIsLoading(true);
       await onConfirm();
       onOpenChange(false);
-      showSuccess(MESSAGES_DIALOG.SUCCESS);
+      // showSuccess(MESSAGES_DIALOG.SUCCESS);
     } catch (err) {
       showError(MESSAGES_DIALOG.ERROR + err);
     } finally {

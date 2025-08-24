@@ -40,6 +40,9 @@ type AppTableProps<T, TValue = unknown> = {
   onPaginationChange?: (pagination: PaginationState) => void;
   onResetFilters?: () => void;
   totalData?: number;
+  isHeader?: boolean;
+  isFooter?: boolean;
+  heightRow?: string;
 };
 
 export function AppTable<T>({
@@ -56,6 +59,9 @@ export function AppTable<T>({
   onPaginationChange,
   onResetFilters,
   totalData,
+  isHeader = true,
+  isFooter = true,
+  heightRow = 'h-14',
 }: AppTableProps<T>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [pagination, setPagination] = useState<PaginationState>({
@@ -98,11 +104,13 @@ export function AppTable<T>({
   const emptyRowsCount = Math.max(0, pageSize - actualRows.length);
 
   return (
-    <div className="flex h-full max-h-screen flex-col overflow-hidden rounded-xl border bg-white shadow-sm">
+    <div className="flex h-full max-h-screen flex-col overflow-auto rounded-xl border bg-white shadow-sm">
       {/* Fixed Header */}
-      <div className="sticky top-0 z-10 rounded-full border-b bg-white px-2 pl-8">
-        <PageHeader pageHeaderTitle={pageHeaderTitle} />
-      </div>
+      {isHeader && (
+        <div className="sticky top-0 z-10 rounded-full border-b bg-white px-2 pl-8">
+          <PageHeader pageHeaderTitle={pageHeaderTitle} />
+        </div>
+      )}
 
       {/* Scrollable Table Content */}
       <div className="flex-1 overflow-auto pl-8">
@@ -131,7 +139,7 @@ export function AppTable<T>({
             {/* Loading skeleton rows */}
             {isLoading ? (
               Array.from({ length: pageSize }).map((_, idx) => (
-                <TableRow key={idx} className="h-14">
+                <TableRow key={idx} className={`${heightRow}`}>
                   {columns.map((_, colIdx) => (
                     <TableCell key={colIdx}>
                       <Skeleton className="h-4 w-full bg-slate-200" />
@@ -147,7 +155,7 @@ export function AppTable<T>({
                     <TableRow
                       key={row.id}
                       onClick={() => onRowClick?.(row.original)}
-                      className="hover:bg-muted h-14"
+                      className={`hover:bg-muted ${heightRow}`}
                     >
                       {row.getVisibleCells().map((cell) => (
                         <TableCell key={cell.id}>
@@ -161,7 +169,7 @@ export function AppTable<T>({
                   ))
                 ) : (
                   /* No data message - chiếm 1 row */
-                  <TableRow className="h-14">
+                  <TableRow className={`${heightRow}`}>
                     <TableCell
                       colSpan={columns.length}
                       className="text-muted-foreground py-8 text-center"
@@ -175,7 +183,7 @@ export function AppTable<T>({
                 {actualRows.length > 0 &&
                   emptyRowsCount > 0 &&
                   Array.from({ length: emptyRowsCount }).map((_, idx) => (
-                    <TableRow key={`empty-${idx}`} className="h-14">
+                    <TableRow key={`empty-${idx}`} className={`${heightRow}`}>
                       {columns.map((_, colIdx) => (
                         <TableCell key={colIdx}>&nbsp;</TableCell>
                       ))}
@@ -188,23 +196,25 @@ export function AppTable<T>({
       </div>
 
       {/* Fixed Footer */}
-      <div className="sticky bottom-0 z-10 rounded-full border-t bg-white px-2 pl-8">
-        <PageFooter
-          status={statusFilter}
-          onStatusFilterChange={onStatusFilterChange}
-          listStatusFilter={listStatusFilter}
-          pageSize={pageSize}
-          onPageSizeChange={onPageSizeChange}
-          onResetFilters={onResetFilters}
-          pageIndex={pagination.pageIndex}
-          pageCount={table.getPageCount()}
-          onPageChange={(pageIndex) => {
-            setPagination((prev) => ({ ...prev, pageIndex }));
-            table.setPageIndex(pageIndex);
-          }}
-          totalData={totalData ?? table.getFilteredRowModel().rows.length}
-        />
-      </div>
+      {isFooter && (
+        <div className="sticky bottom-0 z-10 rounded-full border-t bg-white px-2 pl-8">
+          <PageFooter
+            status={statusFilter}
+            onStatusFilterChange={onStatusFilterChange}
+            listStatusFilter={listStatusFilter}
+            pageSize={pageSize}
+            onPageSizeChange={onPageSizeChange}
+            onResetFilters={onResetFilters}
+            pageIndex={pagination.pageIndex}
+            pageCount={table.getPageCount()}
+            onPageChange={(pageIndex) => {
+              setPagination((prev) => ({ ...prev, pageIndex }));
+              table.setPageIndex(pageIndex);
+            }}
+            totalData={totalData ?? table.getFilteredRowModel().rows.length}
+          />
+        </div>
+      )}
     </div>
   );
 }

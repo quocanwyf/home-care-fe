@@ -1,5 +1,5 @@
 import OrderStatusBadge from '@/components/common/badge/StatusOrdersBadge';
-import TableActions from '@/components/table/TableActions';
+import TableActions from '@/components/common/button/TableActions';
 import type { Maids } from '@/types/table/objects/maids';
 import type { Staffs } from '@/types/table/objects/staffs';
 import type { ColumnDef } from '@tanstack/react-table';

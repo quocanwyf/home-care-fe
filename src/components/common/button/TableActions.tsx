@@ -1,6 +1,6 @@
-import { Ban, Edit, Eye, FileClock, ShieldBan, Trash2 } from 'lucide-react';
+import { Ban, CircleX, Edit, Eye, FileClock, ShieldBan } from 'lucide-react';
 
-import TooltipInfo from '../common/primitives/TooltipInfo';
+import TooltipInfo from '../primitives/TooltipInfo';
 
 interface TableActionsProps<T> {
   onView?: (row: T) => void | undefined;
@@ -9,6 +9,7 @@ interface TableActionsProps<T> {
   onBan?: (row: T) => void | undefined;
   onUnban?: (row: T) => void | undefined;
   onViewHistory?: (row: T) => void | undefined;
+  canCancel?: boolean;
   row: T;
 }
 
@@ -19,6 +20,7 @@ const TableActions = <T,>({
   onBan,
   onUnban,
   onViewHistory,
+  canCancel,
   row,
 }: TableActionsProps<T>) => {
   return (
@@ -58,14 +60,14 @@ const TableActions = <T,>({
               </button>
             </TooltipInfo>
           )}
-          {onDelete && (
-            <TooltipInfo content="Delete">
+          {canCancel && onDelete && (
+            <TooltipInfo content="Cancel">
               <button
                 onClick={() => onDelete(row)}
                 className="cursor-pointer p-1 text-red-400 transition-colors hover:text-red-600"
-                title="Delete"
+                title="Cancel"
               >
-                <Trash2 className="h-4 w-4" />
+                <CircleX className="h-4 w-4" />
               </button>
             </TooltipInfo>
           )}

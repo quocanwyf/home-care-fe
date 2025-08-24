@@ -17,7 +17,9 @@ type InputButtonSearchProps = {
     placeholder?: string;
     required?: boolean;
     value?: string;
+    type?: string;
     onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    maxLength?: number;
   };
   button?: {
     className?: string;
@@ -26,6 +28,7 @@ type InputButtonSearchProps = {
     isLoading?: boolean;
   };
   className?: string;
+  error?: string;
 };
 
 const InputButtonSearch = ({
@@ -33,6 +36,7 @@ const InputButtonSearch = ({
   input,
   button,
   className = '',
+  error,
 }: InputButtonSearchProps) => {
   return (
     <div className={`flex flex-col gap-2 ${className}`}>
@@ -45,7 +49,7 @@ const InputButtonSearch = ({
       </Label>
       <div className="flex gap-2">
         <Input
-          type="text"
+          type={input?.type || 'text'}
           id={input?.inputId}
           name={input?.inputName}
           className={`focus:border-overlay-slider hover:border-overlay-slider/50 h-10 border-gray-400/60 bg-white focus:shadow-xs ${input?.className}`}
@@ -53,6 +57,7 @@ const InputButtonSearch = ({
           placeholder={input?.placeholder}
           value={input?.value}
           onChange={input?.onChange}
+          maxLength={input?.maxLength}
         />
         {button?.disabled ? (
           <div className="flex cursor-not-allowed items-center rounded-lg bg-blue-600/60 px-3 text-white">
@@ -76,6 +81,7 @@ const InputButtonSearch = ({
           </Button>
         )}
       </div>
+      {error && <p className="mt-2 text-sm text-red-500">{error}</p>}
     </div>
   );
 };

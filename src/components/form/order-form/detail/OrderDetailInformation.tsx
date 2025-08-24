@@ -2,7 +2,7 @@ import { TableProperties } from 'lucide-react';
 
 import ConfirmDialog from '@/components/common/float-display/ConfirmDialog';
 import TooltipInfo from '@/components/common/primitives/TooltipInfo';
-import { AppTable } from '@/components/table/AppTable';
+import { AppTable } from '@/components/table/app-table/AppTable';
 import { Button } from '@/components/ui/button';
 import {
   useCancelOrderDetail,

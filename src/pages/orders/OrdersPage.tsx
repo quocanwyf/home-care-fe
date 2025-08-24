@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 
 import ConfirmDialog from '@/components/common/float-display/ConfirmDialog';
-import { AppTable } from '@/components/table/AppTable';
+import { AppTable } from '@/components/table/app-table/AppTable';
 import { STATUS_ORDERS } from '@/constants/dropdown/status-orders';
 import { handleView } from '@/helpers/handle-table-actions';
 // import { data } from '@/constants/mock-data/mock-data-orders';

@@ -1,5 +1,3 @@
-import OrderForm from '@/components/form/order-form/OrderForm';
-
 const AddOrderPage = () => {
   return (
     <div className="h-full w-full rounded-xl bg-white px-8 py-6">
@@ -15,8 +13,7 @@ const AddOrderPage = () => {
             className="focus:border-border-primary/50 shadow-sm"
             required
           /> */}
-
-      <OrderForm />
+      cccc
       <p>llol</p>
     </div>
   );

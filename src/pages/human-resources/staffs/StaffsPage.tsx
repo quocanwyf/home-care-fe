@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import { AppTable } from '@/components/table/AppTable';
+import { AppTable } from '@/components/table/app-table/AppTable';
 import { STATUS_HR } from '@/constants/dropdown/status-hr';
 // import { data } from '@/constants/mock-data/mock-data-staffs';
 import { useGetHRs } from '@/hooks/api/useHRs';

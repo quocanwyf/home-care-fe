@@ -10,6 +10,8 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import { usePermission } from '@/hooks/common/usePermission';
+import type { PermissionModule } from '@/types/auth';
 import type {
   ColumnDef,
   PaginationState,
@@ -43,6 +45,9 @@ type AppTableProps<T, TValue = unknown> = {
   isHeader?: boolean;
   isFooter?: boolean;
   heightRow?: string;
+  permissionModule?: PermissionModule;
+  customAddAction?: () => void;
+  showAddButton?: boolean;
 };
 
 export function AppTable<T>({
@@ -62,7 +67,11 @@ export function AppTable<T>({
   isHeader = true,
   isFooter = true,
   heightRow = 'h-14',
+  permissionModule,
+  customAddAction,
+  showAddButton = true,
 }: AppTableProps<T>) {
+  const { canCreate } = usePermission();
   const [sorting, setSorting] = useState<SortingState>([]);
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
@@ -81,6 +90,11 @@ export function AppTable<T>({
   useEffect(() => {
     setPagination((prev) => ({ ...prev, pageIndex: 0 }));
   }, [statusFilter, pageSize]);
+
+  const hasCreatePermission = permissionModule
+    ? canCreate(permissionModule)
+    : true;
+  const shouldShowAddButton = showAddButton && hasCreatePermission;
 
   const table = useReactTable({
     data,
@@ -107,7 +121,11 @@ export function AppTable<T>({
       {/* Fixed Header */}
       {isHeader && (
         <div className="bg-background sticky top-0 z-10 rounded-full border-b px-2 pl-8">
-          <PageHeader pageHeaderTitle={pageHeaderTitle} />
+          <PageHeader
+            pageHeaderTitle={pageHeaderTitle}
+            showAddButton={shouldShowAddButton}
+            handleClick={customAddAction}
+          />
         </div>
       )}
 

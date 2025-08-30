@@ -5,6 +5,7 @@ import { Check, X } from 'lucide-react';
 import TooltipInfo from '@/components/common/primitives/TooltipInfo';
 import PageHeader from '@/components/table/app-table/PageHeader';
 import { Button } from '@/components/ui/button';
+import { usePermission } from '@/hooks/common/usePermission';
 
 interface PermissionsHeaderProps {
   showUpdateButtons: boolean;
@@ -21,12 +22,17 @@ export const PermissionsHeader: React.FC<PermissionsHeaderProps> = ({
   onUpdateChanges,
   onCancelChanges,
 }) => {
+  const { canCreate } = usePermission();
+
+  const hasCreatePermission = canCreate('roles');
+  const shouldShowAddButton = !showUpdateButtons && hasCreatePermission;
+
   return (
     <div className="sticky top-0 z-10 rounded-full border-b bg-white">
       <PageHeader
         pageHeaderTitle="Management Permissions"
         handleClick={onOpenModal}
-        showAddButton={!showUpdateButtons}
+        showAddButton={shouldShowAddButton}
       >
         {showUpdateButtons && (
           <div className="flex gap-4">

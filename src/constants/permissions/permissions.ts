@@ -80,24 +80,6 @@ export const getAllPossiblePermissions = (): Permission[] => {
       permissionKey: 'customers_view',
       description: 'Xem danh sách khách hàng',
     },
-    {
-      module: 'Customers',
-      action: 'create',
-      permissionKey: 'customers_create',
-      description: 'Tạo khách hàng mới',
-    },
-    {
-      module: 'Customers',
-      action: 'edit',
-      permissionKey: 'customers_edit',
-      description: 'Chỉnh sửa khách hàng',
-    },
-    {
-      module: 'Customers',
-      action: 'delete',
-      permissionKey: 'customers_delete',
-      description: 'Xóa khách hàng',
-    },
 
     // Services
     {

@@ -85,6 +85,7 @@ const MaidsPage = () => {
         (row) => console.log('Xoá', row)
       )}
       pageHeaderTitle="Maids List"
+      permissionModule="helpers"
       //status variable and function
       statusFilter={statusFilter}
       onStatusFilterChange={handleStatusChange}

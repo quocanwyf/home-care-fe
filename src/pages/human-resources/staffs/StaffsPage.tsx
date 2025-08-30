@@ -85,6 +85,7 @@ const StaffsPage = () => {
         (row) => console.log('Xoá', row)
       )}
       pageHeaderTitle="Maids List"
+      permissionModule="staffs"
       //status variable and function
       statusFilter={statusFilter}
       onStatusFilterChange={handleStatusChange}

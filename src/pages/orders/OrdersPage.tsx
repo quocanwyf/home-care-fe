@@ -130,6 +130,7 @@ const OrdersPage = () => {
           handleDeleteOrder
         )}
         pageHeaderTitle="Orders List"
+        permissionModule="orders"
         //status variable and function
         statusFilter={statusFilter}
         onStatusFilterChange={handleStatusChange}

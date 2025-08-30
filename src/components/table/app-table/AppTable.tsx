@@ -69,7 +69,6 @@ export function AppTable<T>({
     pageSize: pageSize,
   });
 
-  // console.log(pagination);
   useEffect(() => {
     onPaginationChange?.(pagination);
   }, [pagination, onPaginationChange]);

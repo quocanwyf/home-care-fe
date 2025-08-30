@@ -21,12 +21,6 @@ export const getAllPossiblePermissions = (): Permission[] => {
       permissionKey: 'orders_edit',
       description: 'Chỉnh sửa đơn hàng',
     },
-    {
-      module: 'Orders',
-      action: 'delete',
-      permissionKey: 'orders_delete',
-      description: 'Xóa đơn hàng',
-    },
     // Staffs
     {
       module: 'Staffs',
@@ -131,32 +125,6 @@ export const getAllPossiblePermissions = (): Permission[] => {
       description: 'Xóa dịch vụ',
     },
 
-    // Blogs
-    {
-      module: 'Blogs',
-      action: 'view',
-      permissionKey: 'blogs_view',
-      description: 'Xem danh sách blog',
-    },
-    {
-      module: 'Blogs',
-      action: 'create',
-      permissionKey: 'blogs_create',
-      description: 'Tạo blog mới',
-    },
-    {
-      module: 'Blogs',
-      action: 'edit',
-      permissionKey: 'blogs_edit',
-      description: 'Chỉnh sửa blog',
-    },
-    {
-      module: 'Blogs',
-      action: 'delete',
-      permissionKey: 'blogs_delete',
-      description: 'Xóa blog',
-    },
-
     // Cost Coefficients
     {
       module: 'Cost Coefficients',
@@ -181,32 +149,6 @@ export const getAllPossiblePermissions = (): Permission[] => {
       action: 'delete',
       permissionKey: 'costCoefficients_delete',
       description: 'Xóa hệ số chi phí',
-    },
-
-    // Policies
-    {
-      module: 'Policies',
-      action: 'view',
-      permissionKey: 'policies_view',
-      description: 'Xem chính sách',
-    },
-    {
-      module: 'Policies',
-      action: 'create',
-      permissionKey: 'policies_create',
-      description: 'Tạo chính sách mới',
-    },
-    {
-      module: 'Policies',
-      action: 'edit',
-      permissionKey: 'policies_edit',
-      description: 'Chỉnh sửa chính sách',
-    },
-    {
-      module: 'Policies',
-      action: 'delete',
-      permissionKey: 'policies_delete',
-      description: 'Xóa chính sách',
     },
 
     // General Settings
@@ -277,3 +219,57 @@ export const DEFAULT_EXPANDED_MODULES = [
   'Roles',
   'Dashboard',
 ];
+
+// Permission Modules
+export const PERMISSION_MODULES = {
+  DASHBOARD: 'dashboard',
+  ORDERS: 'orders',
+  CUSTOMERS: 'customers',
+  HELPERS: 'helpers', // maids
+  STAFFS: 'staffs',
+  SERVICES: 'services',
+  COST_COEFFICIENTS: 'costCoefficients',
+  ROLES: 'roles', // permissions page
+  GENERAL_SETTING: 'generalSetting', // system page
+} as const;
+
+// Permission Actions
+export const PERMISSION_ACTIONS = {
+  VIEW: 'view',
+  CREATE: 'create',
+  EDIT: 'edit',
+  DELETE: 'delete',
+} as const;
+
+// Route to Permission Mapping
+export const ROUTE_PERMISSIONS = {
+  '/dashboard': 'dashboard_view',
+  '/orders': 'orders_view',
+  '/customers': 'customers_view',
+  '/maids': 'helpers_view',
+  '/staffs': 'staffs_view',
+  '/services': 'services_view',
+  '/cost-coefficients': 'costCoefficients_view',
+  '/permissions': 'roles_view',
+  '/system': 'generalSetting_view',
+} as const;
+
+// Các routes con cũng cần permission của parent
+export const getRequiredPermission = (path: string): string | null => {
+  // Exact match trước
+  if (ROUTE_PERMISSIONS[path as keyof typeof ROUTE_PERMISSIONS]) {
+    return ROUTE_PERMISSIONS[path as keyof typeof ROUTE_PERMISSIONS];
+  }
+
+  // Check parent routes cho nested paths
+  if (path.startsWith('/orders')) return 'orders_view';
+  if (path.startsWith('/customers')) return 'customers_view';
+  if (path.startsWith('/maids')) return 'helpers_view';
+  if (path.startsWith('/staffs')) return 'staffs_view';
+  if (path.startsWith('/services')) return 'services_view';
+  if (path.startsWith('/cost-coefficients')) return 'costCoefficients_view';
+  if (path.startsWith('/permissions')) return 'roles_view';
+  if (path.startsWith('/system')) return 'generalSetting_view';
+
+  return null;
+};

@@ -130,8 +130,6 @@ export const useUpdateRole = () => {
     { roleId: string; roleData: UpdateRoleRequest }
   >({
     mutationFn: ({ roleId, roleData }) => {
-      console.log('clmm', roleData);
-
       updateRoleApi(roleId, roleData);
     },
 

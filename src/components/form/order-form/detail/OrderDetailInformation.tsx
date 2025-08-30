@@ -76,7 +76,6 @@ const OrderDetailInformation = ({
     entityName: 'Request',
     onDeleteSuccess: () => {
       onRefresh?.();
-      console.log('cdaicaon di mêmya');
       navigateTo('/orders', {
         toast: {
           type: 'success',

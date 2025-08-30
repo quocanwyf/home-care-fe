@@ -65,7 +65,6 @@ export const useConfirmation = ({
 
       // Handle different response formats
       if (response?.success !== false) {
-        console.log('trếp', response);
         // Consider success if not explicitly false
         showSuccess(successMessage || `${entityName} cancelled successfully!`);
         onDeleteSuccess?.();

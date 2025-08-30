@@ -22,7 +22,6 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { useToast } from '../common/useToast';
 
 export const useGetOrders = (params: OrderParams) => {
-  console.log('cc param', params);
   return useQuery({
     queryKey: ['orders', params], // `params` là một phần của key, khi nó thay đổi, query sẽ fetch lại
     queryFn: ({ signal }) => getOrdersApi(params, signal),

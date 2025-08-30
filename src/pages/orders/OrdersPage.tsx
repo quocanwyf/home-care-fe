@@ -28,7 +28,6 @@ const OrdersPage = () => {
       deleteOrderMutation.mutateAsync(requestId),
     entityName: 'Order',
     onDeleteSuccess: () => {
-      console.log('Order cancelled successfully, refreshing list...');
       refetchOrders();
     },
     onDeleteError: (error) => {
@@ -98,8 +97,6 @@ const OrdersPage = () => {
     page: currentPagination.pageIndex + 1,
     search: searchKeyword ?? '',
   };
-
-  console.log('par', params);
 
   const {
     data: ordersFetchData,

@@ -1,7 +1,7 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 
-import { MENU_ITEMS } from '@/constants/mock-data/mock-data-sidebar';
 import { useAuth } from '@/context/AuthContext';
+import { useFilteredMenuItems } from '@/hooks/common/useFilteredMenuItems';
 
 import Logo from '../common/icons/Logo';
 import GradientText from '../common/primitives/GradientText';
@@ -16,6 +16,8 @@ const SidebarMobile = ({
   const navigate = useNavigate();
   const location = useLocation();
   const { logout } = useAuth();
+
+  const menuItems = useFilteredMenuItems();
 
   const handleLogout = async () => {
     try {
@@ -51,7 +53,7 @@ const SidebarMobile = ({
           <div className="border-border-primary mx-4 mb-2 border-b-3" />
 
           <nav>
-            {MENU_ITEMS.map((item, idx) => (
+            {menuItems.map((item, idx) => (
               <div key={idx}>
                 {item.children ? (
                   <div className="text-text-primary my-1 mr-10 flex justify-center font-bold">

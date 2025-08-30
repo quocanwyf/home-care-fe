@@ -26,7 +26,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   useEffect(() => {
     if (authData) {
-      setUser(authData);
+      setUser(authData.user);
     } else if (isAuthError) {
       setUser(null);
     }
@@ -39,17 +39,28 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const login = async (credentials: LoginRequest): Promise<void> => {
     const response = await loginMutation.mutateAsync(credentials);
 
-    const userData: User = {
-      user: response.user,
-      messages: response.messages,
-    };
-
-    setUser(userData);
+    setUser(response);
   };
 
   const logout = async () => {
     await logoutMutation.mutateAsync();
     setUser(null);
+  };
+
+  // Helper function để check permission nhanh trong context
+  const hasPermission = (permission: string): boolean => {
+    if (!user?.permissionList) return false;
+    return user.permissionList.includes(permission);
+  };
+
+  // Helper function để lấy user role
+  const getUserRole = (): string => {
+    return user?.role || 'Guest';
+  };
+
+  // Helper function để lấy user name
+  const getUserName = (): string => {
+    return user?.fullName || 'Unknown User';
   };
 
   const value: AuthContextType = {
@@ -58,6 +69,9 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     login,
     logout,
     isLoading: loginMutation.isPending || isLoading,
+    hasPermission,
+    getUserRole,
+    getUserName,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

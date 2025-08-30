@@ -21,7 +21,6 @@ export const handleView = ({
   ) => void;
   path: string;
 }) => {
-  console.log('Xem chi tiết');
   navigateTo(path, {
     toast: {
       type: 'success',

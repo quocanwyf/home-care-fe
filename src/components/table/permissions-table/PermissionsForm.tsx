@@ -43,7 +43,6 @@ const PermissionsForm = () => {
     getAllPossiblePermissions,
   } = usePermissionsPage();
 
-  console.log('ca', permissionsData);
   // Loading states
   if (isLoadingRoleDetail) {
     return <LoadingFallback content="Loading role information..." />;

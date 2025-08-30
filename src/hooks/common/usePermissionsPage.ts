@@ -62,9 +62,6 @@ export const usePermissionsPage = () => {
   const roleDeleteConfirmation = useConfirmation({
     deleteFunction: (roleId: string) => deleteRole(roleId),
     entityName: 'Role',
-    onDeleteSuccess: () => {
-      console.log('Role deleted successfully!');
-    },
     successMessage: 'Role deleted successfully!',
     errorMessage: 'Failed to delete role!',
   });
@@ -143,8 +140,6 @@ export const usePermissionsPage = () => {
 
   useEffect(() => {
     if (roleDetailData?.record && editingRoleId) {
-      console.log('Role detail loaded:', roleDetailData.record);
-
       setSelectedRole({
         _id: roleDetailData.record._id,
         title: roleDetailData.record.title,
@@ -166,7 +161,6 @@ export const usePermissionsPage = () => {
 
   // Handlers
   const handleEditRole = (role: Role) => {
-    console.log('Editing role:', role);
     setEditingRoleId(role._id);
   };
 
@@ -180,8 +174,6 @@ export const usePermissionsPage = () => {
 
   const handleUpdateChanges = async () => {
     try {
-      console.log('Updating permissions:', rolePermissions);
-
       const permissionsArray = Object.entries(rolePermissions).map(
         ([roleId, permissions]) => ({
           id: roleId,
@@ -194,7 +186,6 @@ export const usePermissionsPage = () => {
         {
           onSuccess: () => {
             setOriginalRolePermissions({ ...rolePermissions });
-            console.log('Permissions updated successfully!');
           },
           onError: (error) => {
             console.error('Failed to update permissions:', error);
@@ -208,7 +199,6 @@ export const usePermissionsPage = () => {
 
   const handleCancelChanges = () => {
     setRolePermissions({ ...originalRolePermissions });
-    console.log('Changes cancelled');
   };
 
   const toggleModuleExpansion = (moduleName: string) => {
@@ -286,7 +276,6 @@ export const usePermissionsPage = () => {
           onSuccess: () => {
             setOpen(false);
             setSelectedRole(null);
-            console.log('Role updated successfully!');
           },
           onError: (error) => {
             console.error('Failed to update role:', error);
@@ -304,7 +293,6 @@ export const usePermissionsPage = () => {
           onSuccess: () => {
             setOpen(false);
             setSelectedRole(null);
-            console.log('Role created successfully!');
           },
           onError: (error) => {
             console.error('Failed to create role:', error);

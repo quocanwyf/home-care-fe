@@ -84,8 +84,6 @@ const CustomerArea = ({
       const result =
         await checkCustomerExistPhoneMutation.mutateAsync(watchedPhone);
 
-      console.log('Search result:', result);
-
       if (result.success && result.customer) {
         const customerData = result.customer;
         const address = customerData.addresses[0];

@@ -2,7 +2,7 @@ import PermissionsForm from '@/components/table/permissions-table/PermissionsFor
 
 const PermissionsPage = () => {
   return (
-    <div className="h-full w-full rounded-xl bg-white px-8 py-2">
+    <div className="bg-background h-full w-full rounded-xl px-8 py-2">
       <PermissionsForm />
     </div>
   );

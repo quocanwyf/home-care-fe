@@ -104,10 +104,10 @@ export function AppTable<T>({
   const emptyRowsCount = Math.max(0, pageSize - actualRows.length);
 
   return (
-    <div className="flex h-full max-h-screen flex-col overflow-auto rounded-xl border bg-white shadow-sm">
+    <div className="bg-background flex h-full max-h-screen flex-col overflow-auto rounded-xl border shadow-sm">
       {/* Fixed Header */}
       {isHeader && (
-        <div className="sticky top-0 z-10 rounded-full border-b bg-white px-2 pl-8">
+        <div className="bg-background sticky top-0 z-10 rounded-full border-b px-2 pl-8">
           <PageHeader pageHeaderTitle={pageHeaderTitle} />
         </div>
       )}
@@ -115,13 +115,13 @@ export function AppTable<T>({
       {/* Scrollable Table Content */}
       <div className="flex-1 overflow-auto pl-8">
         <Table>
-          <TableHeader className="sticky top-0 z-10 bg-white">
+          <TableHeader className="bg-background sticky top-0 z-10">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
                   <TableHead
                     key={header.id}
-                    className="bg-white font-bold opacity-60"
+                    className="bg-background font-bold opacity-60"
                   >
                     {header.isPlaceholder
                       ? null
@@ -197,7 +197,7 @@ export function AppTable<T>({
 
       {/* Fixed Footer */}
       {isFooter && (
-        <div className="sticky bottom-0 z-10 rounded-full border-t bg-white px-2 pl-8">
+        <div className="bg-background sticky bottom-0 z-10 rounded-full border-t px-2 pl-8">
           <PageFooter
             status={statusFilter}
             onStatusFilterChange={onStatusFilterChange}

@@ -1,11 +1,24 @@
+import { Plus } from 'lucide-react';
+
 import { useAppNavigate } from '@/hooks/common/useAppNavigate';
 
 import TooltipInfo from '../../common/primitives/TooltipInfo';
 import { Button } from '../../ui/button';
 
-const PageHeader = ({ pageHeaderTitle }: { pageHeaderTitle: string }) => {
+const PageHeader = ({
+  pageHeaderTitle,
+  children,
+  handleClick,
+  showAddButton = true,
+}: {
+  pageHeaderTitle: string;
+  children?: React.ReactNode;
+  handleClick?: () => void;
+  showAddButton?: boolean;
+}) => {
   const navigateTo = useAppNavigate();
-  const handleClick = () => {
+
+  const handleClickDefault = () => {
     navigateTo('add', {
       toast: {
         type: 'success',
@@ -20,14 +33,20 @@ const PageHeader = ({ pageHeaderTitle }: { pageHeaderTitle: string }) => {
       <div className="text-overlay-slider font-bold opacity-80">
         {pageHeaderTitle}
       </div>
-      <TooltipInfo content="Add new item" side="bottom">
-        <Button
-          onClick={handleClick}
-          className="max-mobile:mr-4 max-tablet:mr-8 max-desktop:mr-18 mx-20 cursor-pointer rounded-xl px-3 py-1 transition duration-500 ease-in-out hover:scale-105"
-        >
-          Add
-        </Button>
-      </TooltipInfo>
+      <div className="flex">
+        {showAddButton && (
+          <TooltipInfo content="Add new item" side="bottom">
+            <Button
+              onClick={handleClick ?? handleClickDefault}
+              className="mx-4 cursor-pointer rounded-xl px-3 py-1 transition duration-500 ease-in-out hover:scale-105"
+            >
+              <div className="">Add</div>
+              <Plus className="h-4 w-4" />
+            </Button>
+          </TooltipInfo>
+        )}
+        {children}
+      </div>
     </div>
   );
 };

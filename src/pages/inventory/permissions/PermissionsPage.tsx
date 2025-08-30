@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 
-import { Edit, FileText, Trash2, UserCog } from 'lucide-react';
+import { Check, Edit, FileText, Trash2, UserCog, X } from 'lucide-react';
 
 import { PermissionToggleCheckbox } from '@/components/common/checkbox/PermissionToggleCheckbox';
 import AppModal from '@/components/common/float-display/AppModal';
 import InputLabel from '@/components/common/input/InputLabel';
+import TooltipInfo from '@/components/common/primitives/TooltipInfo';
+import PageHeader from '@/components/table/app-table/PageHeader';
 import { ModuleExpansionHeader } from '@/components/table/permissions-table/ModuleExpansionHeader';
 import { Button } from '@/components/ui/button';
 import { useGetPermissions, useGetRoles } from '@/hooks/api/usePermissions.api';
@@ -36,27 +38,15 @@ const PermissionsPage = () => {
   const { data: rolesData } = useGetRoles(); // Data nhóm quyền (Admin, Staff,...) - no permissions
   const { data: permissionsData } = useGetPermissions(); // Data quyền chi tiết - has permissions
 
-  console.log('Roles data:', rolesData);
-  console.log('Permissions data:', permissionsData);
-
   const [open, setOpen] = useState(false);
   const [selectedRole, setSelectedRole] = useState<RoleWithPermissions | null>(
     null
   );
-  const [expandedModules, setExpandedModules] = useState<string[]>([
-    'Staffs',
-    'Helpers',
-    'Customers',
-    'Services',
-    'Blogs',
-    'Cost Coefficients',
-    'Policies',
-    'General Settings',
-    'Roles',
-    'Dashboard',
-  ]);
 
-  // Tạo danh sách tất cả permissions có thể có với mô tả
+  const [originalRolePermissions, setOriginalRolePermissions] = useState<
+    Record<string, string[]>
+  >({});
+
   const getAllPossiblePermissions = (): Permission[] => {
     const allPermissions = [
       // Staffs
@@ -301,6 +291,87 @@ const PermissionsPage = () => {
     getAllPossiblePermissions()
   );
 
+  const [rolePermissions, setRolePermissions] = useState<
+    Record<string, string[]>
+  >({});
+
+  const [expandedModules, setExpandedModules] = useState<string[]>([
+    'Staffs',
+    'Helpers',
+    'Customers',
+    'Services',
+    'Blogs',
+    'Cost Coefficients',
+    'Policies',
+    'General Settings',
+    'Roles',
+    'Dashboard',
+  ]);
+
+  useEffect(() => {
+    if (permissionsData?.records) {
+      const initialRolePermissions: Record<string, string[]> = {};
+      permissionsData.records.forEach((role) => {
+        initialRolePermissions[role._id] = [...role.permissions];
+      });
+      setRolePermissions(initialRolePermissions);
+      setOriginalRolePermissions(initialRolePermissions);
+    }
+  }, [permissionsData]);
+
+  const hasChanges = (): boolean => {
+    // So sánh rolePermissions hiện tại với originalRolePermissions
+    const currentRoleIds = Object.keys(rolePermissions);
+    const originalRoleIds = Object.keys(originalRolePermissions);
+
+    // Kiểm tra số lượng roles
+    if (currentRoleIds.length !== originalRoleIds.length) return true;
+
+    // Kiểm tra từng role
+    for (const roleId of currentRoleIds) {
+      const currentPerms = rolePermissions[roleId] || [];
+      const originalPerms = originalRolePermissions[roleId] || [];
+
+      // So sánh length trước
+      if (currentPerms.length !== originalPerms.length) return true;
+
+      // So sánh từng permission
+      const currentSorted = [...currentPerms].sort();
+      const originalSorted = [...originalPerms].sort();
+
+      for (let i = 0; i < currentSorted.length; i++) {
+        if (currentSorted[i] !== originalSorted[i]) return true;
+      }
+    }
+
+    return false;
+  };
+
+  const handleUpdateChanges = async () => {
+    try {
+      // Implement API call để update permissions
+      console.log('Updating permissions:', rolePermissions);
+
+      // Giả lập API call
+      // await updateRolePermissions(rolePermissions);
+
+      // Update originalRolePermissions sau khi save thành công
+      setOriginalRolePermissions({ ...rolePermissions });
+
+      // Thông báo thành công
+      console.log('Permissions updated successfully!');
+    } catch (error) {
+      console.error('Failed to update permissions:', error);
+    }
+  };
+
+  // ✅ Function để handle cancel changes
+  const handleCancelChanges = () => {
+    // Reset lại permissions về trạng thái ban đầu
+    setRolePermissions({ ...originalRolePermissions });
+    console.log('Changes cancelled');
+  };
+
   // Toggle module expansion
   const toggleModuleExpansion = (moduleName: string) => {
     setExpandedModules((prev) =>
@@ -327,10 +398,7 @@ const PermissionsPage = () => {
 
   // Find role permissions from permissionsData by matching _id
   const getRolePermissions = (roleId: string): string[] => {
-    const roleWithPermissions = permissionsData?.records?.find(
-      (r: RoleWithPermissions) => r._id === roleId
-    );
-    return roleWithPermissions?.permissions || [];
+    return rolePermissions[roleId] || [];
   };
 
   // Get role permission count for each module
@@ -338,9 +406,9 @@ const PermissionsPage = () => {
     roleId: string,
     modulePermissions: Permission[]
   ) => {
-    const rolePermissions = getRolePermissions(roleId);
+    const currentRolePermissions = getRolePermissions(roleId); //   Sử dụng state
     const modulePermissionKeys = modulePermissions.map((p) => p.permissionKey);
-    const hasPermissions = rolePermissions.filter((p) =>
+    const hasPermissions = currentRolePermissions.filter((p) =>
       modulePermissionKeys.includes(p)
     );
     return `${hasPermissions.length}/${modulePermissionKeys.length}`;
@@ -351,21 +419,38 @@ const PermissionsPage = () => {
     roleId: string,
     permissionKey: string
   ): boolean => {
-    const rolePermissions = getRolePermissions(roleId);
-    return rolePermissions.includes(permissionKey);
+    const currentRolePermissions = getRolePermissions(roleId);
+    return currentRolePermissions.includes(permissionKey);
   };
 
   // Handle permission toggle (for future edit functionality)
   const handlePermissionToggle = (roleId: string, permissionKey: string) => {
-    console.log(`Toggle permission ${permissionKey} for role ${roleId}`);
-    // Implement API call to update role permissions here
+    const currentRolePermissions = getRolePermissions(roleId);
+
+    const hasPermission = currentRolePermissions.includes(permissionKey);
+
+    let newPermissions: string[];
+    if (hasPermission) {
+      // Nếu đang có permission thì remove
+      newPermissions = currentRolePermissions.filter(
+        (p) => p !== permissionKey
+      );
+    } else {
+      // Nếu chưa có thì add
+      newPermissions = [...currentRolePermissions, permissionKey];
+    }
+
+    setRolePermissions((prev) => ({
+      ...prev,
+      [roleId]: newPermissions,
+    }));
   };
 
   const handleOpenModal = (role?: Role) => {
     if (role) {
       // Find the role with permissions from permissionsData
       const roleWithPermissions = permissionsData?.records?.find(
-        (r: RoleWithPermissions) => r._id === role._id
+        (r) => r._id === role._id
       );
 
       if (roleWithPermissions) {
@@ -387,13 +472,6 @@ const PermissionsPage = () => {
   };
 
   const handleSave = () => {
-    const selectedPermissions = permissions
-      .filter((p) => p.hasPermission)
-      .map((p) => p.permissionKey);
-
-    console.log('Selected permissions:', selectedPermissions);
-    console.log('Selected role:', selectedRole);
-
     // Call API to save/update role permissions here
     setOpen(false);
     setSelectedRole(null);
@@ -410,29 +488,61 @@ const PermissionsPage = () => {
     );
   };
 
+  const showUpdateButtons = hasChanges();
+
   // If data is still loading
   if (!rolesData || !permissionsData) {
     return <div>Loading...</div>;
   }
 
   return (
-    <div className="h-full w-full rounded-xl bg-white px-6 pt-6">
-      <div className="mb-6 flex items-center justify-between">
+    <div className="h-full w-full rounded-xl bg-white px-6">
+      {/* <div className="mb-6 flex items-center justify-between">
         <h2 className="text-md text-overlay-slider font-semibold">
           Management Permissions
         </h2>
         <Button onClick={() => handleOpenModal()}>New Group</Button>
+      </div> */}
+      <div className="sticky top-0 z-10 rounded-full border-b bg-white px-2 pl-8">
+        <PageHeader
+          pageHeaderTitle="Management Permissions"
+          handleClick={handleOpenModal}
+          showAddButton={!showUpdateButtons}
+        >
+          {showUpdateButtons && (
+            <div className="flex gap-4">
+              <TooltipInfo content="Update changes" side="bottom">
+                <Button
+                  onClick={handleUpdateChanges} // ✅ Thêm handler
+                  className="cursor-pointer rounded-xl px-3 py-1 transition duration-500 ease-in-out hover:scale-105"
+                >
+                  <div className="">Update</div>
+                  <Check className="h-4 w-4" />
+                </Button>
+              </TooltipInfo>
+              <TooltipInfo content="Cancel changes" side="bottom">
+                <Button
+                  onClick={handleCancelChanges} // ✅ Thêm handler
+                  className="bg-text-destructive hover:bg-text-destructive cursor-pointer rounded-xl px-3 py-1 transition duration-500 ease-in-out hover:scale-105"
+                >
+                  <div className="">Cancel</div>
+                  <X className="h-4 w-4" />
+                </Button>
+              </TooltipInfo>
+            </div>
+          )}
+        </PageHeader>
       </div>
 
       {/* Main Permissions Table */}
-      <div className="max-mobile:pb-8 max-h-[82%] overflow-auto rounded-lg border border-b-0 pb-4">
+      <div className="max-mobile:pb-8 max-h-[82%] overflow-auto rounded-lg pb-4">
         <div className="overflow-x-auto">
           <table className="w-full">
             {/* Header */}
             <thead className="border-b bg-gray-50">
               <tr>
-                <th className="min-w-[250px] p-4 text-left text-xs font-medium text-gray-600">
-                  MODULE / ACTION
+                <th className="min-w-[250px] p-4 text-left text-sm font-semibold text-gray-600">
+                  Module / Action
                 </th>
                 {rolesData?.records?.map((role: Role) => (
                   <th
@@ -441,9 +551,6 @@ const PermissionsPage = () => {
                   >
                     <div className="text-center">
                       <div className="font-medium">{role.title}</div>
-                      <div className="mt-1 text-xs text-gray-500">
-                        {role.description}
-                      </div>
                       <div className="mt-2 flex justify-center space-x-1">
                         <button
                           className="flex h-4 w-4 items-center justify-center rounded bg-blue-100 text-xs text-blue-600 hover:bg-blue-200"
@@ -462,15 +569,6 @@ const PermissionsPage = () => {
                     </div>
                   </th>
                 ))}
-                <th className="w-12 p-4 text-center font-medium text-gray-600">
-                  <button
-                    className="flex h-6 w-6 items-center justify-center rounded border-2 border-dashed border-gray-300 text-gray-400 hover:border-gray-400"
-                    onClick={() => handleOpenModal()}
-                    title="Thêm nhóm quyền mới"
-                  >
-                    +
-                  </button>
-                </th>
               </tr>
             </thead>
 
@@ -481,7 +579,7 @@ const PermissionsPage = () => {
                 const isExpanded = expandedModules.includes(module);
 
                 return (
-                  <React.Fragment key={module}>
+                  <Fragment key={module}>
                     {/* Module Header Row */}
                     <tr className="border-b bg-gray-50">
                       <td className="p-0">
@@ -539,10 +637,9 @@ const PermissionsPage = () => {
                               </div>
                             </td>
                           ))}
-                          <td className="p-4 text-center"></td>
                         </tr>
                       ))}
-                  </React.Fragment>
+                  </Fragment>
                 );
               })}
             </tbody>
@@ -558,16 +655,16 @@ const PermissionsPage = () => {
           setSelectedRole(null);
           setPermissions(getAllPossiblePermissions());
         }}
-        title={selectedRole ? 'Chỉnh sửa nhóm quyền' : 'Thêm nhóm quyền mới'}
-        description="Cấu hình quyền cho nhóm người dùng"
+        title={selectedRole ? 'Edit Role' : 'Add New Role'}
+        description="Configure permissions for the user group"
         width="max-w-4xl"
         footer={
           <>
             <Button variant="outline" onClick={() => setOpen(false)}>
-              Hủy
+              Cancel
             </Button>
             <Button onClick={handleSave}>
-              {selectedRole ? 'Cập nhật' : 'Tạo mới'}
+              {selectedRole ? 'Update' : 'Create'}
             </Button>
           </>
         }
@@ -577,35 +674,35 @@ const PermissionsPage = () => {
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <InputLabel
               label={{
-                labelTitle: 'Tên nhóm quyền *',
+                labelTitle: 'Role Name *',
                 icon: <UserCog className="h-3 w-3" />,
               }}
               input={{
                 inputId: 'role',
                 className: 'w-full',
                 inputName: 'role',
-                placeholder: 'Nhập tên nhóm quyền',
+                placeholder: 'Enter role name',
                 defaultValue: selectedRole?.title || '',
               }}
             />
             <InputLabel
               label={{
-                labelTitle: 'Mô tả',
+                labelTitle: 'Description',
                 icon: <FileText className="h-3 w-3" />,
               }}
               input={{
                 inputId: 'description',
                 className: 'w-full',
                 inputName: 'description',
-                placeholder: 'Nhập mô tả',
+                placeholder: 'Enter description',
                 defaultValue: selectedRole?.description || '',
               }}
             />
           </div>
 
-          {/* Permissions table trong modal */}
+          {/* Permissions table in modal */}
           <div className="space-y-2">
-            <h3 className="text-sm font-medium">Phân quyền chi tiết</h3>
+            <h3 className="text-sm font-medium">Detailed Permissions</h3>
             <div className="max-h-96 overflow-auto rounded border">
               <table className="w-full">
                 <thead className="sticky top-0 bg-gray-50">

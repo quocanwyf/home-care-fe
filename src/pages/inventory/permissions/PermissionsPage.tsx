@@ -9,7 +9,11 @@ import TooltipInfo from '@/components/common/primitives/TooltipInfo';
 import PageHeader from '@/components/table/app-table/PageHeader';
 import { ModuleExpansionHeader } from '@/components/table/permissions-table/ModuleExpansionHeader';
 import { Button } from '@/components/ui/button';
-import { useGetPermissions, useGetRoles } from '@/hooks/api/usePermissions.api';
+import {
+  useGetPermissions,
+  useGetRoles,
+  useUpdatePermissions,
+} from '@/hooks/api/usePermissions.api';
 
 interface Permission {
   id: string;
@@ -37,6 +41,8 @@ interface RoleWithPermissions {
 const PermissionsPage = () => {
   const { data: rolesData } = useGetRoles(); // Data nhóm quyền (Admin, Staff,...) - no permissions
   const { data: permissionsData } = useGetPermissions(); // Data quyền chi tiết - has permissions
+  const { mutate: updatePermissions, isPending: isUpdating } =
+    useUpdatePermissions();
 
   const [open, setOpen] = useState(false);
   const [selectedRole, setSelectedRole] = useState<RoleWithPermissions | null>(
@@ -349,23 +355,35 @@ const PermissionsPage = () => {
 
   const handleUpdateChanges = async () => {
     try {
-      // Implement API call để update permissions
       console.log('Updating permissions:', rolePermissions);
 
-      // Giả lập API call
-      // await updateRolePermissions(rolePermissions);
+      const permissionsArray = Object.entries(rolePermissions).map(
+        ([roleId, permissions]) => ({
+          id: roleId,
+          permissions: permissions,
+        })
+      );
 
-      // Update originalRolePermissions sau khi save thành công
-      setOriginalRolePermissions({ ...rolePermissions });
-
-      // Thông báo thành công
-      console.log('Permissions updated successfully!');
+      // ✅ Call API thông qua hook
+      updatePermissions(
+        { permissions: permissionsArray }, // payload
+        {
+          onSuccess: () => {
+            // ✅ Update originalRolePermissions sau khi save thành công
+            setOriginalRolePermissions({ ...rolePermissions });
+            console.log('Permissions updated successfully!');
+          },
+          onError: (error) => {
+            console.error('Failed to update permissions:', error);
+          },
+        }
+      );
     } catch (error) {
       console.error('Failed to update permissions:', error);
     }
   };
 
-  // ✅ Function để handle cancel changes
+  //   Function để handle cancel changes
   const handleCancelChanges = () => {
     // Reset lại permissions về trạng thái ban đầu
     setRolePermissions({ ...originalRolePermissions });
@@ -513,7 +531,8 @@ const PermissionsPage = () => {
             <div className="flex gap-4">
               <TooltipInfo content="Update changes" side="bottom">
                 <Button
-                  onClick={handleUpdateChanges} // ✅ Thêm handler
+                  onClick={handleUpdateChanges}
+                  disabled={isUpdating}
                   className="cursor-pointer rounded-xl px-3 py-1 transition duration-500 ease-in-out hover:scale-105"
                 >
                   <div className="">Update</div>
@@ -522,7 +541,8 @@ const PermissionsPage = () => {
               </TooltipInfo>
               <TooltipInfo content="Cancel changes" side="bottom">
                 <Button
-                  onClick={handleCancelChanges} // ✅ Thêm handler
+                  onClick={handleCancelChanges}
+                  disabled={isUpdating}
                   className="bg-text-destructive hover:bg-text-destructive cursor-pointer rounded-xl px-3 py-1 transition duration-500 ease-in-out hover:scale-105"
                 >
                   <div className="">Cancel</div>
@@ -552,19 +572,22 @@ const PermissionsPage = () => {
                     <div className="text-center">
                       <div className="font-medium">{role.title}</div>
                       <div className="mt-2 flex justify-center space-x-1">
-                        <button
-                          className="flex h-4 w-4 items-center justify-center rounded bg-blue-100 text-xs text-blue-600 hover:bg-blue-200"
-                          onClick={() => handleOpenModal(role)}
-                          title="Edit"
-                        >
-                          <Edit className="h-3 w-3" />
-                        </button>
-                        <button
-                          className="flex h-4 w-4 items-center justify-center rounded bg-red-100 text-xs text-red-600 hover:bg-red-200"
-                          title="Delete"
-                        >
-                          <Trash2 className="h-3 w-3" />
-                        </button>
+                        <TooltipInfo content="Edit">
+                          <button
+                            // onClick={() => onUnban(row)}
+                            className="cursor-pointer p-1 text-blue-400 transition-colors hover:text-blue-600"
+                          >
+                            <Edit className="h-3.5 w-3.5" />
+                          </button>
+                        </TooltipInfo>
+                        <TooltipInfo content="Delete">
+                          <button
+                            // onClick={() => onUnban(row)}
+                            className="cursor-pointer p-1 text-red-400 transition-colors hover:text-red-600"
+                          >
+                            <Trash2 className="h-3.5 w-3.5" />
+                          </button>
+                        </TooltipInfo>
                       </div>
                     </div>
                   </th>
@@ -674,7 +697,7 @@ const PermissionsPage = () => {
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <InputLabel
               label={{
-                labelTitle: 'Role Name *',
+                labelTitle: 'Role Name',
                 icon: <UserCog className="h-3 w-3" />,
               }}
               input={{

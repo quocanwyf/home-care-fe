@@ -24,7 +24,7 @@ export const ModuleExpansionHeader: React.FC<ModuleExpansionHeaderProps> = ({
       ) : (
         <ChevronRight className="h-4 w-4 text-gray-500" />
       )}
-      <span className="font-medium text-gray-900">{moduleName}</span>
+      <span className="text-sm font-medium text-gray-900">{moduleName}</span>
     </div>
   );
 };

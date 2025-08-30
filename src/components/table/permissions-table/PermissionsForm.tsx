@@ -43,6 +43,7 @@ const PermissionsForm = () => {
     getAllPossiblePermissions,
   } = usePermissionsPage();
 
+  console.log('ca', permissionsData);
   // Loading states
   if (isLoadingRoleDetail) {
     return <LoadingFallback content="Loading role information..." />;
@@ -57,7 +58,7 @@ const PermissionsForm = () => {
   }
 
   return (
-    <div>
+    <div className="h-screen">
       {/* Header */}
       <PermissionsHeader
         showUpdateButtons={showUpdateButtons}
@@ -97,22 +98,7 @@ const PermissionsForm = () => {
         confirmText="Delete Role"
         cancelText="Cancel"
         onConfirm={roleDeleteConfirmation.handleDeleteConfirm}
-      >
-        <div className="space-y-2">
-          <div className="text-sm text-gray-600">
-            <strong>Role:</strong>{' '}
-            {roleDeleteConfirmation.entityData?.roleTitle}
-          </div>
-          <div className="text-sm text-gray-600">
-            <strong>Description:</strong>{' '}
-            {roleDeleteConfirmation.entityData?.roleDescription}
-          </div>
-          <div className="text-sm font-medium text-red-600">
-            This action cannot be undone. All users with this role will lose
-            their permissions.
-          </div>
-        </div>
-      </ConfirmDialog>
+      ></ConfirmDialog>
 
       {/* Role Modal */}
       <RolePermissionModal

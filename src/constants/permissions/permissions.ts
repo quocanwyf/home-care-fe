@@ -2,6 +2,31 @@ import type { Permission } from '@/types/table/objects/permissions';
 
 export const getAllPossiblePermissions = (): Permission[] => {
   const allPermissions = [
+    //Orders
+    {
+      module: 'Orders',
+      action: 'view',
+      permissionKey: 'orders_view',
+      description: 'Xem danh sách đơn hàng',
+    },
+    {
+      module: 'Orders',
+      action: 'create',
+      permissionKey: 'orders_create',
+      description: 'Tạo đơn hàng mới',
+    },
+    {
+      module: 'Orders',
+      action: 'edit',
+      permissionKey: 'orders_edit',
+      description: 'Chỉnh sửa đơn hàng',
+    },
+    {
+      module: 'Orders',
+      action: 'delete',
+      permissionKey: 'orders_delete',
+      description: 'Xóa đơn hàng',
+    },
     // Staffs
     {
       module: 'Staffs',

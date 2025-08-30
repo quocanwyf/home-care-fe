@@ -13,8 +13,8 @@ export const ROUTE_TITLES: Record<string, string> = {
   '/staffs/add': 'Staffs / Add',
 
   '/customers': 'Customers',
-
-  '/finances': 'Finances',
+  '/services': 'Services',
+  '/cost-coefficients': 'Cost Coefficients',
   '/permissions': 'Permissions',
   '/system': 'System',
 };

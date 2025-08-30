@@ -54,7 +54,7 @@ const SidebarMobile = ({
             {MENU_ITEMS.map((item, idx) => (
               <div key={idx}>
                 {item.children ? (
-                  <div className="text-text-primary my-2 mr-10 flex justify-center font-bold">
+                  <div className="text-text-primary my-1 mr-10 flex justify-center font-bold">
                     {item.label}
                   </div>
                 ) : (

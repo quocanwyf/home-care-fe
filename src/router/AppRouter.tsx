@@ -26,6 +26,9 @@ const OrdersPage = lazy(() => import('@/pages/orders/OrdersPage'));
 const AddOrderPage = lazy(() => import('@/pages/orders/AddOrderPage'));
 const DetailOrderPage = lazy(() => import('@/pages/orders/DetailOrderPage'));
 
+const ServicesPage = lazy(
+  () => import('@/pages/inventory/services/ServicesPage')
+);
 const FinancesPage = lazy(
   () => import('@/pages/inventory/finances/FianancesPage')
 );
@@ -64,7 +67,8 @@ const AppRouter = () => {
           <Route path="/orders/add" element={<AddOrderPage />} />
           <Route path="/orders/detail/:id" element={<DetailOrderPage />} />
 
-          <Route path="/finances" element={<FinancesPage />} />
+          <Route path="/services" element={<ServicesPage />} />
+          <Route path="/cost-coefficients" element={<FinancesPage />} />
           <Route path="/permissions" element={<PermissionsPage />} />
           <Route path="/system" element={<SystemPage />} />
         </Route>

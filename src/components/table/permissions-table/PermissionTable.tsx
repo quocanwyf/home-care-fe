@@ -56,7 +56,7 @@ export const PermissionsTable: React.FC<PermissionsTableProps> = ({
   };
 
   return (
-    <div className="max-mobile:pb-8 max-h-[82%] overflow-auto rounded-lg pb-4">
+    <div className="max-mobile:pb-8 max-h-[80%] overflow-auto rounded-lg pb-10">
       <div className="overflow-x-auto">
         <table className="w-full">
           {/* Header */}

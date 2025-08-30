@@ -27,9 +27,14 @@ export const MENU_ITEMS = [
     path: '/inventory',
     children: [
       {
-        label: 'Finances',
+        label: 'Services',
+        icon: 'icon-image/card-sim.png',
+        path: '/services',
+      },
+      {
+        label: 'Cost Coefficients',
         icon: 'icon-image/hand-coins.png',
-        path: '/finances',
+        path: '/cost-coefficients',
       },
       {
         key: 'permissions',

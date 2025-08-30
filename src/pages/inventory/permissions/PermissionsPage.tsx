@@ -1,19 +1,26 @@
 import { Fragment, useEffect, useState } from 'react';
 
-import { Check, Edit, FileText, Trash2, UserCog, X } from 'lucide-react';
+import { Check, Edit, Trash2, X } from 'lucide-react';
 
 import { PermissionToggleCheckbox } from '@/components/common/checkbox/PermissionToggleCheckbox';
-import AppModal from '@/components/common/float-display/AppModal';
-import InputLabel from '@/components/common/input/InputLabel';
+import ConfirmDialog from '@/components/common/float-display/ConfirmDialog';
+import { RolePermissionModal } from '@/components/common/float-display/RolePermissionModal';
 import TooltipInfo from '@/components/common/primitives/TooltipInfo';
+import FailLoadingAndEntry from '@/components/fallback/FailLoadingAndEntry';
+import LoadingFallback from '@/components/fallback/LoadingFallback';
 import PageHeader from '@/components/table/app-table/PageHeader';
 import { ModuleExpansionHeader } from '@/components/table/permissions-table/ModuleExpansionHeader';
 import { Button } from '@/components/ui/button';
 import {
+  useCreateRole,
+  useDeleteRole,
   useGetPermissions,
+  useGetRoleDetail,
   useGetRoles,
   useUpdatePermissions,
+  useUpdateRole,
 } from '@/hooks/api/usePermissions.api';
+import { useConfirmation } from '@/hooks/common/useConfirmation';
 
 interface Permission {
   id: string;
@@ -41,9 +48,19 @@ interface RoleWithPermissions {
 const PermissionsPage = () => {
   const { data: rolesData } = useGetRoles(); // Data nhóm quyền (Admin, Staff,...) - no permissions
   const { data: permissionsData } = useGetPermissions(); // Data quyền chi tiết - has permissions
+  const [editingRoleId, setEditingRoleId] = useState<string | undefined>(
+    undefined
+  );
   const { mutate: updatePermissions, isPending: isUpdating } =
     useUpdatePermissions();
-
+  const { mutate: deleteRole, isPending: isDeletingRole } = useDeleteRole(); // ✅ Add delete role hook
+  const { mutate: createRole, isPending: isCreatingRole } = useCreateRole(); // ✅ Hook tạo role
+  const { mutate: updateRole, isPending: isUpdatingRole } = useUpdateRole(); // ✅ Hook update role
+  const {
+    data: roleDetailData,
+    isLoading: isLoadingRoleDetail,
+    error: roleDetailError,
+  } = useGetRoleDetail(editingRoleId);
   const [open, setOpen] = useState(false);
   const [selectedRole, setSelectedRole] = useState<RoleWithPermissions | null>(
     null
@@ -314,6 +331,17 @@ const PermissionsPage = () => {
     'Dashboard',
   ]);
 
+  const roleDeleteConfirmation = useConfirmation({
+    deleteFunction: (roleId: string) => deleteRole(roleId),
+    entityName: 'Role',
+    onDeleteSuccess: () => {
+      // Optional: Add any additional cleanup after successful delete
+      console.log('Role deleted successfully!');
+    },
+    successMessage: 'Role deleted successfully!',
+    errorMessage: 'Failed to delete role!',
+  });
+
   useEffect(() => {
     if (permissionsData?.records) {
       const initialRolePermissions: Record<string, string[]> = {};
@@ -324,6 +352,35 @@ const PermissionsPage = () => {
       setOriginalRolePermissions(initialRolePermissions);
     }
   }, [permissionsData]);
+
+  useEffect(() => {
+    if (roleDetailData?.record && editingRoleId) {
+      console.log('Role detail loaded:', roleDetailData.record);
+
+      // ✅ Set selected role với data từ API
+      setSelectedRole({
+        _id: roleDetailData.record._id,
+        title: roleDetailData.record.title,
+        description: roleDetailData.record.description,
+        permissions: roleDetailData.record.permissions || [],
+      });
+
+      // ✅ Mở modal
+      setOpen(true);
+
+      // ✅ Reset editingRoleId
+      setEditingRoleId(undefined);
+    }
+  }, [roleDetailData, editingRoleId]);
+
+  // ✅ Handle error khi load role detail
+  useEffect(() => {
+    if (roleDetailError && editingRoleId) {
+      console.error('Failed to load role detail:', roleDetailError);
+      setEditingRoleId(undefined);
+      // Có thể show toast error ở đây
+    }
+  }, [roleDetailError, editingRoleId]);
 
   const hasChanges = (): boolean => {
     // So sánh rolePermissions hiện tại với originalRolePermissions
@@ -351,6 +408,20 @@ const PermissionsPage = () => {
     }
 
     return false;
+  };
+
+  const handleEditRole = (role: Role) => {
+    console.log('Editing role:', role);
+    setEditingRoleId(role._id); // ✅ Set roleId để trigger useGetRoleDetail
+  };
+
+  const handleDeleteRole = (role: Role) => {
+    // ✅ Find role data để pass vào confirmation dialog
+    roleDeleteConfirmation.openDeleteConfirmation(role._id, {
+      roleTitle: role.title,
+      roleDescription: role.description || 'No description',
+      roleId: role._id,
+    });
   };
 
   const handleUpdateChanges = async () => {
@@ -489,29 +560,81 @@ const PermissionsPage = () => {
     setOpen(true);
   };
 
-  const handleSave = () => {
-    // Call API to save/update role permissions here
+  const handleCloseModal = () => {
     setOpen(false);
     setSelectedRole(null);
-    setPermissions(getAllPossiblePermissions());
+    setEditingRoleId(undefined); // ✅ Reset editing state
   };
 
-  const handlePermissionToggleInModal = (id: string) => {
-    setPermissions((prev) =>
-      prev.map((permission) =>
-        permission.id === id
-          ? { ...permission, hasPermission: !permission.hasPermission }
-          : permission
-      )
-    );
+  const handleModalSave = (roleData: {
+    title: string;
+    description: string;
+    permissions: string[];
+  }) => {
+    if (selectedRole) {
+      // ✅ Update existing role
+      updateRole(
+        {
+          roleId: selectedRole._id,
+          roleData: {
+            title: roleData.title,
+            description: roleData.description,
+          },
+        },
+        {
+          onSuccess: () => {
+            setOpen(false);
+            setSelectedRole(null);
+            console.log('Role updated successfully!');
+          },
+          onError: (error) => {
+            console.error('Failed to update role:', error);
+          },
+        }
+      );
+    } else {
+      createRole(
+        {
+          title: roleData.title,
+          description: roleData.description,
+          permissions: roleData.permissions,
+        },
+        {
+          onSuccess: () => {
+            setOpen(false);
+            setSelectedRole(null);
+            console.log('Role created successfully!');
+          },
+          onError: (error) => {
+            console.error('Failed to create role:', error);
+          },
+        }
+      );
+    }
   };
 
   const showUpdateButtons = hasChanges();
+
+  if (isLoadingRoleDetail) {
+    return <LoadingFallback content="Loading role information..." />;
+  }
+
+  //  Show error state
+  if (roleDetailError && !roleDetailData) {
+    return <FailLoadingAndEntry content="Failed to load role information" />;
+  }
 
   // If data is still loading
   if (!rolesData || !permissionsData) {
     return <div>Loading...</div>;
   }
+
+  const isAnyActionLoading =
+    isUpdating ||
+    isCreatingRole ||
+    isUpdatingRole ||
+    isDeletingRole ||
+    isLoadingRoleDetail;
 
   return (
     <div className="h-full w-full rounded-xl bg-white px-6">
@@ -570,11 +693,12 @@ const PermissionsPage = () => {
                     className="min-w-[200px] p-4 text-center font-medium text-gray-600"
                   >
                     <div className="text-center">
-                      <div className="font-medium">{role.title}</div>
+                      <div className="text-sm font-semibold">{role.title}</div>
                       <div className="mt-2 flex justify-center space-x-1">
                         <TooltipInfo content="Edit">
                           <button
-                            // onClick={() => onUnban(row)}
+                            onClick={() => handleEditRole(role)} // ✅ Click handler
+                            disabled={isLoadingRoleDetail} // ✅ Disable khi đang load
                             className="cursor-pointer p-1 text-blue-400 transition-colors hover:text-blue-600"
                           >
                             <Edit className="h-3.5 w-3.5" />
@@ -582,7 +706,8 @@ const PermissionsPage = () => {
                         </TooltipInfo>
                         <TooltipInfo content="Delete">
                           <button
-                            // onClick={() => onUnban(row)}
+                            onClick={() => handleDeleteRole(role)}
+                            disabled={isAnyActionLoading}
                             className="cursor-pointer p-1 text-red-400 transition-colors hover:text-red-600"
                           >
                             <Trash2 className="h-3.5 w-3.5" />
@@ -669,109 +794,46 @@ const PermissionsPage = () => {
           </table>
         </div>
       </div>
-
-      {/* Modal for Add/Edit Role */}
-      <AppModal
-        isOpen={open}
-        onClose={() => {
-          setOpen(false);
-          setSelectedRole(null);
-          setPermissions(getAllPossiblePermissions());
-        }}
-        title={selectedRole ? 'Edit Role' : 'Add New Role'}
-        description="Configure permissions for the user group"
-        width="max-w-4xl"
-        footer={
-          <>
-            <Button variant="outline" onClick={() => setOpen(false)}>
-              Cancel
-            </Button>
-            <Button onClick={handleSave}>
-              {selectedRole ? 'Update' : 'Create'}
-            </Button>
-          </>
-        }
+      <ConfirmDialog
+        open={roleDeleteConfirmation.isDialogOpen}
+        onOpenChange={roleDeleteConfirmation.closeDeleteConfirmation}
+        title="Delete Role"
+        description={roleDeleteConfirmation
+          .getDeleteDescription()
+          .replace(
+            'delete this Role',
+            `delete role "${roleDeleteConfirmation.entityData?.roleTitle || 'this role'}"`
+          )}
+        icon={true}
+        danger={true}
+        confirmText="Delete Role"
+        cancelText="Cancel"
+        onConfirm={roleDeleteConfirmation.handleDeleteConfirm}
       >
-        <div className="space-y-4">
-          {/* Form inputs */}
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-            <InputLabel
-              label={{
-                labelTitle: 'Role Name',
-                icon: <UserCog className="h-3 w-3" />,
-              }}
-              input={{
-                inputId: 'role',
-                className: 'w-full',
-                inputName: 'role',
-                placeholder: 'Enter role name',
-                defaultValue: selectedRole?.title || '',
-              }}
-            />
-            <InputLabel
-              label={{
-                labelTitle: 'Description',
-                icon: <FileText className="h-3 w-3" />,
-              }}
-              input={{
-                inputId: 'description',
-                className: 'w-full',
-                inputName: 'description',
-                placeholder: 'Enter description',
-                defaultValue: selectedRole?.description || '',
-              }}
-            />
+        <div className="space-y-2">
+          <div className="text-sm text-gray-600">
+            <strong>Role:</strong>{' '}
+            {roleDeleteConfirmation.entityData?.roleTitle}
           </div>
-
-          {/* Permissions table in modal */}
-          <div className="space-y-2">
-            <h3 className="text-sm font-medium">Detailed Permissions</h3>
-            <div className="max-h-96 overflow-auto rounded border">
-              <table className="w-full">
-                <thead className="sticky top-0 bg-gray-50">
-                  <tr>
-                    <th className="p-3 text-left text-xs font-medium text-gray-600">
-                      MODULE
-                    </th>
-                    <th className="p-3 text-left text-xs font-medium text-gray-600">
-                      ACTION
-                    </th>
-                    <th className="p-3 text-center text-xs font-medium text-gray-600">
-                      PERMISSION
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {permissions.map((permission) => (
-                    <tr
-                      key={permission.id}
-                      className="border-b hover:bg-gray-50"
-                    >
-                      <td className="p-3 text-sm">{permission.module}</td>
-                      <td className="p-3 text-sm">
-                        <div>
-                          <div className="capitalize">{permission.action}</div>
-                          <div className="text-xs text-gray-500">
-                            {permission.description}
-                          </div>
-                        </div>
-                      </td>
-                      <td className="p-3 text-center">
-                        <PermissionToggleCheckbox
-                          isChecked={permission.hasPermission}
-                          onToggle={() =>
-                            handlePermissionToggleInModal(permission.id)
-                          }
-                        />
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+          <div className="text-sm text-gray-600">
+            <strong>Description:</strong>{' '}
+            {roleDeleteConfirmation.entityData?.roleDescription}
+          </div>
+          <div className="text-sm font-medium text-red-600">
+            This action cannot be undone. All users with this role will lose
+            their permissions.
           </div>
         </div>
-      </AppModal>
+      </ConfirmDialog>
+      {/* Modal for Add/Edit Role */}
+      <RolePermissionModal
+        isOpen={open}
+        onClose={handleCloseModal}
+        selectedRole={selectedRole}
+        allPermissions={getAllPossiblePermissions()}
+        onSave={handleModalSave}
+        isLoading={isCreatingRole || isUpdatingRole}
+      />
     </div>
   );
 };

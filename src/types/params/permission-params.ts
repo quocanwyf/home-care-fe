@@ -27,7 +27,7 @@ export interface CreateRoleRequest {
   title: string;
   description: string;
   permissions: string[];
-  deleted: boolean;
+  deleted?: boolean;
 }
 
 export interface UpdateRoleRequest {

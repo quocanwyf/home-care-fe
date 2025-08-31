@@ -10,4 +10,7 @@ export const STATUS_DISPLAY_NAME: Record<string, string> = {
   active: 'Active',
   inactive: 'Inactive',
   banned: 'Banned',
+  online: 'Online',
+  offline: 'Offline',
+  working: 'Working',
 };

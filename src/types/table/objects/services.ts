@@ -4,16 +4,16 @@ export interface ServiceCategory {
   services: Service[];
 }
 
-export type Service = {
-  label: string;
-  value: string;
-  serviceDate: {
-    title: string;
-    cost: number;
-    coefficient_service: number;
-    coefficient_other: number;
-  };
-};
+export interface Service {
+  _id: string;
+  title: string;
+  basicPrice: number;
+  coefficient_id: string;
+  description: string;
+  status: string;
+  coefficientValue: number;
+  coefficientTitle: string;
+}
 
 export type ServiceList = {
   [key: string]: Service[];

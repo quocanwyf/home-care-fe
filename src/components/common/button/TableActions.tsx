@@ -30,7 +30,6 @@ const TableActions = <T,>({
           <button
             onClick={() => onUnban(row)}
             className="cursor-pointer p-1 text-yellow-400 transition-colors hover:text-yellow-600"
-            title="Unban"
           >
             <ShieldBan className="h-4 w-4" />
           </button>
@@ -43,7 +42,6 @@ const TableActions = <T,>({
               <button
                 onClick={() => onView(row)}
                 className="cursor-pointer p-1 text-blue-400 transition-colors hover:text-blue-600"
-                title="View"
               >
                 <Eye className="h-4 w-4" />
               </button>
@@ -54,7 +52,6 @@ const TableActions = <T,>({
               <button
                 onClick={() => onEdit(row)}
                 className="cursor-pointer p-1 text-green-400 transition-colors hover:text-green-600"
-                title="Edit"
               >
                 <Edit className="h-4 w-4" />
               </button>
@@ -65,7 +62,6 @@ const TableActions = <T,>({
               <button
                 onClick={() => onDelete(row)}
                 className="cursor-pointer p-1 text-red-400 transition-colors hover:text-red-600"
-                title="Cancel"
               >
                 <CircleX className="h-4 w-4" />
               </button>
@@ -76,7 +72,6 @@ const TableActions = <T,>({
               <button
                 onClick={() => onViewHistory(row)}
                 className="cursor-pointer p-1 text-purple-400 transition-colors hover:text-purple-600"
-                title="View history"
               >
                 <FileClock className="h-4 w-4" />
               </button>
@@ -87,7 +82,6 @@ const TableActions = <T,>({
               <button
                 onClick={() => onBan(row)}
                 className="cursor-pointer p-1 text-yellow-400 transition-colors hover:text-yellow-600"
-                title="Ban"
               >
                 <Ban className="h-4 w-4" />
               </button>

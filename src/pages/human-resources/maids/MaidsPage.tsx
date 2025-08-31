@@ -3,12 +3,12 @@ import { useEffect, useState } from 'react';
 import { AppTable } from '@/components/table/app-table/AppTable';
 import { STATUS_HR } from '@/constants/dropdown/status-hr';
 // import { data } from '@/constants/mock-data/mock-data-maids';
-import { useGetHRs } from '@/hooks/api/useHRs';
+import { useGetHelpers } from '@/hooks/api/useHelpers.api';
 import { usePageSize } from '@/hooks/common/usePageSize';
 import { useSearchConfig } from '@/hooks/common/useSearchConfig';
 import { useStatusFilter } from '@/hooks/common/useStatusFilter';
 import { useToast } from '@/hooks/common/useToast';
-import { staffMaidColumns } from '@/types/table/column/staff-maid-columns';
+import { helpersColumns } from '@/types/table/column/helper-column';
 import type { PaginationState } from '@tanstack/react-table';
 
 const MaidsPage = () => {
@@ -52,7 +52,6 @@ const MaidsPage = () => {
     limit: pageSize ?? 10,
     page: currentPagination.pageIndex + 1,
     search: searchKeyword ?? '',
-    type: 'helper',
   };
 
   const {
@@ -61,25 +60,25 @@ const MaidsPage = () => {
     error,
     isError,
     isFetching,
-  } = useGetHRs(params);
+  } = useGetHelpers(params);
 
   useEffect(() => {
     if (maidsData) {
       const test = maidsData || [];
-      setMaids(test.result || []);
+      setMaids(test.helpers || []); // Thay đổi từ staffs thành helpers
     }
   }, [maidsData]);
-
+  console.log(maids);
   useEffect(() => {
     if (isError) {
-      showError(error?.message || 'An error occurred while fetching orders.');
+      showError(error?.message || 'An error occurred while fetching maids.');
     }
   }, [isError, error, showError]);
 
   return (
     <AppTable
       data={maids}
-      columns={staffMaidColumns(
+      columns={helpersColumns(
         (row) => console.log('Xem', row),
         (row) => console.log('Sửa', row),
         (row) => console.log('Xoá', row)

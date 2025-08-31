@@ -27,7 +27,6 @@ const TableDetailActions = ({
           <button
             onClick={() => onStartWork?.(row)}
             className="cursor-pointer p-1 text-yellow-400 transition-colors hover:text-yellow-600"
-            title="Start Work"
           >
             <Play className="h-4 w-4" />
           </button>
@@ -40,7 +39,6 @@ const TableDetailActions = ({
           <button
             onClick={() => onCompleteWork?.(row)}
             className="cursor-pointer p-1 text-yellow-400 transition-colors hover:text-yellow-600"
-            title="Complete Work"
           >
             <CircleCheck className="h-4 w-4" />
           </button>
@@ -53,7 +51,6 @@ const TableDetailActions = ({
           <button
             onClick={() => onCancel?.(row)}
             className="cursor-pointer p-1 text-yellow-400 transition-colors hover:text-yellow-600"
-            title="Cancel Work"
           >
             <CircleX className="h-4 w-4" />
           </button>

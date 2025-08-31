@@ -44,16 +44,12 @@ const PermissionsForm = () => {
   } = usePermissionsPage();
 
   // Loading states
-  if (isLoadingRoleDetail) {
+  if (isLoadingRoleDetail || !rolesData || !permissionsData) {
     return <LoadingFallback content="Loading role information..." />;
   }
 
   if (roleDetailError && !roleDetailData) {
     return <FailLoadingAndEntry content="Failed to load role information" />;
-  }
-
-  if (!rolesData || !permissionsData) {
-    return <div>Loading...</div>;
   }
 
   return (

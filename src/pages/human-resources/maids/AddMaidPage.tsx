@@ -1,4 +1,6 @@
 // import OrderForm from '@/components/form/order-form/OrderForm';
+import DragAndDropUpload from '@/components/common/upload-files/DragAndDropUpload';
+import { ALLOWED_TYPES } from '@/constants/upload-files/allowed-types';
 
 const AddOrderPage = () => {
   return (
@@ -15,8 +17,28 @@ const AddOrderPage = () => {
             className="focus:border-border-primary/50 shadow-sm"
             required
           /> */}
-      cc
-      <p>cc </p>
+      <div className="flex gap-4">
+        <div className="flex w-full flex-col gap-2">
+          <label className="ml-2">Upload avatar</label>
+          <DragAndDropUpload
+            acceptedTypes={ALLOWED_TYPES}
+            maxFileSizeByMB={20}
+            maxFiles={1}
+            browseText="Browse"
+            showFileSize={true}
+          />
+        </div>
+        <div className="flex w-full flex-col gap-2">
+          <label className="ml-2">Upload Health Certifications</label>
+          <DragAndDropUpload
+            acceptedTypes={ALLOWED_TYPES}
+            maxFileSizeByMB={20}
+            maxFiles={1}
+            browseText="Browsesss"
+            showFileSize={true}
+          />
+        </div>
+      </div>
     </div>
   );
 };

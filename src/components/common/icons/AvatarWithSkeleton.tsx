@@ -26,7 +26,7 @@ const AvatarWithSkeleton = ({
         }`}
         onLoad={() => setLoaded(true)}
         onError={(e) => {
-          (e.target as HTMLImageElement).src = '/public/bg-imgage/deny.gif';
+          (e.target as HTMLImageElement).src = '/bg-imgage/deny.gif';
           setLoaded(true);
         }}
       />

@@ -1,8 +1,13 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
+import LoadingFallback from '@/components/fallback/LoadingFallbackApp';
 import { Button } from '@/components/ui/button';
 import { parseDDMMYYYYToDate } from '@/helpers/date-utitlity';
-import { useCreateHelper } from '@/hooks/api/useHelpers.api';
+import {
+  useCreateHelper,
+  useGetHelperEdit,
+  useUpdateHelper,
+} from '@/hooks/api/useHelpers.api';
 import { useAppNavigate } from '@/hooks/common/useAppNavigate';
 import { useToast } from '@/hooks/common/useToast';
 import type { MaidFormData } from '@/types/schema/maid-form-schema-type';
@@ -11,12 +16,22 @@ import JobInformationArea from './JobInformationArea';
 import PersonalInformationArea from './PersonalInformationArea';
 import UploadArea from './UploadArea';
 
-const MaidForm = () => {
+interface MaidFormProps {
+  mode?: 'create' | 'edit';
+  helperId?: string;
+}
+
+const MaidForm: React.FC<MaidFormProps> = ({ mode, helperId }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { showSuccess, showError } = useToast();
   const navigateTo = useAppNavigate();
 
   const createHelperMutation = useCreateHelper();
+  const updateHelperMutation = useUpdateHelper();
+
+  const { data: helperEditData, isLoading: isLoadingHelper } = useGetHelperEdit(
+    mode === 'edit' && helperId ? helperId : ''
+  );
 
   const [formData, setFormData] = useState<MaidFormData>({
     helper_id: '',
@@ -35,6 +50,70 @@ const MaidForm = () => {
     avatar: [],
     healthCertificates: [],
   });
+
+  useEffect(() => {
+    if (mode === 'edit' && helperEditData?.helper) {
+      const helper = helperEditData.helper;
+
+      console.log('Helper data received:', helper);
+
+      // Convert jobs from API format to form format
+      const jobsFormatted = helper.jobs
+        ? helper.jobs.map((job: any) => ({
+            label: job.title,
+            value: job._id,
+          }))
+        : [];
+
+      // Convert gender to dropdown format
+      const genderFormatted = helper.gender
+        ? {
+            label: helper.gender === 'male' ? 'Male' : 'Female', // Convert API format
+            value: helper.gender === 'male' ? 'Male' : 'Female',
+          }
+        : { label: '', value: '' };
+
+      // Convert education to dropdown format
+      const educationFormatted = helper.educationLevel
+        ? {
+            label:
+              helper.educationLevel.charAt(0).toUpperCase() +
+              helper.educationLevel.slice(1), // Capitalize first letter
+            value:
+              helper.educationLevel.charAt(0).toUpperCase() +
+              helper.educationLevel.slice(1),
+          }
+        : { label: '', value: '' };
+
+      // Set form data
+      setFormData({
+        helper_id: helper.helper_id || '',
+        fullName: helper.fullName || '',
+        birthDate: helper.birthDate || '', // API trả về format dd/mm/yyyy
+        phone: helper.phone || '',
+        birthPlace: helper.birthPlace || '',
+        address: helper.address || '',
+        gender: genderFormatted,
+        nationality: helper.nationality || '',
+        educationLevel: educationFormatted,
+        height: helper.height?.toString() || '',
+        weight: helper.weight?.toString() || '',
+        jobs: jobsFormatted,
+        experienceDescription: helper.experienceDescription || '',
+        avatar: [], // Files sẽ empty vì edit mode
+        healthCertificates: [], // Files sẽ empty vì edit mode
+      });
+
+      console.log('Form data set:', {
+        helper_id: helper.helper_id,
+        fullName: helper.fullName,
+        birthDate: helper.birthDate,
+        gender: genderFormatted,
+        educationLevel: educationFormatted,
+        jobs: jobsFormatted,
+      });
+    }
+  }, [mode, helperEditData]);
 
   // Update functions for each section
   const updatePersonalInfo = (updates: Partial<MaidFormData>) => {
@@ -96,6 +175,15 @@ const MaidForm = () => {
       return false;
     }
 
+    if (mode === 'create') {
+      if (
+        formData.avatar.length === 0 ||
+        formData.healthCertificates.length === 0
+      ) {
+        return false;
+      }
+    }
+
     return true;
   }, [formData]);
 
@@ -123,30 +211,8 @@ const MaidForm = () => {
     }
 
     if (formData.birthDate) {
-      // Fix: Sử dụng parseDDMMYYYYToDate thay vì new Date()
-      const birthDate = parseDDMMYYYYToDate(formData.birthDate);
-
-      // Check if date is valid
-      if (!birthDate || isNaN(birthDate.getTime())) {
-        showError('Please enter a valid birth date');
-        return false;
-      }
-
+      const birthDate = new Date(formData.birthDate);
       const today = new Date();
-      today.setHours(23, 59, 59, 999); // Set to end of today
-
-      console.log('Birth date string:', formData.birthDate);
-      console.log('Parsed birth date:', birthDate);
-      console.log('Today:', today);
-      console.log('Is birth date > today?', birthDate > today);
-
-      // Check if birth date is in the future
-      if (birthDate > today) {
-        showError('Birth date cannot be in the future');
-        return false;
-      }
-
-      // Calculate age
       let age = today.getFullYear() - birthDate.getFullYear();
       const monthDiff = today.getMonth() - birthDate.getMonth();
 
@@ -157,8 +223,6 @@ const MaidForm = () => {
         age--;
       }
 
-      console.log('Calculated age:', age);
-
       if (age < 13) {
         showError('Helper must be at least 13 years old');
         return false;
@@ -166,6 +230,11 @@ const MaidForm = () => {
 
       if (age > 100) {
         showError('Helper cannot be older than 100 years');
+        return false;
+      }
+
+      if (birthDate > today) {
+        showError('Birth date cannot be in the future');
         return false;
       }
     }
@@ -248,31 +317,44 @@ const MaidForm = () => {
         apiFormData.append('healthCertificates', file);
       });
 
-      const result = await createHelperMutation.mutateAsync(apiFormData);
+      let result;
+      if (mode === 'create') {
+        result = await createHelperMutation.mutateAsync(apiFormData);
+      } else {
+        console.log('Updating helper with ID:', helperId);
+        result = await updateHelperMutation.mutateAsync({
+          id: helperId!,
+          formData: apiFormData,
+        });
+      }
 
       console.log('Create helper result:', result);
 
       if (result.success) {
-        showSuccess('Helper created successfully!');
+        showSuccess(
+          `Helper ${mode === 'create' ? 'created' : 'updated'} successfully!`
+        );
 
         // Reset form after success
-        setFormData({
-          helper_id: '',
-          fullName: '',
-          birthDate: '',
-          phone: '',
-          birthPlace: '',
-          address: '',
-          gender: { label: '', value: '' },
-          nationality: '',
-          educationLevel: { label: '', value: '' },
-          height: '',
-          weight: '',
-          jobs: [],
-          experienceDescription: '',
-          avatar: [],
-          healthCertificates: [],
-        });
+        if (mode === 'create') {
+          setFormData({
+            helper_id: '',
+            fullName: '',
+            birthDate: '',
+            phone: '',
+            birthPlace: '',
+            address: '',
+            gender: { label: '', value: '' },
+            nationality: '',
+            educationLevel: { label: '', value: '' },
+            height: '',
+            weight: '',
+            jobs: [],
+            experienceDescription: '',
+            avatar: [],
+            healthCertificates: [],
+          });
+        }
         navigateTo('/maids', {
           toast: {
             type: 'success',
@@ -302,7 +384,15 @@ const MaidForm = () => {
   };
 
   const isButtonDisabled =
-    !isFormValid || isSubmitting || createHelperMutation.isPending;
+    !isFormValid ||
+    isSubmitting ||
+    createHelperMutation.isPending ||
+    updateHelperMutation.isPending ||
+    (mode === 'edit' && isLoadingHelper);
+
+  if (isLoadingHelper) {
+    return <LoadingFallback content="Loading helper information..." />;
+  }
 
   return (
     <div className="h-full w-full overflow-y-auto py-4 pb-26">
@@ -312,7 +402,21 @@ const MaidForm = () => {
           onUpdate={updatePersonalInfo}
         />
         <JobInformationArea data={formData} onUpdate={updateJobInfo} />
-        <UploadArea onUpdate={updateFiles} />
+        <UploadArea
+          data={formData}
+          onUpdate={updateFiles}
+          existingAvatar={
+            mode === 'edit' && helperEditData?.helper?.avatar
+              ? helperEditData.helper.avatar
+              : undefined
+          }
+          existingHealthCertificates={
+            mode === 'edit' && helperEditData?.helper?.healthCertificates
+              ? helperEditData.helper.healthCertificates
+              : []
+          }
+          mode={mode}
+        />
 
         {/* Submit Button */}
         <div className="max-mobile:my-20 my-12 mr-6 mb-16">
@@ -325,13 +429,17 @@ const MaidForm = () => {
             }`}
             disabled={isButtonDisabled}
           >
-            {isSubmitting || createHelperMutation.isPending ? (
+            {isSubmitting ||
+            createHelperMutation.isPending ||
+            updateHelperMutation.isPending ? (
               <div className="flex items-center gap-2">
                 <div className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
-                Creating...
+                {mode === 'create' ? 'Creating...' : 'Updating...'}
               </div>
-            ) : (
+            ) : mode === 'create' ? (
               'Create Helper'
+            ) : (
+              'Update Helper'
             )}
           </Button>
         </div>

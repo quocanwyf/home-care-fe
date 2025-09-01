@@ -63,3 +63,60 @@ export const createHelperApi = async (
   const data = await response.json();
   return data;
 };
+
+export const getHelperEditApi = async (
+  id: string
+): Promise<{
+  success: boolean;
+  helper: any;
+  services: any[];
+  coefficientList: any[];
+}> => {
+  const url = `${import.meta.env.VITE_API_BASE_URL}/admin/helpers/edit/${id}`;
+
+  const response = await fetch(url, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    credentials: 'include',
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(
+      errorData.message || `HTTP error! status: ${response.status}`
+    );
+  }
+
+  const data = await response.json();
+
+  if (!data.success) {
+    throw new Error(data.message || 'Failed to fetch helper data');
+  }
+
+  return data;
+};
+
+export const updateHelperApi = async (
+  id: string,
+  formData: FormData
+): Promise<{ success: boolean; message?: string }> => {
+  const url = `${import.meta.env.VITE_API_BASE_URL}/admin/helpers/edit/${id}`;
+
+  const response = await fetch(url, {
+    method: 'PATCH',
+    body: formData,
+    credentials: 'include',
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(
+      errorData.message || `HTTP error! status: ${response.status}`
+    );
+  }
+
+  const data = await response.json();
+  return data;
+};

@@ -11,9 +11,13 @@ const DashboardPage = lazy(() => import('@/pages/dashboard/DashboardPage'));
 const CustomersPage = lazy(
   () => import('@/pages/human-resources/customers/CustomersPage')
 );
+
 const MaidsPage = lazy(() => import('@/pages/human-resources/maids/MaidsPage'));
 const AddMaidPage = lazy(
   () => import('@/pages/human-resources/maids/AddMaidPage')
+);
+const EditMaidPage = lazy(
+  () => import('@/pages/human-resources/maids/EditMaidPage')
 );
 
 const StaffsPage = lazy(
@@ -95,6 +99,14 @@ const AppRouter = () => {
             element={
               <RouteGuard module="helpers">
                 <AddMaidPage />
+              </RouteGuard>
+            }
+          />
+          <Route
+            path="/maids/edit/:id"
+            element={
+              <RouteGuard module="helpers">
+                <EditMaidPage />
               </RouteGuard>
             }
           />

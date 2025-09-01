@@ -2,8 +2,10 @@ import { useEffect, useState } from 'react';
 
 import { AppTable } from '@/components/table/app-table/AppTable';
 import { STATUS_HR } from '@/constants/dropdown/status-hr';
+import { handleView } from '@/helpers/handle-table-actions';
 // import { data } from '@/constants/mock-data/mock-data-maids';
 import { useGetHelpers } from '@/hooks/api/useHelpers.api';
+import { useAppNavigate } from '@/hooks/common/useAppNavigate';
 import { usePageSize } from '@/hooks/common/usePageSize';
 import { useSearchConfig } from '@/hooks/common/useSearchConfig';
 import { useStatusFilter } from '@/hooks/common/useStatusFilter';
@@ -14,7 +16,7 @@ import type { PaginationState } from '@tanstack/react-table';
 const MaidsPage = () => {
   const { showError } = useToast();
   const [maids, setMaids] = useState([]);
-
+  const navigateTo = useAppNavigate();
   const [searchKeyword, setSearchKeyword] = useState('');
 
   const [currentPagination, setCurrentPagination] = useState<PaginationState>({
@@ -75,14 +77,19 @@ const MaidsPage = () => {
     }
   }, [isError, error, showError]);
 
+  const handleEdit = (row: any) => {
+    navigateTo(`/maids/edit/${row._id}`);
+  };
+
+  const handleView = (row: any) => {
+    // Update this based on your view requirements
+    navigateTo(`/orders/detail/${row.orderId || row.helper_id}`);
+  };
+
   return (
     <AppTable
       data={maids}
-      columns={helpersColumns(
-        (row) => console.log('Xem', row),
-        (row) => console.log('Sửa', row),
-        (row) => console.log('Xoá', row)
-      )}
+      columns={helpersColumns(handleView, handleEdit)}
       pageHeaderTitle="Maids List"
       permissionModule="helpers"
       //status variable and function

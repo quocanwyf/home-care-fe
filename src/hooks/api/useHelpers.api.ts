@@ -1,4 +1,9 @@
-import { createHelperApi, getHelpersApi } from '@/apis/helpers.api';
+import {
+  createHelperApi,
+  getHelperEditApi,
+  getHelpersApi,
+  updateHelperApi,
+} from '@/apis/helpers.api';
 import type { HelperParams } from '@/types/params/helpers-params';
 import { useMutation, useQuery } from '@tanstack/react-query';
 
@@ -15,6 +20,23 @@ export const useCreateHelper = () => {
   return useMutation({
     mutationFn: (formData: FormData) => {
       return createHelperApi(formData);
+    },
+  });
+};
+
+export const useGetHelperEdit = (id: string) => {
+  return useQuery({
+    queryKey: ['helper-edit', id],
+    queryFn: () => getHelperEditApi(id),
+    enabled: !!id,
+    refetchOnWindowFocus: false,
+  });
+};
+
+export const useUpdateHelper = () => {
+  return useMutation({
+    mutationFn: ({ id, formData }: { id: string; formData: FormData }) => {
+      return updateHelperApi(id, formData);
     },
   });
 };

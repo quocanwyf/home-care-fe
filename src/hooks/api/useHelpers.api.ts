@@ -1,6 +1,6 @@
-import { getHelpersApi } from '@/apis/helpers.api';
+import { createHelperApi, getHelpersApi } from '@/apis/helpers.api';
 import type { HelperParams } from '@/types/params/helpers-params';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 
 export const useGetHelpers = (params: HelperParams) => {
   return useQuery({
@@ -8,5 +8,13 @@ export const useGetHelpers = (params: HelperParams) => {
     queryFn: ({ signal }) => getHelpersApi(params, signal),
     placeholderData: undefined,
     refetchOnWindowFocus: false,
+  });
+};
+
+export const useCreateHelper = () => {
+  return useMutation({
+    mutationFn: (formData: FormData) => {
+      return createHelperApi(formData);
+    },
   });
 };

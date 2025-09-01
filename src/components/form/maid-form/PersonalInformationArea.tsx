@@ -3,6 +3,7 @@ import { SquareUser } from 'lucide-react';
 import DatePicker from '@/components/common/date-picker/DatePicker';
 import LabelDropdown from '@/components/common/dropdowns/LabelDropdown';
 import InputLabel from '@/components/common/input/InputLabel';
+import { maxAgeDate, minAgeDate } from '@/helpers/date-utitlity';
 import type { MaidFormData } from '@/types/schema/maid-form-schema-type';
 
 interface PersonalInformationAreaProps {
@@ -51,13 +52,14 @@ const PersonalInformationArea: React.FC<PersonalInformationAreaProps> = ({
         {/* Helper ID */}
         <InputLabel
           label={{
-            labelTitle: 'Helper ID',
+            labelTitle: 'ID Card',
             classNameLabel: 'text-gray-700',
           }}
           input={{
             placeholder: 'Enter helper ID',
             value: data.helper_id,
-            onChange: (e) => handleInputChange('helper_id', e.target.value),
+            onChange: (e) =>
+              handleInputChange('helper_id', e.target.value.replace(/\D/g, '')),
             required: true,
           }}
         />
@@ -92,13 +94,20 @@ const PersonalInformationArea: React.FC<PersonalInformationAreaProps> = ({
         />
 
         {/* Birth Date */}
-        <DatePicker
-          label="Birth Date"
-          value={data.birthDate}
-          onChange={(date) => handleInputChange('birthDate', date)}
-          minDate={new Date('1950-01-01')}
-          required
-        />
+        <div>
+          <DatePicker
+            label="Birth Date"
+            value={data.birthDate}
+            onChange={(date) => handleInputChange('birthDate', date)}
+            minDate={maxAgeDate} // Không được quá 100 tuổi
+            maxDate={minAgeDate} // Phải ít nhất 13 tuổi
+            required
+            allowPastDates={true}
+          />
+          <p className="mt-1 text-xs text-gray-500">
+            Age must be between 13-100 years old
+          </p>
+        </div>
 
         {/* Birth Place */}
         <InputLabel

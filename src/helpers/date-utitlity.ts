@@ -23,3 +23,16 @@ export const isDateInPast = (date: Date): boolean => {
   today.setHours(0, 0, 0, 0);
   return date < today;
 };
+
+// Calculate date ranges for birth date validation
+export const today = new Date();
+export const maxDate = new Date(); // Không được chọn ngày tương lai
+maxDate.setHours(23, 59, 59, 999); // Set to end of today
+
+// Tối thiểu 13 tuổi
+export const minAgeDate = new Date();
+minAgeDate.setFullYear(today.getFullYear() - 13);
+
+// Tối đa 100 tuổi
+export const maxAgeDate = new Date();
+maxAgeDate.setFullYear(today.getFullYear() - 100);

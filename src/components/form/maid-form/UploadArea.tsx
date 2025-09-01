@@ -12,6 +12,7 @@ const UploadArea: React.FC<UploadAreaProps> = ({ onUpdate }) => {
 
   const handleAvatarChange = (files: File[]) => {
     onUpdate({ avatar: files });
+    // console.log(files);
   };
 
   const handleHealthCertificatesChange = (files: File[]) => {

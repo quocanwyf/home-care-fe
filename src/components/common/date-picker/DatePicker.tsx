@@ -25,7 +25,9 @@ interface DatePickerProps {
   onChange?: (dateString: string) => void; // ✅ Return string format
   disabled?: boolean;
   minDate?: Date;
+  maxDate?: Date;
   required?: boolean;
+  allowPastDates?: boolean;
 }
 
 const DatePicker = ({
@@ -35,8 +37,10 @@ const DatePicker = ({
   value,
   onChange,
   disabled = false,
-  minDate = new Date(), // ✅ Default to today
+  minDate = new Date(),
+  maxDate = new Date(),
   required = false,
+  allowPastDates = false,
 }: DatePickerProps) => {
   const [open, setOpen] = useState(false);
 
@@ -60,7 +64,8 @@ const DatePicker = ({
   //  Check if date should be disabled
   const isDateDisabled = (date: Date): boolean => {
     // Check if date is in the past
-    if (isDateInPast(date)) {
+
+    if (!allowPastDates && isDateInPast(date)) {
       return true;
     }
 
@@ -71,6 +76,14 @@ const DatePicker = ({
       const minCompareDate = new Date(minDate);
       minCompareDate.setHours(0, 0, 0, 0);
       return compareDate < minCompareDate;
+    }
+
+    if (maxDate) {
+      const compareDate = new Date(date);
+      compareDate.setHours(0, 0, 0, 0);
+      const maxCompareDate = new Date(maxDate);
+      maxCompareDate.setHours(0, 0, 0, 0);
+      return compareDate > maxCompareDate;
     }
 
     return false;
@@ -110,9 +123,12 @@ const DatePicker = ({
       </Popover>
 
       {/* ✅ Show validation error if needed */}
-      {value && selectedDate && isDateInPast(selectedDate) && (
-        <p className="text-xs text-red-500">Cannot select past dates</p>
-      )}
+      {!allowPastDates &&
+        value &&
+        selectedDate &&
+        isDateInPast(selectedDate) && (
+          <p className="text-xs text-red-500">Cannot select past dates</p>
+        )}
     </div>
   );
 };

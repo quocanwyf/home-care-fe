@@ -41,3 +41,25 @@ export const getHelpersApi = async (
   const data: HelpersResponse = await response.json();
   return data;
 };
+
+export const createHelperApi = async (
+  formData: FormData
+): Promise<{ success: boolean }> => {
+  const url = `${import.meta.env.VITE_API_BASE_URL}/admin/helpers/create`;
+
+  const response = await fetch(url, {
+    method: 'POST',
+    body: formData, // FormData tự động set Content-Type: multipart/form-data do dùng apiformdata
+    credentials: 'include',
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(
+      errorData.message || `HTTP error! status: ${response.status}`
+    );
+  }
+
+  const data = await response.json();
+  return data;
+};

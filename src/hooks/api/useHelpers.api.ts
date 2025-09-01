@@ -1,5 +1,6 @@
 import {
   createHelperApi,
+  getHelperDetailApi,
   getHelperEditApi,
   getHelpersApi,
   updateHelperApi,
@@ -38,5 +39,14 @@ export const useUpdateHelper = () => {
     mutationFn: ({ id, formData }: { id: string; formData: FormData }) => {
       return updateHelperApi(id, formData);
     },
+  });
+};
+
+export const useGetHelperDetail = (id: string) => {
+  return useQuery({
+    queryKey: ['helper-detail', id],
+    queryFn: () => getHelperDetailApi(id),
+    enabled: !!id,
+    refetchOnWindowFocus: false,
   });
 };

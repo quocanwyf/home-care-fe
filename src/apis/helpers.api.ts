@@ -120,3 +120,35 @@ export const updateHelperApi = async (
   const data = await response.json();
   return data;
 };
+
+export const getHelperDetailApi = async (
+  id: string
+): Promise<{
+  success: boolean;
+  helper: any;
+}> => {
+  const url = `${import.meta.env.VITE_API_BASE_URL}/admin/helpers/detail/${id}`;
+
+  const response = await fetch(url, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    credentials: 'include',
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(
+      errorData.message || `HTTP error! status: ${response.status}`
+    );
+  }
+
+  const data = await response.json();
+
+  if (!data.success) {
+    throw new Error(data.message || 'Failed to fetch helper details');
+  }
+
+  return data;
+};

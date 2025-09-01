@@ -19,6 +19,9 @@ const AddMaidPage = lazy(
 const EditMaidPage = lazy(
   () => import('@/pages/human-resources/maids/EditMaidPage')
 );
+const DetailMaidPage = lazy(
+  () => import('@/pages/human-resources/maids/DetailMaidPage')
+);
 
 const StaffsPage = lazy(
   () => import('@/pages/human-resources/staffs/StaffsPage')
@@ -107,6 +110,14 @@ const AppRouter = () => {
             element={
               <RouteGuard module="helpers">
                 <EditMaidPage />
+              </RouteGuard>
+            }
+          />
+          <Route
+            path="/maids/detail/:id"
+            element={
+              <RouteGuard module="helpers">
+                <DetailMaidPage />
               </RouteGuard>
             }
           />

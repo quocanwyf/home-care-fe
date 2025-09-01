@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 
 import { AppTable } from '@/components/table/app-table/AppTable';
 import { STATUS_HR } from '@/constants/dropdown/status-hr';
-import { handleView } from '@/helpers/handle-table-actions';
 // import { data } from '@/constants/mock-data/mock-data-maids';
 import { useGetHelpers } from '@/hooks/api/useHelpers.api';
 import { useAppNavigate } from '@/hooks/common/useAppNavigate';
@@ -83,7 +82,7 @@ const MaidsPage = () => {
 
   const handleView = (row: any) => {
     // Update this based on your view requirements
-    navigateTo(`/orders/detail/${row.orderId || row.helper_id}`);
+    navigateTo(`/maids/detail/${row._id}`);
   };
 
   return (

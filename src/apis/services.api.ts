@@ -36,3 +36,24 @@ export const getServicesApi = async (
   const data: ServicesResponse = await response.json();
   return data;
 };
+
+export const deleteServiceApi = async (
+  serviceId: string
+): Promise<{ success: boolean }> => {
+  const url = `${import.meta.env.VITE_API_BASE_URL}/admin/services/delete/${serviceId}`;
+
+  const response = await fetch(url, {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    credentials: 'include',
+  });
+
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
+
+  const data = await response.json();
+  return data;
+};

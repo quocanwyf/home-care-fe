@@ -1,10 +1,11 @@
 // import OrderForm from '@/components/form/order-form/OrderForm';
 import DragAndDropUpload from '@/components/common/upload-files/DragAndDropUpload';
+import MaidForm from '@/components/form/maid-form/MaidForm';
 import { ALLOWED_TYPES } from '@/constants/upload-files/allowed-types';
 
 const AddOrderPage = () => {
   return (
-    <div className="h-full w-full rounded-xl bg-white px-8 py-6">
+    <div className="h-full w-full rounded-xl bg-white px-8 py-2">
       {/* <Label className="font-semibold" htmlFor="hmrId">
             <Phone className="inline-block h-4 w-4" />
             User ID
@@ -17,7 +18,7 @@ const AddOrderPage = () => {
             className="focus:border-border-primary/50 shadow-sm"
             required
           /> */}
-      <div className="flex gap-4">
+      {/* <div className="flex gap-4">
         <div className="flex w-full flex-col gap-2">
           <label className="ml-2">Upload avatar</label>
           <DragAndDropUpload
@@ -38,7 +39,8 @@ const AddOrderPage = () => {
             showFileSize={true}
           />
         </div>
-      </div>
+      </div> */}
+      <MaidForm />
     </div>
   );
 };

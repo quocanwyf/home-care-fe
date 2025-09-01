@@ -137,7 +137,7 @@ const DragAndDropUpload: React.FC<DragAndDropUploadProps> = ({
   return (
     <div className="mx-auto h-full w-full max-w-xl rounded-xl border-2 border-dashed border-gray-400 px-2">
       <div
-        className="flex h-32 cursor-pointer flex-col items-center justify-center"
+        className="mt-4 mb-4 flex h-22 cursor-pointer flex-col items-center justify-center"
         onDragOver={(e: React.DragEvent) => e.preventDefault()}
         onDrop={handleDrop}
         onClick={handleClick}
@@ -168,7 +168,7 @@ const DragAndDropUpload: React.FC<DragAndDropUploadProps> = ({
         {files.map((file, index) => (
           <div
             key={index}
-            className="mx-4 mb-4 flex items-center justify-between rounded-sm border p-2"
+            className="mx-4 flex items-center justify-between rounded-sm border p-2"
           >
             <div>
               <p

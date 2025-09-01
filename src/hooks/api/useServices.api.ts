@@ -1,6 +1,6 @@
-import { getServicesApi } from '@/apis/services.api';
+import { deleteServiceApi, getServicesApi } from '@/apis/services.api';
 import type { ServiceParams } from '@/types/params/services-params';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 
 export const useGetServices = (params: ServiceParams) => {
   return useQuery({
@@ -8,5 +8,11 @@ export const useGetServices = (params: ServiceParams) => {
     queryFn: ({ signal }) => getServicesApi(params, signal),
     placeholderData: undefined,
     refetchOnWindowFocus: false,
+  });
+};
+
+export const useDeleteService = () => {
+  return useMutation({
+    mutationFn: deleteServiceApi,
   });
 };

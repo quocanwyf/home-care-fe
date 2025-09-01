@@ -110,7 +110,7 @@ const FilePreviewItem: React.FC<FilePreviewItemProps> = ({
             <p>{currentFile.name}</p>
           </div>
           <button
-            className="rounded-full p-2 hover:bg-gray-200"
+            className="cursor-pointer rounded-full p-2 hover:bg-gray-200"
             onClick={onClose}
           >
             <X className="h-5 w-5" />
@@ -147,13 +147,13 @@ const FilePreviewItem: React.FC<FilePreviewItemProps> = ({
 
           <div className="flex gap-2">
             <button
-              className="rounded-full p-2 text-blue-500 hover:bg-gray-200"
+              className="cursor-pointer rounded-full p-2 text-blue-500 hover:bg-gray-200"
               onClick={handleDownload}
             >
               <Download size={19} />
             </button>
             <button
-              className="rounded-full p-2 text-red-500 hover:bg-red-200"
+              className="cursor-pointer rounded-full p-2 text-red-500 hover:bg-red-200"
               onClick={() => onDelete(currentIndex)}
             >
               <Trash size={18} />

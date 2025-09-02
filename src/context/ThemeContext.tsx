@@ -12,7 +12,7 @@ interface ThemeProviderProps {
 
 export const ThemeProvider = ({
   children,
-  defaultTheme = 'green',
+  defaultTheme = 'blue',
 }: ThemeProviderProps) => {
   const [theme, setTheme] = useState<ThemeType>(() => {
     //  Check local storage first

@@ -249,48 +249,68 @@ const DashboardForm = () => {
             </CardTitle>
           </div>
         </CardHeader>
-        <CardContent className="min-h-[300px]">
+        <CardContent className="flex min-h-[300px] justify-center">
           {chartLoading ? (
-            <div className="space-y-3">
-              {Array.from({ length: 5 }).map((_, index) => (
+            <div className="flex h-[250px] items-end justify-start gap-4 px-4">
+              {Array.from({ length: 8 }).map((_, index) => (
                 <div
                   key={index}
-                  className="flex items-center justify-between rounded-lg bg-white p-3"
+                  className="flex min-w-[80px] flex-col items-center gap-2"
                 >
+                  <Skeleton className="h-32 w-16" />
                   <Skeleton className="h-4 w-20" />
-                  <div className="flex gap-4">
-                    <Skeleton className="h-4 w-24" />
-                    <Skeleton className="h-4 w-16" />
-                  </div>
                 </div>
               ))}
             </div>
+          ) : chartData?.data && chartData.data.length > 0 ? (
+            <div className=" ">
+              <div className="flex h-[250px] min-w-max items-end justify-start gap-4 px-4">
+                {chartData.data.map((item, index) => {
+                  const maxRevenue = Math.max(
+                    ...chartData.data.map((d) => d.revenue)
+                  );
+                  const barHeight =
+                    maxRevenue > 0 ? (item.revenue / maxRevenue) * 180 : 20;
+
+                  return (
+                    <div
+                      key={index}
+                      className="flex min-w-[80px] flex-col items-center gap-3"
+                    >
+                      {/* Revenue value on top */}
+                      <div className="text-xs font-medium text-gray-600">
+                        {item.revenue.toLocaleString()}
+                      </div>
+
+                      {/* Bar */}
+                      <div
+                        className="relative flex w-16 items-center justify-center rounded-t bg-blue-500"
+                        style={{ height: `${Math.max(barHeight, 25)}px` }}
+                      >
+                        {/* Orders count in center of bar */}
+                        <div className="text-xs font-bold text-white">
+                          {item.orders}
+                        </div>
+                      </div>
+
+                      {/* Date label */}
+                      <div className="text-center text-xs font-medium text-gray-700">
+                        {item._id}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* Simple legend */}
+              <div className="mt-4 flex justify-center gap-6 border-t pt-3 text-xs text-gray-600">
+                <span>Revenue (VNĐ)</span>
+                <span>Orders (count)</span>
+              </div>
+            </div>
           ) : (
-            <div className="space-y-2">
-              {chartData?.data?.map((item, index) => (
-                <div
-                  key={index}
-                  className="flex items-center justify-between rounded-lg bg-white p-3"
-                >
-                  <span className="text-sm font-medium text-gray-900">
-                    {item._id}
-                  </span>
-                  <div className="flex gap-4">
-                    <span className="text-sm text-gray-700">
-                      <span className="text-muted-foreground">Revenue:</span>{' '}
-                      {item.revenue.toLocaleString()} VNĐ
-                    </span>
-                    <span className="text-sm text-gray-700">
-                      <span className="text-muted-foreground">Orders:</span>{' '}
-                      {item.orders}
-                    </span>
-                  </div>
-                </div>
-              )) || (
-                <div className="text-center text-gray-600">
-                  Unavailable data
-                </div>
-              )}
+            <div className="flex h-full items-center justify-center text-gray-500">
+              No data available
             </div>
           )}
         </CardContent>

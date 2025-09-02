@@ -319,7 +319,7 @@ const DashboardForm = () => {
                         {service.serviceName}
                       </p>
                       <p className="text-muted-foreground text-xs">
-                        {service.totalOrders} đơn
+                        {service.totalOrders} orders
                       </p>
                     </div>
                   </div>
@@ -329,7 +329,7 @@ const DashboardForm = () => {
                 </div>
               )) || (
                 <div className="text-center text-gray-600">
-                  Không có dữ liệu
+                  Unavailable data
                 </div>
               )}
             </div>

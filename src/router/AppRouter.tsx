@@ -38,7 +38,7 @@ const ServicesPage = lazy(
   () => import('@/pages/inventory/services/ServicesPage')
 );
 const FinancesPage = lazy(
-  () => import('@/pages/inventory/finances/FianancesPage')
+  () => import('@/pages/inventory/finances/CoefficientPage')
 );
 const PermissionsPage = lazy(
   () => import('@/pages/inventory/permissions/PermissionsPage')

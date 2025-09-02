@@ -9,7 +9,7 @@ import AppRouter from './router/AppRouter';
 function App() {
   return (
     <>
-      <ThemeProvider defaultTheme="green">
+      <ThemeProvider defaultTheme="blue">
         <TooltipProvider delayDuration={400} skipDelayDuration={100}>
           <AppRouter />
         </TooltipProvider>

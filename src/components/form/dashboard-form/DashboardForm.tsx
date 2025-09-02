@@ -72,9 +72,9 @@ const DashboardForm = () => {
   }
 
   return (
-    <div className="mt-4 flex h-full w-full flex-col gap-4 overflow-auto">
+    <div className="mt-4 flex h-full w-full flex-col gap-4 overflow-y-scroll">
       {/* Filter Section */}
-      <div className="bg-overlay-slider/8 shadow-around w-full rounded-md px-4 pb-4">
+      <div className="bg-overlay-slider/8 shadow-around w-full rounded-md border px-4 pb-4">
         <div className="mb-4 flex flex-row items-center justify-between font-bold">
           <div className="flex p-4 px-0">
             <TableProperties className="text-overlay-slider mr-2 h-5 w-5" />
@@ -85,8 +85,8 @@ const DashboardForm = () => {
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
           {/* Date Range Picker */}
           <div className="flex flex-col gap-2">
-            <label className="text-xs font-medium text-gray-700">
-              Khoảng thời gian:
+            <label className="ml-2 text-sm font-medium text-gray-700">
+              Choose range :
             </label>
             <DateRangePicker
               onChange={handleDateRangeChange}
@@ -100,8 +100,8 @@ const DashboardForm = () => {
 
           {/* Interval Selector */}
           <div className="flex flex-col gap-2">
-            <label className="text-xs font-medium text-gray-700">
-              Biểu đồ theo:
+            <label className="ml-2 text-sm font-medium text-gray-700">
+              Interval :
             </label>
             <div className="flex gap-2">
               {(['day', 'month', 'year'] as IntervalType[]).map((type) => (
@@ -110,13 +110,13 @@ const DashboardForm = () => {
                   variant={interval === type ? 'default' : 'outline'}
                   size="sm"
                   onClick={() => handleIntervalChange(type)}
-                  className={`rounded-xl text-xs transition duration-500 ease-in-out hover:scale-105 ${
+                  className={`cursor-pointer rounded-xl text-xs transition duration-500 ease-in-out hover:scale-105 ${
                     interval === type
                       ? 'bg-orange-100 text-orange-800 hover:bg-orange-100'
                       : 'text-gray-700 hover:bg-orange-50'
                   }`}
                 >
-                  {type === 'day' ? 'Ngày' : type === 'month' ? 'Tháng' : 'Năm'}
+                  {type === 'day' ? 'Day' : type === 'month' ? 'Month' : 'Year'}
                 </Button>
               ))}
             </div>
@@ -127,76 +127,76 @@ const DashboardForm = () => {
       {/* Overview Statistics Cards */}
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
         {/* Customers Card */}
-        <Card className="bg-overlay-slider/8 shadow-around">
+        <Card className="bg-overlay-slider/8 shadow-around scale-100 transform transition-transform duration-300 hover:scale-105">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-overlay-slider text-sm font-medium">
-              Khách hàng
+            <CardTitle className="text-overlay-slider font-medium">
+              Customer
             </CardTitle>
             <Users className="text-overlay-slider h-4 w-4" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-gray-900">
+            <div className="font-bold text-gray-900">
               {statsData?.customers?.total || 0}
             </div>
             <p className="text-muted-foreground text-xs">
               +{statsData?.customers?.growth || 0} (
-              {statsData?.customers?.growthPercent || '0'}%) từ kỳ trước
+              {statsData?.customers?.growthPercent || '0'}%) previous period
             </p>
           </CardContent>
         </Card>
 
         {/* Orders Card */}
-        <Card className="bg-overlay-slider/8 shadow-around">
+        <Card className="bg-overlay-slider/8 shadow-around scale-100 transform transition-transform duration-300 hover:scale-105">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-overlay-slider text-sm font-medium">
-              Đơn hàng
+            <CardTitle className="text-overlay-slider font-medium">
+              Order
             </CardTitle>
             <ShoppingCart className="text-overlay-slider h-4 w-4" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-gray-900">
+            <div className="font-bold text-gray-900">
               {statsData?.orders?.total || 0}
             </div>
             <p className="text-muted-foreground text-xs">
               +{statsData?.orders?.growth || 0} (
-              {statsData?.orders?.growthPercent || '0'}%) từ kỳ trước
+              {statsData?.orders?.growthPercent || '0'}%) previous period
             </p>
           </CardContent>
         </Card>
 
         {/* Revenue Card */}
-        <Card className="bg-overlay-slider/8 shadow-around">
+        <Card className="bg-overlay-slider/8 shadow-around scale-100 transform transition-transform duration-300 hover:scale-105">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-overlay-slider text-sm font-medium">
-              Doanh thu
+            <CardTitle className="text-overlay-slider font-medium">
+              Revenue
             </CardTitle>
             <DollarSign className="text-overlay-slider h-4 w-4" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-gray-900">
+            <div className="font-bold text-gray-900">
               {statsData?.revenue?.total?.toLocaleString() || 0} VNĐ
             </div>
             <p className="text-muted-foreground text-xs">
               TB: {statsData?.revenue?.avgPerOrder?.toLocaleString() || 0}{' '}
-              VNĐ/đơn
+              VNĐ/order
             </p>
           </CardContent>
         </Card>
 
         {/* Performance Card */}
-        <Card className="bg-overlay-slider/8 shadow-around">
+        <Card className="bg-overlay-slider/8 shadow-around scale-100 transform transition-transform duration-300 hover:scale-105">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-overlay-slider text-sm font-medium">
-              Hiệu suất
+            <CardTitle className="text-overlay-slider font-medium">
+              Performance
             </CardTitle>
             <TrendingUp className="text-overlay-slider h-4 w-4" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-gray-900">
+            <div className="font-bold text-gray-900">
               {statsData?.orders?.completionRate || '0'}%
             </div>
             <p className="text-muted-foreground text-xs">
-              Hoàn thành • Hủy: {statsData?.orders?.cancelRate || '0'}%
+              Hoàn thành | Hủy: {statsData?.orders?.cancelRate || '0'}%
             </p>
           </CardContent>
         </Card>
@@ -208,14 +208,14 @@ const DashboardForm = () => {
           <div className="flex items-center">
             <TrendingUp className="text-overlay-slider mr-2 h-5 w-5" />
             <CardTitle className="text-overlay-slider text-sm font-bold">
-              BIỂU ĐỒ DOANH THU & ĐƠN HÀNG
+              REVENUE CHART & ORDERS
             </CardTitle>
           </div>
         </CardHeader>
         <CardContent className="min-h-[300px]">
           {chartLoading ? (
             <div className="flex h-[300px] items-center justify-center">
-              <div className="text-gray-600">Đang tải biểu đồ...</div>
+              <div className="text-gray-600">Loading . . .</div>
             </div>
           ) : (
             <div className="space-y-2">
@@ -229,18 +229,18 @@ const DashboardForm = () => {
                   </span>
                   <div className="flex gap-4">
                     <span className="text-sm text-gray-700">
-                      <span className="text-muted-foreground">Doanh thu:</span>{' '}
+                      <span className="text-muted-foreground">Revenue:</span>{' '}
                       {item.revenue.toLocaleString()} VNĐ
                     </span>
                     <span className="text-sm text-gray-700">
-                      <span className="text-muted-foreground">Đơn:</span>{' '}
+                      <span className="text-muted-foreground">Orders:</span>{' '}
                       {item.orders}
                     </span>
                   </div>
                 </div>
               )) || (
                 <div className="text-center text-gray-600">
-                  Không có dữ liệu
+                  Unavailable data
                 </div>
               )}
             </div>
@@ -256,7 +256,7 @@ const DashboardForm = () => {
             <div className="flex items-center">
               <Users className="text-overlay-slider mr-2 h-5 w-5" />
               <CardTitle className="text-overlay-slider text-sm font-bold">
-                TOP NGƯỜI GIÚP VIỆC
+                TOP MAIDS
               </CardTitle>
             </div>
           </CardHeader>
@@ -281,12 +281,12 @@ const DashboardForm = () => {
                     </div>
                   </div>
                   <span className="text-sm font-bold text-orange-600">
-                    {helper.totalOrders} đơn
+                    {helper.totalOrders} orders
                   </span>
                 </div>
               )) || (
                 <div className="text-center text-gray-600">
-                  Không có dữ liệu
+                  Unavailable data
                 </div>
               )}
             </div>
@@ -299,7 +299,7 @@ const DashboardForm = () => {
             <div className="flex items-center">
               <DollarSign className="text-overlay-slider mr-2 h-5 w-5" />
               <CardTitle className="text-overlay-slider text-sm font-bold">
-                TOP DỊCH VỤ DOANH THU
+                TOP SERVICES
               </CardTitle>
             </div>
           </CardHeader>

@@ -10,9 +10,11 @@ import {
 
 import { DateRangePicker } from '@/components/common/date-picker/DateRangePicker';
 import type { FormattedDateRange } from '@/components/common/date-picker/DateRangePicker';
-import LoadingFallback from '@/components/fallback/LoadingFallback';
+// Remove LoadingFallback import
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
+// Add this import
 import { formatDateToDDMMYYYY } from '@/helpers/date-utitlity';
 import {
   useGetDashboardChart,
@@ -65,11 +67,11 @@ const DashboardForm = () => {
     setInterval(newInterval);
   };
 
-  const isLoading = statsLoading || chartLoading;
-
-  if (isLoading) {
-    return <LoadingFallback content="Loading order information..." />;
-  }
+  // Remove the global loading check
+  // const isLoading = statsLoading || chartLoading;
+  // if (isLoading) {
+  //   return <LoadingFallback content="Loading order information..." />;
+  // }
 
   return (
     <div className="mt-4 flex h-full w-full flex-col gap-4 overflow-y-scroll">
@@ -94,7 +96,6 @@ const DashboardForm = () => {
               quickSelectionMode="past"
               constraintChooseDate={false}
               value={dateRange}
-              placeholder="Chọn khoảng thời gian"
             />
           </div>
 
@@ -135,13 +136,22 @@ const DashboardForm = () => {
             <Users className="text-overlay-slider h-4 w-4" />
           </CardHeader>
           <CardContent>
-            <div className="font-bold text-gray-900">
-              {statsData?.customers?.total || 0}
-            </div>
-            <p className="text-muted-foreground text-xs">
-              +{statsData?.customers?.growth || 0} (
-              {statsData?.customers?.growthPercent || '0'}%) previous period
-            </p>
+            {statsLoading ? (
+              <>
+                <Skeleton className="mb-2 h-6 w-16" />
+                <Skeleton className="h-4 w-32" />
+              </>
+            ) : (
+              <>
+                <div className="font-bold text-gray-900">
+                  {statsData?.customers?.total || 0}
+                </div>
+                <p className="text-muted-foreground text-xs">
+                  +{statsData?.customers?.growth || 0} (
+                  {statsData?.customers?.growthPercent || '0'}%) previous period
+                </p>
+              </>
+            )}
           </CardContent>
         </Card>
 
@@ -154,13 +164,22 @@ const DashboardForm = () => {
             <ShoppingCart className="text-overlay-slider h-4 w-4" />
           </CardHeader>
           <CardContent>
-            <div className="font-bold text-gray-900">
-              {statsData?.orders?.total || 0}
-            </div>
-            <p className="text-muted-foreground text-xs">
-              +{statsData?.orders?.growth || 0} (
-              {statsData?.orders?.growthPercent || '0'}%) previous period
-            </p>
+            {statsLoading ? (
+              <>
+                <Skeleton className="mb-2 h-6 w-16" />
+                <Skeleton className="h-4 w-32" />
+              </>
+            ) : (
+              <>
+                <div className="font-bold text-gray-900">
+                  {statsData?.orders?.total || 0}
+                </div>
+                <p className="text-muted-foreground text-xs">
+                  +{statsData?.orders?.growth || 0} (
+                  {statsData?.orders?.growthPercent || '0'}%) previous period
+                </p>
+              </>
+            )}
           </CardContent>
         </Card>
 
@@ -173,13 +192,22 @@ const DashboardForm = () => {
             <DollarSign className="text-overlay-slider h-4 w-4" />
           </CardHeader>
           <CardContent>
-            <div className="font-bold text-gray-900">
-              {statsData?.revenue?.total?.toLocaleString() || 0} VNĐ
-            </div>
-            <p className="text-muted-foreground text-xs">
-              TB: {statsData?.revenue?.avgPerOrder?.toLocaleString() || 0}{' '}
-              VNĐ/order
-            </p>
+            {statsLoading ? (
+              <>
+                <Skeleton className="mb-2 h-6 w-24" />
+                <Skeleton className="h-4 w-28" />
+              </>
+            ) : (
+              <>
+                <div className="font-bold text-gray-900">
+                  {statsData?.revenue?.total?.toLocaleString() || 0} VNĐ
+                </div>
+                <p className="text-muted-foreground text-xs">
+                  TB: {statsData?.revenue?.avgPerOrder?.toLocaleString() || 0}{' '}
+                  VNĐ/order
+                </p>
+              </>
+            )}
           </CardContent>
         </Card>
 
@@ -192,12 +220,21 @@ const DashboardForm = () => {
             <TrendingUp className="text-overlay-slider h-4 w-4" />
           </CardHeader>
           <CardContent>
-            <div className="font-bold text-gray-900">
-              {statsData?.orders?.completionRate || '0'}%
-            </div>
-            <p className="text-muted-foreground text-xs">
-              Hoàn thành | Hủy: {statsData?.orders?.cancelRate || '0'}%
-            </p>
+            {statsLoading ? (
+              <>
+                <Skeleton className="mb-2 h-6 w-12" />
+                <Skeleton className="h-4 w-36" />
+              </>
+            ) : (
+              <>
+                <div className="font-bold text-gray-900">
+                  {statsData?.orders?.completionRate || '0'}%
+                </div>
+                <p className="text-muted-foreground text-xs">
+                  Hoàn thành | Hủy: {statsData?.orders?.cancelRate || '0'}%
+                </p>
+              </>
+            )}
           </CardContent>
         </Card>
       </div>
@@ -214,8 +251,19 @@ const DashboardForm = () => {
         </CardHeader>
         <CardContent className="min-h-[300px]">
           {chartLoading ? (
-            <div className="flex h-[300px] items-center justify-center">
-              <div className="text-gray-600">Loading . . .</div>
+            <div className="space-y-3">
+              {Array.from({ length: 5 }).map((_, index) => (
+                <div
+                  key={index}
+                  className="flex items-center justify-between rounded-lg bg-white p-3"
+                >
+                  <Skeleton className="h-4 w-20" />
+                  <div className="flex gap-4">
+                    <Skeleton className="h-4 w-24" />
+                    <Skeleton className="h-4 w-16" />
+                  </div>
+                </div>
+              ))}
             </div>
           ) : (
             <div className="space-y-2">
@@ -261,35 +309,55 @@ const DashboardForm = () => {
             </div>
           </CardHeader>
           <CardContent>
-            <div className="space-y-2">
-              {statsData?.topHelpers?.map((helper, index) => (
-                <div
-                  key={helper._id}
-                  className="flex items-center justify-between rounded-lg bg-white p-3"
-                >
-                  <div className="flex items-center gap-3">
-                    <span className="flex h-6 w-6 items-center justify-center rounded-full bg-orange-100 text-xs font-bold text-orange-800">
-                      {index + 1}
-                    </span>
-                    <div>
-                      <p className="text-sm font-medium text-gray-900">
-                        {helper.fullName}
-                      </p>
-                      <p className="text-muted-foreground text-xs">
-                        {helper.phone}
-                      </p>
+            {statsLoading ? (
+              <div className="space-y-3">
+                {Array.from({ length: 3 }).map((_, index) => (
+                  <div
+                    key={index}
+                    className="flex items-center justify-between rounded-lg bg-white p-3"
+                  >
+                    <div className="flex items-center gap-3">
+                      <Skeleton className="h-6 w-6 rounded-full" />
+                      <div>
+                        <Skeleton className="mb-1 h-4 w-24" />
+                        <Skeleton className="h-3 w-20" />
+                      </div>
                     </div>
+                    <Skeleton className="h-4 w-16" />
                   </div>
-                  <span className="text-sm font-bold text-orange-600">
-                    {helper.totalOrders} orders
-                  </span>
-                </div>
-              )) || (
-                <div className="text-center text-gray-600">
-                  Unavailable data
-                </div>
-              )}
-            </div>
+                ))}
+              </div>
+            ) : (
+              <div className="space-y-2">
+                {statsData?.topHelpers?.map((helper, index) => (
+                  <div
+                    key={helper._id}
+                    className="flex items-center justify-between rounded-lg bg-white p-3"
+                  >
+                    <div className="flex items-center gap-3">
+                      <span className="flex h-6 w-6 items-center justify-center rounded-full bg-orange-100 text-xs font-bold text-orange-800">
+                        {index + 1}
+                      </span>
+                      <div>
+                        <p className="text-sm font-medium text-gray-900">
+                          {helper.fullName}
+                        </p>
+                        <p className="text-muted-foreground text-xs">
+                          {helper.phone}
+                        </p>
+                      </div>
+                    </div>
+                    <span className="text-sm font-bold text-orange-600">
+                      {helper.totalOrders} orders
+                    </span>
+                  </div>
+                )) || (
+                  <div className="text-center text-gray-600">
+                    Unavailable data
+                  </div>
+                )}
+              </div>
+            )}
           </CardContent>
         </Card>
 
@@ -304,35 +372,55 @@ const DashboardForm = () => {
             </div>
           </CardHeader>
           <CardContent>
-            <div className="space-y-2">
-              {statsData?.revenueBreakdown?.map((service, index) => (
-                <div
-                  key={index}
-                  className="flex items-center justify-between rounded-lg bg-white p-3"
-                >
-                  <div className="flex items-center gap-3">
-                    <span className="flex h-6 w-6 items-center justify-center rounded-full bg-orange-100 text-xs font-bold text-orange-800">
-                      {index + 1}
-                    </span>
-                    <div>
-                      <p className="text-sm font-medium text-gray-900">
-                        {service.serviceName}
-                      </p>
-                      <p className="text-muted-foreground text-xs">
-                        {service.totalOrders} orders
-                      </p>
+            {statsLoading ? (
+              <div className="space-y-3">
+                {Array.from({ length: 3 }).map((_, index) => (
+                  <div
+                    key={index}
+                    className="flex items-center justify-between rounded-lg bg-white p-3"
+                  >
+                    <div className="flex items-center gap-3">
+                      <Skeleton className="h-6 w-6 rounded-full" />
+                      <div>
+                        <Skeleton className="mb-1 h-4 w-32" />
+                        <Skeleton className="h-3 w-16" />
+                      </div>
                     </div>
+                    <Skeleton className="h-4 w-20" />
                   </div>
-                  <span className="text-sm font-bold text-orange-600">
-                    {service.revenue.toLocaleString()} VNĐ
-                  </span>
-                </div>
-              )) || (
-                <div className="text-center text-gray-600">
-                  Unavailable data
-                </div>
-              )}
-            </div>
+                ))}
+              </div>
+            ) : (
+              <div className="space-y-2">
+                {statsData?.revenueBreakdown?.map((service, index) => (
+                  <div
+                    key={index}
+                    className="flex items-center justify-between rounded-lg bg-white p-3"
+                  >
+                    <div className="flex items-center gap-3">
+                      <span className="flex h-6 w-6 items-center justify-center rounded-full bg-orange-100 text-xs font-bold text-orange-800">
+                        {index + 1}
+                      </span>
+                      <div>
+                        <p className="text-sm font-medium text-gray-900">
+                          {service.serviceName}
+                        </p>
+                        <p className="text-muted-foreground text-xs">
+                          {service.totalOrders} orders
+                        </p>
+                      </div>
+                    </div>
+                    <span className="text-sm font-bold text-orange-600">
+                      {service.revenue.toLocaleString()} VNĐ
+                    </span>
+                  </div>
+                )) || (
+                  <div className="text-center text-gray-600">
+                    Unavailable data
+                  </div>
+                )}
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>

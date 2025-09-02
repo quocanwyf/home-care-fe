@@ -18,7 +18,7 @@ export const ThemeProvider = ({
     //  Check local storage first
     if (typeof window !== 'undefined') {
       const stored = localStorage.getItem('theme') as ThemeType;
-      if (stored && ['dark', 'green', 'blue'].includes(stored)) {
+      if (stored && ['dark', 'blue', 'green'].includes(stored)) {
         return stored;
       }
     }

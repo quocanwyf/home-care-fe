@@ -231,7 +231,7 @@ const DashboardForm = () => {
                   {statsData?.orders?.completionRate || '0'}%
                 </div>
                 <p className="text-muted-foreground text-xs">
-                  Hoàn thành | Hủy: {statsData?.orders?.cancelRate || '0'}%
+                  Done | Cancelled: {statsData?.orders?.cancelRate || '0'}%
                 </p>
               </>
             )}

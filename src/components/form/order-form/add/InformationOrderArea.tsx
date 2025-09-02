@@ -177,7 +177,7 @@ const InformationOrderArea = ({
         coefficient_other = activeCoeffs.weekend;
       }
 
-      // ✅ Update coefficients using setValue
+      //   Update coefficients using setValue
       if (
         watch('coefficient_ot') !== coefficient_ot ||
         watchedCoefficientOther !== coefficient_other
@@ -188,7 +188,7 @@ const InformationOrderArea = ({
         });
       }
 
-      // ✅ Prepare calculation data with current form values
+      //   Prepare calculation data with current form values
       const currentFormData = {
         serviceTitle: watchedServiceTitle,
         serviceBasePrice: watchedServiceBasePrice,
@@ -243,7 +243,7 @@ const InformationOrderArea = ({
 
     const options: string[] = [];
 
-    for (let hourIncrement = 2; hourIncrement <= 12; hourIncrement += 1) {
+    for (let hourIncrement = 2; hourIncrement <= 24; hourIncrement += 1) {
       const endTotalMinutes = startTotalMinutes + hourIncrement * 60;
 
       if (endTotalMinutes > maxTotalMinutes) break;

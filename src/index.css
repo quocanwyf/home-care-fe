@@ -6,9 +6,9 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme {
-  /*---overlay---*/
+  /*---overlay--- DEFAULT BLUE THEME */
   --color-overlay-slider: #3b82f6;
-/*---bg---*/
+  /*---bg---*/
   --color-background-first: #f0f2f5;
   --color-background-second: #ffffff;
   /*---border---*/
@@ -132,7 +132,7 @@ body {
 }
 /*---break---*/
 .dark {
-  --background: oklch(0.145 0 0);
+  --background: #0F172A;
   --foreground: oklch(0.985 0 0);
   --card: oklch(0.205 0 0);
   --card-foreground: oklch(0.985 0 0);
@@ -167,6 +167,15 @@ body {
   --color-overlay-slider: #6366f1;
   --color-background-first: #1e293b;
   --color-background-second: #0f172a;
+  --color-border-primary: #475569;
+  --color-text-primary: #f1f5f9;
+  --color-text-secondary: #ffffff;
+  --color-text-destructive: #ef4444;
+  --color-text-confirm: #6366f1;
+  --color-text-linear1: #a78bfa;
+  --color-text-linear2: #8b5cf6;
+  --color-text-linear3: #7c3aed;
+  --color-backdrop: #0f172a;
   --color-tab-hover: #334155;
   --shadow-around: 0 0 10px rgba(99, 102, 241, 0.3);
 }
@@ -199,13 +208,23 @@ body {
   --sidebar-border: #d1d5db;
   --sidebar-ring: #16a34a;
 
-  /* Custom variables */
-  --color-overlay-slider: #16a34a;
+  /* Custom variables - THÊM ĐOẠN NÀY */
+ --color-overlay-slider: #16a34a;
   --color-background-first: #f0fdf4;
   --color-background-second: #ffffff;
+  --color-border-primary: #d1d5db;
+  --color-text-primary: #052e16;
+  --color-text-secondary: #000000;
+  --color-text-destructive: #dc2626;
+  --color-text-confirm: #16a34a;
+  --color-text-linear1: #86efac;
+  --color-text-linear2: #4ade80;
+  --color-text-linear3: #22c55e;
+  --color-backdrop: #374151;
   --color-tab-hover: #dcfce7;
   --shadow-around: 0 0 10px rgba(22, 163, 74, 0.3);
 }
+
 /*---break---*/
 @layer base {
   * {

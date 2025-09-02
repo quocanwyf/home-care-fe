@@ -21,8 +21,6 @@ const OrderDetailForm = () => {
     refetch,
   } = useGetOrderDetail(id);
 
-  console.log(orderDetailData);
-
   useEffect(() => {
     if (isError && error) {
       showError(error.message);

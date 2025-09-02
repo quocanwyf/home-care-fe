@@ -1,19 +1,17 @@
 export interface Permission {
   id: string;
-  name: string;
-  description: string;
   module: string;
   action: string;
+  permissionKey: string;
+  hasPermission: boolean;
+  description: string;
 }
 
 export interface Role {
   _id: string;
   title: string;
-  description: string;
   permissions?: string[];
-  deleted?: boolean;
-  createdAt?: string;
-  updatedAt?: string;
+  description?: string;
 }
 
 export interface PermissionTableData {
@@ -32,4 +30,11 @@ export interface PermissionToggleProps {
   role: Role;
   permission: Permission;
   onToggle: (roleId: string, permissionId: string) => void;
+}
+
+export interface RoleWithPermissions {
+  _id: string;
+  title: string;
+  permissions: string[];
+  description?: string;
 }

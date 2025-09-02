@@ -17,8 +17,33 @@ const MainLayout = () => {
   const handleOpenMenu = () => {
     setIsMobileSidebarOpen((prev) => !prev);
   };
+  const getCurrentTitle = (): string => {
+    const currentPath = location.pathname;
 
-  const currentTitle = ROUTE_TITLES[location.pathname] || 'dashboard';
+    // First try exact match
+    if (ROUTE_TITLES[currentPath]) {
+      return ROUTE_TITLES[currentPath];
+    }
+
+    // Then try dynamic route matching
+    for (const [routePattern, title] of Object.entries(ROUTE_TITLES)) {
+      if (routePattern.includes(':')) {
+        // Convert route pattern to regex
+        // /maids/edit/:id becomes /maids/edit/[^/]+
+        const regexPattern = routePattern.replace(/:[^/]+/g, '[^/]+');
+        const regex = new RegExp(`^${regexPattern}$`);
+
+        if (regex.test(currentPath)) {
+          return title;
+        }
+      }
+    }
+
+    // Default fallback
+    return 'Dashboard';
+  };
+
+  const currentTitle = getCurrentTitle();
 
   return (
     <div className="bg-background-first min-h-screen overflow-hidden">

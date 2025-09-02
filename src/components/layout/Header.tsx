@@ -31,8 +31,8 @@ const Header = ({
       return isLoading ? 'Loading...' : 'HomeCare';
     }
 
-    const fullName = user?.user?.fullName || 'User';
-    const role = user?.user?.role || 'Role';
+    const fullName = user?.fullName || 'User';
+    const role = user?.role || 'Role';
     return `${fullName} - ${role} / ${title} Page`;
   }, [user, isLoading, title]);
 

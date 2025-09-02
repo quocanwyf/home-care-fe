@@ -100,11 +100,11 @@ export const useCreateRole = () => {
 export const useGetRoleDetail = (roleId: string | undefined) => {
   return useQuery<RoleDetailResponse, Error>({
     queryKey: ['role-detail', roleId],
-    queryFn: ({ signal }) => {
+    queryFn: () => {
       if (!roleId) {
         throw new Error('Role ID is required');
       }
-      return getRoleDetailApi(roleId, signal);
+      return getRoleDetailApi(roleId);
     },
     enabled: !!roleId, // ✅ Only run query if roleId exists
     staleTime: 1 * 60 * 1000, // 1 minute
@@ -129,7 +129,9 @@ export const useUpdateRole = () => {
     Error,
     { roleId: string; roleData: UpdateRoleRequest }
   >({
-    mutationFn: ({ roleId, roleData }) => updateRoleApi(roleId, roleData),
+    mutationFn: ({ roleId, roleData }) => {
+      updateRoleApi(roleId, roleData);
+    },
 
     onSuccess: () => {
       showSuccess('Role updated successfully!');
@@ -155,14 +157,13 @@ export const useUpdateRole = () => {
 
 //   7. Hook xóa role
 export const useDeleteRole = () => {
-  const { showError, showSuccess } = useToast();
+  const { showError } = useToast();
   const queryClient = useQueryClient();
 
   return useMutation<ApiSuccessResponse, Error, string>({
     mutationFn: (roleId: string) => deleteRoleApi(roleId),
 
     onSuccess: () => {
-      showSuccess('Role deleted successfully!');
       //   Invalidate both roles and permissions cache
       queryClient.invalidateQueries({ queryKey: ['roles'] });
       queryClient.invalidateQueries({ queryKey: ['permissions'] });

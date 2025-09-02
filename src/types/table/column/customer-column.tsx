@@ -18,21 +18,32 @@ export const customerColumn = (
     header: 'Full name',
   },
   {
-    // Tạo custom accessor cho location
     accessorKey: 'location',
     header: 'Location',
     cell: ({ row }) => {
-      const location = row.getValue('location') as Customers['location'];
+      const location = row.getValue('location') as Customer['location'];
 
+      if (!location || location.length === 0) {
+        return <span className="text-muted-foreground">No address</span>;
+      }
+
+      const firstLocation = location[0];
       return (
         <div className="max-w-[200px]">
-          <div className="text-sm">{location[0].addressNum}</div>
+          <div className="text-sm">{firstLocation.detailAddress}</div>
           <div className="text-muted-foreground text-xs">
-            {location[0].ward}, {location[0].city}
+            {firstLocation.ward}, {firstLocation.district}
+          </div>
+          <div className="text-muted-foreground text-xs">
+            {firstLocation.province}
           </div>
         </div>
       );
     },
+  },
+  {
+    accessorKey: 'registerDate',
+    header: 'Register Date',
   },
   {
     accessorKey: 'point',

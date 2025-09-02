@@ -30,14 +30,10 @@ export const ThemeProvider = ({
     const root = document.documentElement;
 
     // Remove all theme classes
-    root.classList.remove('dark', 'blue');
+    root.classList.remove('dark', 'blue', 'green');
 
-    // Add current theme class (except for green which is default)
-    if (theme !== 'green') {
-      root.classList.add(theme);
-    }
+    root.classList.add(theme);
 
-    // ✅ Save to localStorage
     localStorage.setItem('theme', theme);
   }, [theme]);
 

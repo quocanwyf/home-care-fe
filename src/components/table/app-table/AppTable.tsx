@@ -10,6 +10,8 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import { usePermission } from '@/hooks/common/usePermission';
+import type { PermissionModule } from '@/types/auth';
 import type {
   ColumnDef,
   PaginationState,
@@ -43,6 +45,9 @@ type AppTableProps<T, TValue = unknown> = {
   isHeader?: boolean;
   isFooter?: boolean;
   heightRow?: string;
+  permissionModule?: PermissionModule;
+  customAddAction?: () => void;
+  showAddButton?: boolean;
 };
 
 export function AppTable<T>({
@@ -62,14 +67,17 @@ export function AppTable<T>({
   isHeader = true,
   isFooter = true,
   heightRow = 'h-14',
+  permissionModule,
+  customAddAction,
+  showAddButton = true,
 }: AppTableProps<T>) {
+  const { canCreate } = usePermission();
   const [sorting, setSorting] = useState<SortingState>([]);
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
     pageSize: pageSize,
   });
 
-  // console.log(pagination);
   useEffect(() => {
     onPaginationChange?.(pagination);
   }, [pagination, onPaginationChange]);
@@ -82,6 +90,11 @@ export function AppTable<T>({
   useEffect(() => {
     setPagination((prev) => ({ ...prev, pageIndex: 0 }));
   }, [statusFilter, pageSize]);
+
+  const hasCreatePermission = permissionModule
+    ? canCreate(permissionModule)
+    : true;
+  const shouldShowAddButton = showAddButton && hasCreatePermission;
 
   const table = useReactTable({
     data,
@@ -104,24 +117,28 @@ export function AppTable<T>({
   const emptyRowsCount = Math.max(0, pageSize - actualRows.length);
 
   return (
-    <div className="flex h-full max-h-screen flex-col overflow-auto rounded-xl border bg-white shadow-sm">
+    <div className="bg-background flex h-full max-h-screen flex-col overflow-auto rounded-xl border shadow-sm">
       {/* Fixed Header */}
       {isHeader && (
-        <div className="sticky top-0 z-10 rounded-full border-b bg-white px-2 pl-8">
-          <PageHeader pageHeaderTitle={pageHeaderTitle} />
+        <div className="bg-background sticky top-0 z-10 rounded-full border-b px-2 pl-8">
+          <PageHeader
+            pageHeaderTitle={pageHeaderTitle}
+            showAddButton={shouldShowAddButton}
+            handleClick={customAddAction}
+          />
         </div>
       )}
 
       {/* Scrollable Table Content */}
       <div className="flex-1 overflow-auto pl-8">
         <Table>
-          <TableHeader className="sticky top-0 z-10 bg-white">
+          <TableHeader className="bg-background sticky top-0 z-10">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
                   <TableHead
                     key={header.id}
-                    className="bg-white font-bold opacity-60"
+                    className="bg-background font-bold opacity-60"
                   >
                     {header.isPlaceholder
                       ? null
@@ -197,7 +214,7 @@ export function AppTable<T>({
 
       {/* Fixed Footer */}
       {isFooter && (
-        <div className="sticky bottom-0 z-10 rounded-full border-t bg-white px-2 pl-8">
+        <div className="bg-background sticky bottom-0 z-10 rounded-full border-t px-2 pl-8">
           <PageFooter
             status={statusFilter}
             onStatusFilterChange={onStatusFilterChange}

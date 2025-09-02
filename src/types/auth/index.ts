@@ -4,23 +4,17 @@ export interface LoginRequest {
 }
 
 export interface LoginResponse {
-  user: {
-    fullName: string;
-    role: string;
-    permissionList: string[];
-    hmrId?: string;
-  };
-  messages: string;
+  success: boolean;
+  fullName: string;
+  role: string;
+  permissionList: string[];
 }
 
 export interface User {
-  user: {
-    fullName: string;
-    role: string;
-    permissionList: string[];
-    hmrId?: string;
-  };
-  messages: string;
+  success: boolean;
+  fullName: string;
+  role: string;
+  permissionList: string[];
 }
 
 export interface AuthContextType {
@@ -29,4 +23,23 @@ export interface AuthContextType {
   login: (credentials: LoginRequest) => Promise<void>;
   logout: () => Promise<void>;
   isLoading: boolean;
+  hasPermission: (permission: string) => boolean;
+  getUserRole: () => string;
+  getUserName: () => string;
 }
+
+// Permission Types
+export type PermissionModule =
+  | 'dashboard'
+  | 'orders'
+  | 'customers'
+  | 'helpers'
+  | 'staffs'
+  | 'services'
+  | 'costCoefficients'
+  | 'roles'
+  | 'generalSetting';
+
+export type PermissionAction = 'view' | 'create' | 'edit' | 'delete';
+
+export type Permission = `${PermissionModule}_${PermissionAction}`;

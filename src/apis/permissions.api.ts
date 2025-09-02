@@ -150,8 +150,7 @@ export const createRoleApi = async (
 
 // .lấy thông tin để sửa nhóm quyền - GET /admin/roles/edit/:id
 export const getRoleDetailApi = async (
-  roleId: string,
-  signal?: AbortSignal
+  roleId: string
 ): Promise<RoleDetailResponse> => {
   const url = `${import.meta.env.VITE_API_BASE_URL}/admin/roles/edit/${roleId}`;
 
@@ -162,7 +161,6 @@ export const getRoleDetailApi = async (
         'Content-Type': 'application/json',
       },
       credentials: 'include',
-      signal,
     });
 
     if (!response.ok) {
@@ -205,7 +203,10 @@ export const updateRoleApi = async (
         'Content-Type': 'application/json',
       },
       credentials: 'include',
-      body: JSON.stringify(roleData),
+      body: JSON.stringify({
+        title: roleData.title,
+        description: roleData.description,
+      }),
       signal,
     });
 

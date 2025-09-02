@@ -75,6 +75,8 @@ const CustomersPage = () => {
     }
   }, [isError, error, showError]);
 
+  console.log(customers);
+
   return (
     <AppTable
       data={customers}

@@ -3,13 +3,13 @@ import { useEffect, useState } from 'react';
 import { AppTable } from '@/components/table/app-table/AppTable';
 import { STATUS_HR } from '@/constants/dropdown/status-hr';
 // import { data } from '@/constants/mock-data/mock-data-staffs';
-import { useGetHRs } from '@/hooks/api/useHRs';
+import { useGetStaffs } from '@/hooks/api/useStaffs.api';
 import { usePageSize } from '@/hooks/common/usePageSize';
 import { useSearchConfig } from '@/hooks/common/useSearchConfig';
 import { useStatusFilter } from '@/hooks/common/useStatusFilter';
 import { useToast } from '@/hooks/common/useToast';
-import { staffMaidColumns } from '@/types/table/column/staff-maid-columns';
-import type { PaginationState } from '@tanstack/table-core';
+import { staffsColumns } from '@/types/table/column/staff-column';
+import type { PaginationState } from '@tanstack/react-table';
 
 const StaffsPage = () => {
   const { showError } = useToast();
@@ -52,7 +52,6 @@ const StaffsPage = () => {
     limit: pageSize ?? 10,
     page: currentPagination.pageIndex + 1,
     search: searchKeyword ?? '',
-    type: 'staff',
   };
 
   const {
@@ -61,34 +60,36 @@ const StaffsPage = () => {
     error,
     isError,
     isFetching,
-  } = useGetHRs(params);
+  } = useGetStaffs(params);
 
   useEffect(() => {
     if (staffsData) {
       const test = staffsData || [];
-      setStaffs(test.result || []);
+      setStaffs(test.staffs || []);
     }
   }, [staffsData]);
+  console.log(staffs);
 
   useEffect(() => {
     if (isError) {
-      showError(error?.message || 'An error occurred while fetching orders.');
+      showError(error?.message || 'An error occurred while fetching staffs.');
     }
   }, [isError, error, showError]);
 
   return (
     <AppTable
       data={staffs}
-      columns={staffMaidColumns(
+      columns={staffsColumns(
         (row) => console.log('Xem', row),
         (row) => console.log('Sửa', row),
         (row) => console.log('Xoá', row)
       )}
-      pageHeaderTitle="Maids List"
+      pageHeaderTitle="Staffs List"
+      permissionModule="staffs"
       //status variable and function
       statusFilter={statusFilter}
       onStatusFilterChange={handleStatusChange}
-      listStatusFilter={STATUS_HR}
+      listStatusFilter={['all']}
       //pagesize variable and function
       pageSize={pageSize}
       onPageSizeChange={handlePageSizeChange}

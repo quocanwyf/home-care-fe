@@ -1,18 +1,17 @@
 import OrderStatusBadge from '@/components/common/badge/StatusOrdersBadge';
 import TableActions from '@/components/common/button/TableActions';
-import type { Maids } from '@/types/table/objects/maids';
-import type { Staffs } from '@/types/table/objects/staffs';
+import AvatarWithSkeleton from '@/components/common/icons/AvatarWithSkeleton';
+import type { Helper } from '@/types/params/helpers-params';
+import type { Staff } from '@/types/params/staffs-params';
 import type { ColumnDef } from '@tanstack/react-table';
 
-import type { HRs } from '../objects/hrs';
-
 export const staffMaidColumns = (
-  onView?: (row: Staffs | Maids) => void,
-  onEdit?: (row: Staffs | Maids) => void,
-  onDelete?: (row: Staffs | Maids) => void
-): ColumnDef<Staffs | Maids, unknown>[] => [
+  onView?: (row: Staff | Helper) => void,
+  onEdit?: (row: Staff | Helper) => void,
+  onDelete?: (row: Staff | Helper) => void
+): ColumnDef<Staff | Helper, unknown>[] => [
   {
-    accessorKey: 'phoneNumber',
+    accessorKey: 'phone',
     header: 'Phone number',
   },
   {
@@ -20,29 +19,30 @@ export const staffMaidColumns = (
     header: 'Full name',
   },
   {
-    // Tạo custom accessor cho location
-    accessorKey: 'location',
-    header: 'Address',
-    cell: ({ row }) => {
-      const location = row.getValue('location') as HRs['location'];
-      return (
-        <div className="max-w-[200px]">
-          <div className="text-sm">{location.addressNum}</div>
-          <div className="text-muted-foreground text-xs">
-            {location.ward}, {location.city}
-          </div>
-        </div>
-      );
-    },
+    accessorKey: 'avatar',
+    header: 'Avatar',
+    cell: ({ row }) => (
+      <AvatarWithSkeleton src={row.getValue('avatar') as string} size={40} />
+    ),
   },
   {
-    accessorKey: 'dateOfBirth',
-    header: 'Date of birth',
+    id: 'id',
+    header: 'ID',
+    cell: ({ row }) => {
+      const data = row.original;
+      if ('helper_id' in data) {
+        return data.helper_id;
+      }
+      if ('staff_id' in data) {
+        return data.staff_id;
+      }
+      return '-';
+    },
   },
   {
     accessorKey: 'status',
     header: 'Status',
-    cell: ({ row }) => <OrderStatusBadge status={row.original.status} />,
+    cell: ({ row }) => <OrderStatusBadge status={row.original.workingStatus} />,
   },
   {
     id: 'actions',

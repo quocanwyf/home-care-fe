@@ -23,6 +23,9 @@ export type ObjectsWithStatus =
   | 'assigned'
   | 'active'
   | 'inactive'
+  | 'online'
+  | 'offline'
+  | 'working'
   | 'banned';
 
 export const ObjectsStatusStyles: Record<ObjectsWithStatus, string> = {
@@ -35,5 +38,8 @@ export const ObjectsStatusStyles: Record<ObjectsWithStatus, string> = {
   assigned: 'bg-fuchsia-100 text-fuchsia-800',
   active: 'bg-green-100 text-green-800',
   inactive: 'bg-gray-100 text-gray-800',
+  online: 'bg-green-100 text-green-800',
+  offline: 'bg-gray-100 text-gray-800',
+  working: 'bg-blue-100 text-blue-800',
   banned: 'bg-red-100 text-red-800',
 };

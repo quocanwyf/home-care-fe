@@ -1,5 +1,7 @@
 // apis/customers.api.ts
 import type {
+  CustomerDetailInfo,
+  CustomerOrdersResponse,
   CustomerParams,
   CustomersResponse,
 } from '@/types/params/customer-params';
@@ -65,5 +67,51 @@ export const checkCustomerExistApi = async (
   }
 
   const data: CustomersResponse = await response.json();
+  return data;
+};
+
+export const getCustomerDetailApi = async (
+  cusPhone: string,
+  signal?: AbortSignal
+): Promise<CustomerDetailInfo> => {
+  const url = `${import.meta.env.VITE_API_BASE_URL}/admin/customer/detail/${cusPhone}`;
+
+  const response = await fetch(url, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    credentials: 'include',
+    signal,
+  });
+
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
+
+  const data: CustomerDetailInfo = await response.json();
+  return data;
+};
+
+export const getCustomerOrdersApi = async (
+  phone: string,
+  signal?: AbortSignal
+): Promise<CustomerOrdersResponse> => {
+  const url = `${import.meta.env.VITE_API_BASE_URL}/admin/requests?search=${phone}`;
+
+  const response = await fetch(url, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    credentials: 'include',
+    signal,
+  });
+
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
+
+  const data: CustomerOrdersResponse = await response.json();
   return data;
 };

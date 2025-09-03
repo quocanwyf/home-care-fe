@@ -83,3 +83,24 @@ export interface StaffUpdatePayload {
   id: string;
   formData: FormData;
 }
+
+export interface StaffDetailData {
+  _id: string;
+  staff_id: string;
+  fullName: string;
+  birthDate: string;
+  startDate: string;
+  phone: string;
+  email: string;
+  birthPlace: string;
+  avatar: string;
+  salary: number;
+  role_id: string;
+  status: 'active' | 'inactive';
+  role: string;
+}
+
+export interface StaffDetailInfo {
+  success: boolean;
+  staff: StaffDetailData;
+}

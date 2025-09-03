@@ -1,6 +1,7 @@
 import type {
   StaffCreateInfo,
   StaffCreateResponse,
+  StaffDetailInfo,
   StaffEditInfo,
   StaffParams,
   StaffUpdateResponse,
@@ -130,5 +131,29 @@ export const updateStaffApi = async (
   }
 
   const data: StaffUpdateResponse = await response.json();
+  return data;
+};
+
+// Get staff detail
+export const getStaffDetailApi = async (
+  id: string,
+  signal?: AbortSignal
+): Promise<StaffDetailInfo> => {
+  const url = `${import.meta.env.VITE_API_BASE_URL}/admin/staffs/detail/${id}`;
+
+  const response = await fetch(url, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    credentials: 'include',
+    signal,
+  });
+
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
+
+  const data: StaffDetailInfo = await response.json();
   return data;
 };

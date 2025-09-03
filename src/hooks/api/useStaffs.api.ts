@@ -1,6 +1,7 @@
 import {
   createStaffApi,
   getStaffCreateInfoApi,
+  getStaffDetailApi,
   getStaffEditApi,
   getStaffsApi,
   updateStaffApi,
@@ -61,5 +62,14 @@ export const useUpdateStaff = () => {
       queryClient.invalidateQueries({ queryKey: ['staffs'] });
       queryClient.invalidateQueries({ queryKey: ['staff-edit'] });
     },
+  });
+};
+
+export const useGetStaffDetail = (id: string) => {
+  return useQuery({
+    queryKey: ['staff-detail', id],
+    queryFn: ({ signal }) => getStaffDetailApi(id, signal),
+    enabled: !!id, // Only run query if id exists
+    refetchOnWindowFocus: false,
   });
 };

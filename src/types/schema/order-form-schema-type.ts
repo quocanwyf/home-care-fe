@@ -18,6 +18,7 @@ export const defaultOrderFormValues: OrderFormSchemaType = {
   endDate: '',
   startTime: '',
   endTime: '',
+  requestType: 'shortTerm',
 
   // Cost calculation
   totalCost: 0,

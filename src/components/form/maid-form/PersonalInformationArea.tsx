@@ -200,6 +200,18 @@ const PersonalInformationArea: React.FC<PersonalInformationAreaProps> = ({
             required: true,
           }}
         />
+        <InputLabel
+          label={{
+            labelTitle: 'Password',
+            classNameLabel: 'text-gray-700',
+          }}
+          input={{
+            placeholder: 'Enter password',
+            value: data.password,
+            onChange: (e) => handleInputChange('password', e.target.value),
+            required: true,
+          }}
+        />
       </div>
     </div>
   );

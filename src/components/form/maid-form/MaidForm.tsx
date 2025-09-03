@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 
-import LoadingFallback from '@/components/fallback/LoadingFallbackApp';
+import LoadingFallback from '@/components/fallback/LoadingFallback';
 import { Button } from '@/components/ui/button';
 import { parseDDMMYYYYToDate } from '@/helpers/date-utitlity';
 import {
@@ -49,13 +49,16 @@ const MaidForm: React.FC<MaidFormProps> = ({ mode, helperId }) => {
     experienceDescription: '',
     avatar: [],
     healthCertificates: [],
+    baseFactor: { label: '', value: 1 }, // Initialize baseFactor
+    password: '',
   });
 
   useEffect(() => {
     if (mode === 'edit' && helperEditData?.helper) {
       const helper = helperEditData.helper;
+      const coefficientList = helperEditData.coefficientList || [];
 
-      console.log('Helper data received:', helper);
+      console.log('Helper data received:', helperEditData);
 
       // Convert jobs from API format to form format
       const jobsFormatted = helper.jobs
@@ -68,7 +71,7 @@ const MaidForm: React.FC<MaidFormProps> = ({ mode, helperId }) => {
       // Convert gender to dropdown format
       const genderFormatted = helper.gender
         ? {
-            label: helper.gender === 'male' ? 'Male' : 'Female', // Convert API format
+            label: helper.gender === 'male' ? 'Male' : 'Female',
             value: helper.gender === 'male' ? 'Male' : 'Female',
           }
         : { label: '', value: '' };
@@ -78,18 +81,36 @@ const MaidForm: React.FC<MaidFormProps> = ({ mode, helperId }) => {
         ? {
             label:
               helper.educationLevel.charAt(0).toUpperCase() +
-              helper.educationLevel.slice(1), // Capitalize first letter
+              helper.educationLevel.slice(1),
             value:
               helper.educationLevel.charAt(0).toUpperCase() +
               helper.educationLevel.slice(1),
           }
         : { label: '', value: '' };
 
+      // Find baseFactor in coefficientList
+      const baseFactorFormatted = (() => {
+        if (helper.baseFactor && coefficientList.length > 0) {
+          const matchingCoefficient = coefficientList.find(
+            (coeff: any) => coeff.value === helper.baseFactor
+          );
+
+          if (matchingCoefficient) {
+            return {
+              label: `${matchingCoefficient.title} (${matchingCoefficient.value})`,
+              value: matchingCoefficient.value,
+            };
+          }
+        }
+        // Default fallback
+        return { label: 'Hệ số bậc lương 1 (1)', value: 1 };
+      })();
+
       // Set form data
       setFormData({
         helper_id: helper.helper_id || '',
         fullName: helper.fullName || '',
-        birthDate: helper.birthDate || '', // API trả về format dd/mm/yyyy
+        birthDate: helper.birthDate || '',
         phone: helper.phone || '',
         birthPlace: helper.birthPlace || '',
         address: helper.address || '',
@@ -100,17 +121,10 @@ const MaidForm: React.FC<MaidFormProps> = ({ mode, helperId }) => {
         weight: helper.weight?.toString() || '',
         jobs: jobsFormatted,
         experienceDescription: helper.experienceDescription || '',
-        avatar: [], // Files sẽ empty vì edit mode
-        healthCertificates: [], // Files sẽ empty vì edit mode
-      });
-
-      console.log('Form data set:', {
-        helper_id: helper.helper_id,
-        fullName: helper.fullName,
-        birthDate: helper.birthDate,
-        gender: genderFormatted,
-        educationLevel: educationFormatted,
-        jobs: jobsFormatted,
+        avatar: [],
+        healthCertificates: [],
+        baseFactor: baseFactorFormatted,
+        password: helper.password || '',
       });
     }
   }, [mode, helperEditData]);
@@ -141,6 +155,7 @@ const MaidForm: React.FC<MaidFormProps> = ({ mode, helperId }) => {
       'nationality',
       'height',
       'weight',
+      'password',
     ];
 
     for (const field of requiredFields) {
@@ -175,6 +190,11 @@ const MaidForm: React.FC<MaidFormProps> = ({ mode, helperId }) => {
       return false;
     }
 
+    // Check password
+    if (!formData.password.trim()) {
+      return false;
+    }
+
     if (mode === 'create') {
       if (
         formData.avatar.length === 0 ||
@@ -198,6 +218,7 @@ const MaidForm: React.FC<MaidFormProps> = ({ mode, helperId }) => {
       'nationality',
       'height',
       'weight',
+      'password',
     ];
 
     for (const field of requiredFields) {
@@ -264,6 +285,11 @@ const MaidForm: React.FC<MaidFormProps> = ({ mode, helperId }) => {
       return false;
     }
 
+    if (!formData.password.trim()) {
+      showError('Password is required');
+      return false;
+    }
+
     if (formData.healthCertificates.length === 0) {
       showError('Health certificates are required');
       return false;
@@ -284,7 +310,7 @@ const MaidForm: React.FC<MaidFormProps> = ({ mode, helperId }) => {
     try {
       // Prepare FormData for API
       const apiFormData = new FormData();
-      console.log('test loz', formData.jobs);
+
       // Add text fields
       apiFormData.append('helper_id', formData.helper_id);
       apiFormData.append('fullName', formData.fullName.trim());
@@ -297,6 +323,14 @@ const MaidForm: React.FC<MaidFormProps> = ({ mode, helperId }) => {
       apiFormData.append('educationLevel', formData.educationLevel.value);
       apiFormData.append('height', formData.height);
       apiFormData.append('weight', formData.weight);
+      apiFormData.append('password', formData.password);
+
+      // Add baseFactor for edit mode
+      if (mode === 'edit' && formData.baseFactor?.value) {
+        apiFormData.append('baseFactor', formData.baseFactor.value.toString());
+      } else if (mode === 'create') {
+        apiFormData.append('baseFactor', '1'); // Default value for create
+      }
 
       // Add jobs array
       formData.jobs.forEach((job) => {
@@ -317,6 +351,8 @@ const MaidForm: React.FC<MaidFormProps> = ({ mode, helperId }) => {
         apiFormData.append('healthCertificates', file);
       });
 
+      console.log('Submitting form data:', formData);
+
       let result;
       if (mode === 'create') {
         result = await createHelperMutation.mutateAsync(apiFormData);
@@ -327,8 +363,6 @@ const MaidForm: React.FC<MaidFormProps> = ({ mode, helperId }) => {
           formData: apiFormData,
         });
       }
-
-      console.log('Create helper result:', result);
 
       if (result.success) {
         showSuccess(
@@ -353,6 +387,8 @@ const MaidForm: React.FC<MaidFormProps> = ({ mode, helperId }) => {
             experienceDescription: '',
             avatar: [],
             healthCertificates: [],
+            baseFactor: { label: '', value: 1 },
+            password: '',
           });
         }
         navigateTo('/maids', {
@@ -374,7 +410,6 @@ const MaidForm: React.FC<MaidFormProps> = ({ mode, helperId }) => {
           );
         }
       }
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       console.error('Error creating helper:', error);
       showError('Network error occurred. Please try again later.');
@@ -401,7 +436,12 @@ const MaidForm: React.FC<MaidFormProps> = ({ mode, helperId }) => {
           data={formData}
           onUpdate={updatePersonalInfo}
         />
-        <JobInformationArea data={formData} onUpdate={updateJobInfo} />
+        <JobInformationArea
+          data={formData}
+          onUpdate={updateJobInfo}
+          mode={mode}
+          coefficientList={helperEditData?.coefficientList || []}
+        />
         <UploadArea
           data={formData}
           onUpdate={updateFiles}
@@ -437,9 +477,9 @@ const MaidForm: React.FC<MaidFormProps> = ({ mode, helperId }) => {
                 {mode === 'create' ? 'Creating...' : 'Updating...'}
               </div>
             ) : mode === 'create' ? (
-              'Create Helper'
+              'Create Maid'
             ) : (
-              'Update Helper'
+              'Update Maid'
             )}
           </Button>
         </div>

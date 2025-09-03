@@ -23,6 +23,7 @@ export const orderFormSchema = z.object({
   endDate: z.string().min(1, 'End date is required'),
   startTime: z.string().min(1, 'Start time is required'),
   endTime: z.string().min(1, 'End time is required'),
+  requestType: z.enum(['shortTerm', 'longTerm']).optional(),
 
   // Cost calculation
   totalCost: z.number().min(0, 'Total cost must be non-negative').default(0),

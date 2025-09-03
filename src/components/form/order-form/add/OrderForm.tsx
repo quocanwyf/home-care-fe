@@ -79,6 +79,8 @@ export default function OrderForm() {
         coefficient_other: data.coefficient_other,
         coefficient_ot: data.coefficient_ot,
 
+        requestType: data.requestType,
+
         // Date and time
         startDate: data.startDate,
         startTime: data.startTime,
@@ -108,6 +110,7 @@ export default function OrderForm() {
         isCusHasAcc: data.isCusHasAcc,
       };
 
+      console.log('Order payload:', orderPayload);
       const response = await addOrderMutation.mutateAsync(orderPayload);
 
       if (response.success) {

@@ -4,6 +4,7 @@ import { AppTable } from '@/components/table/app-table/AppTable';
 import { STATUS_CUSTOMER } from '@/constants/dropdown/status-customers';
 // import { data } from '@/constants/mock-data/mock-data-customers';
 import { useGetCustomers } from '@/hooks/api/useCustomers.api';
+import { useAppNavigate } from '@/hooks/common/useAppNavigate';
 import { usePageSize } from '@/hooks/common/usePageSize';
 import { useSearchConfig } from '@/hooks/common/useSearchConfig';
 import { useStatusFilter } from '@/hooks/common/useStatusFilter';
@@ -12,6 +13,7 @@ import { customerColumn } from '@/types/table/column/customer-column';
 import type { PaginationState } from '@tanstack/react-table';
 
 const CustomersPage = () => {
+  const navigateTo = useAppNavigate();
   const { showError } = useToast();
   const [customers, setCustomers] = useState([]);
 
@@ -77,14 +79,15 @@ const CustomersPage = () => {
 
   console.log(customers);
 
+  const handleView = (row: any) => {
+    navigateTo(`/customers/detail/${row.phoneNumber}`);
+    console.log(row);
+  };
+
   return (
     <AppTable
       data={customers}
-      columns={customerColumn(
-        (row) => console.log('Xoá', row),
-        (row) => console.log('Bỏ cấm', row),
-        (row) => console.log('Xem lịch sử', row)
-      )}
+      columns={customerColumn(handleView)}
       pageHeaderTitle="Customers List"
       //status variable and function
       statusFilter={statusFilter}

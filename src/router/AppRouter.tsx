@@ -11,6 +11,9 @@ const DashboardPage = lazy(() => import('@/pages/dashboard/DashboardPage'));
 const CustomersPage = lazy(
   () => import('@/pages/human-resources/customers/CustomersPage')
 );
+const DetailCustomerPage = lazy(
+  () => import('@/pages/human-resources/customers/DetailCustomerPage')
+);
 
 const MaidsPage = lazy(() => import('@/pages/human-resources/maids/MaidsPage'));
 const AddMaidPage = lazy(
@@ -29,6 +32,12 @@ const StaffsPage = lazy(
 const AddStaffPage = lazy(
   () => import('@/pages/human-resources/staffs/AddStaffPage')
 );
+const EditStaffPage = lazy(
+  () => import('@/pages/human-resources/staffs/EditStaffPage')
+);
+const DetailStaffPage = lazy(
+  () => import('@/pages/human-resources/staffs/DetailStaffPage')
+);
 
 const OrdersPage = lazy(() => import('@/pages/orders/OrdersPage'));
 const AddOrderPage = lazy(() => import('@/pages/orders/AddOrderPage'));
@@ -37,6 +46,16 @@ const DetailOrderPage = lazy(() => import('@/pages/orders/DetailOrderPage'));
 const ServicesPage = lazy(
   () => import('@/pages/inventory/services/ServicesPage')
 );
+const AddServicePage = lazy(
+  () => import('@/pages/inventory/services/AddServicePage')
+);
+const EditServicePage = lazy(
+  () => import('@/pages/inventory/services/EditServicePage')
+);
+const DetailServicePage = lazy(
+  () => import('@/pages/inventory/services/DetailServicePage')
+);
+
 const FinancesPage = lazy(
   () => import('@/pages/inventory/finances/CoefficientPage')
 );
@@ -84,6 +103,14 @@ const AppRouter = () => {
             element={
               <RouteGuard module="customers">
                 <CustomersPage />
+              </RouteGuard>
+            }
+          />
+          <Route
+            path="/customers/detail/:id"
+            element={
+              <RouteGuard module="customers">
+                <DetailCustomerPage />
               </RouteGuard>
             }
           />
@@ -139,6 +166,22 @@ const AppRouter = () => {
               </RouteGuard>
             }
           />
+          <Route
+            path="/staffs/edit/:id"
+            element={
+              <RouteGuard module="staffs">
+                <EditStaffPage />
+              </RouteGuard>
+            }
+          />
+          <Route
+            path="/staffs/detail/:id"
+            element={
+              <RouteGuard module="staffs">
+                <DetailStaffPage />
+              </RouteGuard>
+            }
+          />
 
           {/* Orders - cần orders_view */}
           <Route
@@ -172,6 +215,30 @@ const AppRouter = () => {
             element={
               <RouteGuard module="services">
                 <ServicesPage />
+              </RouteGuard>
+            }
+          />
+          <Route
+            path="/services/add"
+            element={
+              <RouteGuard module="services">
+                <AddServicePage />
+              </RouteGuard>
+            }
+          />
+          <Route
+            path="/services/edit/:id"
+            element={
+              <RouteGuard module="services">
+                <EditServicePage />
+              </RouteGuard>
+            }
+          />
+          <Route
+            path="/services/detail/:id"
+            element={
+              <RouteGuard module="services">
+                <DetailServicePage />
               </RouteGuard>
             }
           />

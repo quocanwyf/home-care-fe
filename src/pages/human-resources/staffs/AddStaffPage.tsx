@@ -1,22 +1,11 @@
-const AddOrderPage = () => {
+import StaffForm from '@/components/form/staff-form/StaffForm';
+
+const AddStaffPage = () => {
   return (
-    <div className="h-full w-full rounded-xl bg-white px-8 py-6">
-      {/* <Label className="font-semibold" htmlFor="hmrId">
-            <Phone className="inline-block h-4 w-4" />
-            User ID
-          </Label>
-          <Input
-            type="text"
-            id="hmrId"
-            name="hmrId" // ✅ Thêm name attribute
-            placeholder="Enter your User ID"
-            className="focus:border-border-primary/50 shadow-sm"
-            required
-          /> */}
-      cccc
-      <p>llol</p>
+    <div className="h-full w-full rounded-xl bg-white px-8 py-2">
+      <StaffForm mode="create" />
     </div>
   );
 };
 
-export default AddOrderPage;
+export default AddStaffPage;

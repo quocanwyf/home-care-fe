@@ -11,6 +11,7 @@ export interface MaidFormData {
   educationLevel: { label: string; value: string };
   height: string;
   weight: string;
+  baseFactor?: { label: string; value: number };
 
   // Job Info
   jobs: { label: string; value: string }[];
@@ -19,4 +20,5 @@ export interface MaidFormData {
   // Files
   avatar: File[];
   healthCertificates: File[];
+  password: string;
 }

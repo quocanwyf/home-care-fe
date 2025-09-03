@@ -5,8 +5,8 @@ import type { Customers } from '@/types/table/objects/customers';
 import type { ColumnDef } from '@tanstack/react-table';
 
 export const customerColumn = (
-  onBan?: (row: Customers) => void | undefined,
-  onUnban?: (row: Customers) => void | undefined,
+  // onBan?: (row: Customers) => void | undefined,
+  // onUnban?: (row: Customers) => void | undefined,
   onViewHistory?: (row: Customers) => void | undefined
 ): ColumnDef<Customers>[] => [
   {
@@ -60,14 +60,14 @@ export const customerColumn = (
     id: 'actions',
     header: 'Actions',
     cell: ({ row }) => {
-      const isBanned = row.original.status === 'banned';
+      // const isBanned = row.original.status === 'banned';
       return (
         <TableActions
           onView={undefined}
           onEdit={undefined}
           onDelete={undefined}
-          onBan={onBan}
-          onUnban={isBanned ? onUnban : undefined}
+          // onBan={onBan}
+          // onUnban={isBanned ? onUnban : undefined}
           onViewHistory={onViewHistory}
           row={row.original}
         />

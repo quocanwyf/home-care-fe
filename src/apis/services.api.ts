@@ -1,5 +1,11 @@
 import type {
+  ServiceCreatePayload,
+  ServiceCreateResponse,
+  ServiceDetailInfo,
+  ServiceEditInfo,
   ServiceParams,
+  ServiceUpdatePayload,
+  ServiceUpdateResponse,
   ServicesResponse,
 } from '@/types/params/services-params';
 
@@ -55,5 +61,96 @@ export const deleteServiceApi = async (
   }
 
   const data = await response.json();
+  return data;
+};
+
+export const createServiceApi = async (
+  payload: ServiceCreatePayload
+): Promise<ServiceCreateResponse> => {
+  const url = `${import.meta.env.VITE_API_BASE_URL}/admin/services/create`;
+
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    credentials: 'include',
+    body: JSON.stringify(payload),
+  });
+
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
+
+  const data: ServiceCreateResponse = await response.json();
+  return data;
+};
+
+export const getServiceEditApi = async (
+  serviceId: string,
+  signal?: AbortSignal
+): Promise<ServiceEditInfo> => {
+  const url = `${import.meta.env.VITE_API_BASE_URL}/admin/services/edit/${serviceId}`;
+
+  const response = await fetch(url, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    credentials: 'include',
+    signal,
+  });
+
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
+
+  const data: ServiceEditInfo = await response.json();
+  return data;
+};
+
+export const updateServiceApi = async (
+  serviceId: string,
+  payload: ServiceUpdatePayload
+): Promise<ServiceUpdateResponse> => {
+  const url = `${import.meta.env.VITE_API_BASE_URL}/admin/services/edit/${serviceId}`;
+
+  const response = await fetch(url, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    credentials: 'include',
+    body: JSON.stringify(payload),
+  });
+
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
+
+  const data: ServiceUpdateResponse = await response.json();
+  return data;
+};
+
+export const getServiceDetailApi = async (
+  serviceId: string,
+  signal?: AbortSignal
+): Promise<ServiceDetailInfo> => {
+  const url = `${import.meta.env.VITE_API_BASE_URL}/admin/services/detail/${serviceId}`;
+
+  const response = await fetch(url, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    credentials: 'include',
+    signal,
+  });
+
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
+
+  const data: ServiceDetailInfo = await response.json();
   return data;
 };

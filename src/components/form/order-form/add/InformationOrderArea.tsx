@@ -64,8 +64,8 @@ const InformationOrderArea = ({
   } | null>(null);
 
   const requestTypes = [
-    { label: 'Short-term', value: 'short-term' },
-    { label: 'Long-term', value: 'long-term' },
+    { label: 'Short-term', value: 'shortTerm' },
+    { label: 'Long-term', value: 'longTerm' },
   ];
 
   const minTime = systemSetting?.openHour || '06:00';
@@ -77,12 +77,16 @@ const InformationOrderArea = ({
   }) => {
     setSelectedRequestType(value);
 
-    if (value.value === 'short-term') {
-      // Keep only startDate for short-term
+    setValue('requestType', value.value as 'shortTerm' | 'longTerm', {
+      shouldValidate: true,
+    });
+
+    if (value.value === 'shortTerm') {
+      // Keep only startDate for shortTerm
       setValue('startDate', watchedStartDate || '', { shouldValidate: true });
       setValue('endDate', watchedStartDate || '', { shouldValidate: true });
     } else {
-      // Reset both dates for long-term
+      // Reset both dates for longTerm
       setValue('startDate', '', { shouldValidate: true });
       setValue('endDate', '', { shouldValidate: true });
     }
@@ -118,7 +122,7 @@ const InformationOrderArea = ({
   //   Update single date handler
   const handleSingleDateChange = (dateString: string) => {
     setValue('startDate', dateString, { shouldValidate: true });
-    setValue('endDate', dateString, { shouldValidate: true }); // Same date for short-term
+    setValue('endDate', dateString, { shouldValidate: true }); // Same date for shortTerm
   };
 
   const handleDateRangeChange = (range: FormattedDateRange | undefined) => {
@@ -305,15 +309,26 @@ const InformationOrderArea = ({
 
           <div className="flex-1">
             {/* Request Type doesn't need Controller as it's not a form field */}
-            <LabelDropdown
-              label="Request Type"
-              options={requestTypes}
-              handleSelect={handleSelectRequestType}
-              className="w-full"
-              labelClassName="w-full"
-              triggerLabel="Choose request type"
-              triggerClassName="h-10 cursor-pointer"
-              selectedValue={selectedRequestType}
+            <Controller
+              name="requestType"
+              control={control}
+              render={({ fieldState: { error } }) => (
+                <>
+                  <LabelDropdown
+                    label="Request Type"
+                    options={requestTypes}
+                    handleSelect={handleSelectRequestType}
+                    className="w-full"
+                    labelClassName="w-full"
+                    triggerLabel="Choose request type"
+                    triggerClassName="h-10 cursor-pointer"
+                    selectedValue={selectedRequestType}
+                  />
+                  {error && (
+                    <p className="mt-1 text-sm text-red-500">{error.message}</p>
+                  )}
+                </>
+              )}
             />
           </div>
         </div>{' '}
@@ -363,7 +378,7 @@ const InformationOrderArea = ({
             )}
           />
 
-          {selectedRequestType?.value === 'long-term' ? (
+          {selectedRequestType?.value === 'longTerm' ? (
             <Controller
               name="startDate"
               control={control}
@@ -394,7 +409,7 @@ const InformationOrderArea = ({
                 </div>
               )}
             />
-          ) : selectedRequestType?.value === 'short-term' ? (
+          ) : selectedRequestType?.value === 'shortTerm' ? (
             <Controller
               name="startDate"
               control={control}

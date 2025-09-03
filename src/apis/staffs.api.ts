@@ -1,4 +1,12 @@
-import type { StaffParams, StaffsResponse } from '@/types/params/staffs-params';
+import type {
+  StaffCreateInfo,
+  StaffCreateResponse,
+  StaffDetailInfo,
+  StaffEditInfo,
+  StaffParams,
+  StaffUpdateResponse,
+  StaffsResponse,
+} from '@/types/params/staffs-params';
 
 export const getStaffsApi = async (
   params: StaffParams,
@@ -36,5 +44,116 @@ export const getStaffsApi = async (
   }
 
   const data: StaffsResponse = await response.json();
+  return data;
+};
+
+export const getStaffCreateInfoApi = async (
+  signal?: AbortSignal
+): Promise<StaffCreateInfo> => {
+  const url = `${import.meta.env.VITE_API_BASE_URL}/admin/staffs/create`;
+
+  const response = await fetch(url, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    credentials: 'include',
+    signal,
+  });
+
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
+
+  const data: StaffCreateInfo = await response.json();
+  return data;
+};
+
+// Create staff
+export const createStaffApi = async (
+  payload: FormData
+): Promise<StaffCreateResponse> => {
+  const url = `${import.meta.env.VITE_API_BASE_URL}/admin/staffs/create`;
+
+  const response = await fetch(url, {
+    method: 'POST',
+    body: payload, // FormData, don't set Content-Type header
+    credentials: 'include',
+  });
+
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
+
+  const data: StaffCreateResponse = await response.json();
+  return data;
+};
+
+// Get staff for edit
+export const getStaffEditApi = async (
+  id: string,
+  signal?: AbortSignal
+): Promise<StaffEditInfo> => {
+  const url = `${import.meta.env.VITE_API_BASE_URL}/admin/staffs/edit/${id}`;
+
+  const response = await fetch(url, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    credentials: 'include',
+    signal,
+  });
+
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
+
+  const data: StaffEditInfo = await response.json();
+  return data;
+};
+
+// Update staff
+export const updateStaffApi = async (
+  id: string,
+  payload: FormData
+): Promise<StaffUpdateResponse> => {
+  const url = `${import.meta.env.VITE_API_BASE_URL}/admin/staffs/edit/${id}`;
+
+  const response = await fetch(url, {
+    method: 'PATCH',
+    body: payload,
+    credentials: 'include',
+  });
+
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
+
+  const data: StaffUpdateResponse = await response.json();
+  return data;
+};
+
+// Get staff detail
+export const getStaffDetailApi = async (
+  id: string,
+  signal?: AbortSignal
+): Promise<StaffDetailInfo> => {
+  const url = `${import.meta.env.VITE_API_BASE_URL}/admin/staffs/detail/${id}`;
+
+  const response = await fetch(url, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    credentials: 'include',
+    signal,
+  });
+
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
+
+  const data: StaffDetailInfo = await response.json();
   return data;
 };

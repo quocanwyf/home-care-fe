@@ -22,7 +22,7 @@ export const HeaderAvatarDropdown = ({
         className="h-6 w-6 rounded-full"
       />
       <span className="text-sm font-semibold">
-        {user?.user?.fullName + ' - ' + user?.user?.role || 'User Menu'}
+        {user?.fullName + ' - ' + user?.role || 'User Menu'}
       </span>
     </div>
   );

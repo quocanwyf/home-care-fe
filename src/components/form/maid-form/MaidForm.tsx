@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 
-import LoadingFallback from '@/components/fallback/LoadingFallbackApp';
+import LoadingFallback from '@/components/fallback/LoadingFallback';
 import { Button } from '@/components/ui/button';
 import { parseDDMMYYYYToDate } from '@/helpers/date-utitlity';
 import {
@@ -21,10 +21,13 @@ interface MaidFormProps {
   helperId?: string;
 }
 
-const MaidForm: React.FC<MaidFormProps> = ({ mode, helperId }) => {
+const MaidForm: React.FC<MaidFormProps> = ({ mode = 'create', helperId }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { showSuccess, showError } = useToast();
   const navigateTo = useAppNavigate();
+
+  // Password state for edit mode
+  const [isEditingPassword, setIsEditingPassword] = useState(false);
 
   const createHelperMutation = useCreateHelper();
   const updateHelperMutation = useUpdateHelper();
@@ -49,13 +52,16 @@ const MaidForm: React.FC<MaidFormProps> = ({ mode, helperId }) => {
     experienceDescription: '',
     avatar: [],
     healthCertificates: [],
+    baseFactor: { label: '', value: 1 },
+    password: mode === 'edit' ? '' : undefined, // Only initialize for edit mode
   });
 
   useEffect(() => {
     if (mode === 'edit' && helperEditData?.helper) {
       const helper = helperEditData.helper;
+      const coefficientList = helperEditData.coefficientList || [];
 
-      console.log('Helper data received:', helper);
+      console.log('Helper data received:', helperEditData);
 
       // Convert jobs from API format to form format
       const jobsFormatted = helper.jobs
@@ -68,7 +74,7 @@ const MaidForm: React.FC<MaidFormProps> = ({ mode, helperId }) => {
       // Convert gender to dropdown format
       const genderFormatted = helper.gender
         ? {
-            label: helper.gender === 'male' ? 'Male' : 'Female', // Convert API format
+            label: helper.gender === 'male' ? 'Male' : 'Female',
             value: helper.gender === 'male' ? 'Male' : 'Female',
           }
         : { label: '', value: '' };
@@ -78,18 +84,36 @@ const MaidForm: React.FC<MaidFormProps> = ({ mode, helperId }) => {
         ? {
             label:
               helper.educationLevel.charAt(0).toUpperCase() +
-              helper.educationLevel.slice(1), // Capitalize first letter
+              helper.educationLevel.slice(1),
             value:
               helper.educationLevel.charAt(0).toUpperCase() +
               helper.educationLevel.slice(1),
           }
         : { label: '', value: '' };
 
+      // Find baseFactor in coefficientList
+      const baseFactorFormatted = (() => {
+        if (helper.baseFactor && coefficientList.length > 0) {
+          const matchingCoefficient = coefficientList.find(
+            (coeff: any) => coeff.value === helper.baseFactor
+          );
+
+          if (matchingCoefficient) {
+            return {
+              label: `${matchingCoefficient.title} (${matchingCoefficient.value})`,
+              value: matchingCoefficient.value,
+            };
+          }
+        }
+        // Default fallback
+        return { label: 'Hệ số bậc lương 1 (1)', value: 1 };
+      })();
+
       // Set form data
       setFormData({
         helper_id: helper.helper_id || '',
         fullName: helper.fullName || '',
-        birthDate: helper.birthDate || '', // API trả về format dd/mm/yyyy
+        birthDate: helper.birthDate || '',
         phone: helper.phone || '',
         birthPlace: helper.birthPlace || '',
         address: helper.address || '',
@@ -100,20 +124,29 @@ const MaidForm: React.FC<MaidFormProps> = ({ mode, helperId }) => {
         weight: helper.weight?.toString() || '',
         jobs: jobsFormatted,
         experienceDescription: helper.experienceDescription || '',
-        avatar: [], // Files sẽ empty vì edit mode
-        healthCertificates: [], // Files sẽ empty vì edit mode
+        avatar: [],
+        healthCertificates: [],
+        baseFactor: baseFactorFormatted,
+        password: '', // Initialize as empty for edit mode
       });
 
-      console.log('Form data set:', {
-        helper_id: helper.helper_id,
-        fullName: helper.fullName,
-        birthDate: helper.birthDate,
-        gender: genderFormatted,
-        educationLevel: educationFormatted,
-        jobs: jobsFormatted,
-      });
+      // Reset password editing state
+      setIsEditingPassword(false);
     }
   }, [mode, helperEditData]);
+
+  // Handle password edit toggle
+  const handlePasswordEditToggle = () => {
+    if (isEditingPassword) {
+      // Cancel editing - clear password field
+      setFormData((prev) => ({ ...prev, password: '' }));
+      setIsEditingPassword(false);
+    } else {
+      // Start editing - clear field
+      setFormData((prev) => ({ ...prev, password: '' }));
+      setIsEditingPassword(true);
+    }
+  };
 
   // Update functions for each section
   const updatePersonalInfo = (updates: Partial<MaidFormData>) => {
@@ -167,7 +200,7 @@ const MaidForm: React.FC<MaidFormProps> = ({ mode, helperId }) => {
       return false;
     }
 
-    // Check files
+    // Check files (avatar and health certificates required for both modes)
     if (
       formData.avatar.length === 0 ||
       formData.healthCertificates.length === 0
@@ -175,17 +208,8 @@ const MaidForm: React.FC<MaidFormProps> = ({ mode, helperId }) => {
       return false;
     }
 
-    if (mode === 'create') {
-      if (
-        formData.avatar.length === 0 ||
-        formData.healthCertificates.length === 0
-      ) {
-        return false;
-      }
-    }
-
     return true;
-  }, [formData]);
+  }, [formData, mode]);
 
   const validateForm = (): boolean => {
     const requiredFields = [
@@ -210,6 +234,7 @@ const MaidForm: React.FC<MaidFormProps> = ({ mode, helperId }) => {
       }
     }
 
+    // Age validation
     if (formData.birthDate) {
       const birthDate = new Date(formData.birthDate);
       const today = new Date();
@@ -284,7 +309,7 @@ const MaidForm: React.FC<MaidFormProps> = ({ mode, helperId }) => {
     try {
       // Prepare FormData for API
       const apiFormData = new FormData();
-      console.log('test loz', formData.jobs);
+
       // Add text fields
       apiFormData.append('helper_id', formData.helper_id);
       apiFormData.append('fullName', formData.fullName.trim());
@@ -297,6 +322,32 @@ const MaidForm: React.FC<MaidFormProps> = ({ mode, helperId }) => {
       apiFormData.append('educationLevel', formData.educationLevel.value);
       apiFormData.append('height', formData.height);
       apiFormData.append('weight', formData.weight);
+
+      // Handle password for different modes
+      if (mode === 'create') {
+        // Create mode: Don't send password at all
+        // No password field appended
+      } else {
+        // Edit mode: Handle password change
+        if (
+          isEditingPassword &&
+          formData.password &&
+          formData.password.trim()
+        ) {
+          apiFormData.append('hasNewPassword', 'true');
+          apiFormData.append('password', formData.password);
+        } else {
+          apiFormData.append('hasNewPassword', 'false');
+          // Don't append password field when not changing
+        }
+      }
+
+      // Add baseFactor for edit mode
+      if (mode === 'edit' && formData.baseFactor?.value) {
+        apiFormData.append('baseFactor', formData.baseFactor.value.toString());
+      } else if (mode === 'create') {
+        apiFormData.append('baseFactor', '1'); // Default value for create
+      }
 
       // Add jobs array
       formData.jobs.forEach((job) => {
@@ -317,6 +368,8 @@ const MaidForm: React.FC<MaidFormProps> = ({ mode, helperId }) => {
         apiFormData.append('healthCertificates', file);
       });
 
+      console.log('Submitting form data:', formData);
+
       let result;
       if (mode === 'create') {
         result = await createHelperMutation.mutateAsync(apiFormData);
@@ -327,8 +380,6 @@ const MaidForm: React.FC<MaidFormProps> = ({ mode, helperId }) => {
           formData: apiFormData,
         });
       }
-
-      console.log('Create helper result:', result);
 
       if (result.success) {
         showSuccess(
@@ -353,6 +404,8 @@ const MaidForm: React.FC<MaidFormProps> = ({ mode, helperId }) => {
             experienceDescription: '',
             avatar: [],
             healthCertificates: [],
+            baseFactor: { label: '', value: 1 },
+            password: undefined, // Don't include password for create
           });
         }
         navigateTo('/maids', {
@@ -367,14 +420,13 @@ const MaidForm: React.FC<MaidFormProps> = ({ mode, helperId }) => {
         const errorMessage = result.message || '';
 
         if (errorMessage.toLowerCase().includes('existed')) {
-          showError(errorMessage + 'Please use different details.');
+          showError(errorMessage + ' Please use different details.');
         } else {
           showError(
             errorMessage || 'Failed to create helper. Please try again.'
           );
         }
       }
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       console.error('Error creating helper:', error);
       showError('Network error occurred. Please try again later.');
@@ -384,7 +436,6 @@ const MaidForm: React.FC<MaidFormProps> = ({ mode, helperId }) => {
   };
 
   const isButtonDisabled =
-    !isFormValid ||
     isSubmitting ||
     createHelperMutation.isPending ||
     updateHelperMutation.isPending ||
@@ -400,8 +451,16 @@ const MaidForm: React.FC<MaidFormProps> = ({ mode, helperId }) => {
         <PersonalInformationArea
           data={formData}
           onUpdate={updatePersonalInfo}
+          mode={mode}
+          isEditingPassword={isEditingPassword}
+          onPasswordEditToggle={handlePasswordEditToggle}
         />
-        <JobInformationArea data={formData} onUpdate={updateJobInfo} />
+        <JobInformationArea
+          data={formData}
+          onUpdate={updateJobInfo}
+          mode={mode}
+          coefficientList={helperEditData?.coefficientList || []}
+        />
         <UploadArea
           data={formData}
           onUpdate={updateFiles}
@@ -425,7 +484,7 @@ const MaidForm: React.FC<MaidFormProps> = ({ mode, helperId }) => {
             className={`float-right cursor-pointer disabled:cursor-not-allowed ${
               isButtonDisabled
                 ? 'bg-gray-400 hover:bg-gray-400'
-                : 'bg-blue-600 hover:bg-blue-700'
+                : 'hover:bg-overlay-slider bg-overlay-slider/90'
             }`}
             disabled={isButtonDisabled}
           >
@@ -437,9 +496,9 @@ const MaidForm: React.FC<MaidFormProps> = ({ mode, helperId }) => {
                 {mode === 'create' ? 'Creating...' : 'Updating...'}
               </div>
             ) : mode === 'create' ? (
-              'Create Helper'
+              'Create Maid'
             ) : (
-              'Update Helper'
+              'Update Maid'
             )}
           </Button>
         </div>

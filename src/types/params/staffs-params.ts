@@ -22,3 +22,32 @@ export interface StaffsResponse {
   totalPages?: number;
   currentPage?: number;
 }
+
+export interface Role {
+  _id: string;
+  title: string;
+}
+
+export interface StaffCreateInfo {
+  success: boolean;
+  roles: Role[];
+}
+
+export interface StaffCreatePayload {
+  staff_id: string;
+  fullName: string;
+  password: string;
+  birthDate: string;
+  phone: string;
+  email: string;
+  birthPlace: string;
+  avatar: File;
+  salary: number;
+  role_id: string;
+  status: string;
+}
+
+export interface StaffCreateResponse {
+  success: boolean;
+  message?: string;
+}

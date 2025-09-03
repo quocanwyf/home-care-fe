@@ -11,3 +11,22 @@ export interface ServicesResponse {
   totalServices: number;
   services: Service[];
 }
+
+export interface ServiceCreatePayload {
+  service: {
+    title: string;
+    basicPrice: number;
+    description: string;
+    status: 'active' | 'inactive';
+  };
+  coefficient: {
+    title: string;
+    description: string;
+    value: number;
+  };
+}
+
+export interface ServiceCreateResponse {
+  success: boolean;
+  message?: string;
+}

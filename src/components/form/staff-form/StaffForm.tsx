@@ -283,7 +283,7 @@ const StaffForm: React.FC<StaffFormProps> = ({ mode = 'create', staffId }) => {
   }
 
   return (
-    <div className="h-full w-full overflow-y-auto py-4 pb-26">
+    <div className="h-full w-full overflow-y-auto pb-26">
       <form onSubmit={handleSubmitStaff}>
         {/* Personal Information Section */}
         <div className="bg-overlay-slider/8 shadow-around my-6 w-full rounded-md px-4 pt-2 pb-4">

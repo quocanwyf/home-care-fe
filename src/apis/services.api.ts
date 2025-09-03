@@ -1,4 +1,6 @@
 import type {
+  ServiceCreatePayload,
+  ServiceCreateResponse,
   ServiceParams,
   ServicesResponse,
 } from '@/types/params/services-params';
@@ -55,5 +57,27 @@ export const deleteServiceApi = async (
   }
 
   const data = await response.json();
+  return data;
+};
+
+export const createServiceApi = async (
+  payload: ServiceCreatePayload
+): Promise<ServiceCreateResponse> => {
+  const url = `${import.meta.env.VITE_API_BASE_URL}/admin/services/create`;
+
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    credentials: 'include',
+    body: JSON.stringify(payload),
+  });
+
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
+
+  const data: ServiceCreateResponse = await response.json();
   return data;
 };

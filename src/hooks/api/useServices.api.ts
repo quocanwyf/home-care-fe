@@ -1,6 +1,14 @@
-import { deleteServiceApi, getServicesApi } from '@/apis/services.api';
-import type { ServiceParams } from '@/types/params/services-params';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import {
+  createServiceApi,
+  deleteServiceApi,
+  getServicesApi,
+} from '@/apis/services.api';
+import type {
+  ServiceCreatePayload,
+  ServiceCreateResponse,
+  ServiceParams,
+} from '@/types/params/services-params';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 export const useGetServices = (params: ServiceParams) => {
   return useQuery({
@@ -14,5 +22,17 @@ export const useGetServices = (params: ServiceParams) => {
 export const useDeleteService = () => {
   return useMutation({
     mutationFn: deleteServiceApi,
+  });
+};
+
+export const useCreateService = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation<ServiceCreateResponse, Error, ServiceCreatePayload>({
+    mutationFn: createServiceApi,
+    onSuccess: () => {
+      // Invalidate services list to refresh data
+      queryClient.invalidateQueries({ queryKey: ['services'] });
+    },
   });
 };

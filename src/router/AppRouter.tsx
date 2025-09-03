@@ -43,6 +43,16 @@ const DetailOrderPage = lazy(() => import('@/pages/orders/DetailOrderPage'));
 const ServicesPage = lazy(
   () => import('@/pages/inventory/services/ServicesPage')
 );
+const AddServicePage = lazy(
+  () => import('@/pages/inventory/services/AddServicePage')
+);
+const EditServicePage = lazy(
+  () => import('@/pages/inventory/services/EditServicePage')
+);
+const DetailServicePage = lazy(
+  () => import('@/pages/inventory/services/DetailServicePage')
+);
+
 const FinancesPage = lazy(
   () => import('@/pages/inventory/finances/CoefficientPage')
 );
@@ -194,6 +204,30 @@ const AppRouter = () => {
             element={
               <RouteGuard module="services">
                 <ServicesPage />
+              </RouteGuard>
+            }
+          />
+          <Route
+            path="/services/add"
+            element={
+              <RouteGuard module="services">
+                <AddServicePage />
+              </RouteGuard>
+            }
+          />
+          <Route
+            path="/services/edit/:id"
+            element={
+              <RouteGuard module="services">
+                <EditServicePage />
+              </RouteGuard>
+            }
+          />
+          <Route
+            path="/services/detail/:id"
+            element={
+              <RouteGuard module="services">
+                <DetailServicePage />
               </RouteGuard>
             }
           />

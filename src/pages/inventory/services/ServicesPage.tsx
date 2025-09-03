@@ -4,15 +4,17 @@ import ConfirmDialog from '@/components/common/float-display/ConfirmDialog';
 import { AppTable } from '@/components/table/app-table/AppTable';
 import { STATUS_SERVICES } from '@/constants/dropdown/status-services';
 import { useDeleteService, useGetServices } from '@/hooks/api/useServices.api';
+import { useAppNavigate } from '@/hooks/common/useAppNavigate';
 import { useConfirmation } from '@/hooks/common/useConfirmation';
 import { usePageSize } from '@/hooks/common/usePageSize';
 import { useSearchConfig } from '@/hooks/common/useSearchConfig';
 import { useToast } from '@/hooks/common/useToast';
-import type { Service } from '@/types/params/services-params';
 import { servicesColumns } from '@/types/table/column/services-column';
+import type { Service } from '@/types/table/objects/services';
 import type { PaginationState } from '@tanstack/react-table';
 
 const ServicesPage = () => {
+  const navigateTo = useAppNavigate();
   const { showError } = useToast();
   const [services, setServices] = useState([]);
 
@@ -94,15 +96,19 @@ const ServicesPage = () => {
     }
   }, [isError, error, showError]);
 
+  const handleEdit = (row: any) => {
+    navigateTo(`/services/edit/${row._id}`);
+  };
+
+  const handleView = (row: any) => {
+    navigateTo(`/services/detail/${row._id}`);
+  };
+
   return (
     <>
       <AppTable
         data={services}
-        columns={servicesColumns(
-          (row) => console.log('Xem service', row),
-          (row) => console.log('Sửa service', row),
-          handleDeleteService
-        )}
+        columns={servicesColumns(handleView, handleEdit, handleDeleteService)}
         pageHeaderTitle="Services List"
         permissionModule="services"
         //pagesize variable and function

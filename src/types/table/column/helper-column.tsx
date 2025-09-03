@@ -31,7 +31,7 @@ export const helpersColumns = (
   {
     accessorKey: 'workingStatus',
     header: 'Working Status',
-    cell: ({ row }) => <OrderStatusBadge status={row.original.workingStatus} />,
+    cell: ({ row }) => <OrderStatusBadge status={row.original.status} />,
   },
   {
     id: 'actions',

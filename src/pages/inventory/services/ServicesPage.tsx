@@ -83,7 +83,7 @@ const ServicesPage = () => {
     isFetching,
     refetch: refetchServices,
   } = useGetServices(params);
-
+  console.log(servicesData);
   useEffect(() => {
     if (servicesData) {
       setServices(servicesData.services || []);

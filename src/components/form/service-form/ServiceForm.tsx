@@ -73,16 +73,18 @@ const ServiceForm: React.FC<ServiceFormProps> = ({
 
       // Set form data
       reset({
-        serviceTitle: service.title || '',
-        basicPrice: service.basicPrice ? service.basicPrice.toString() : '',
-        serviceDescription: service.description || '',
+        serviceTitle: service?.title || '',
+        basicPrice: service?.basicPrice ? service.basicPrice.toString() : '',
+        serviceDescription: service?.description || '',
         serviceStatus: {
-          label: service.status === 'active' ? 'Active' : 'Inactive',
-          value: service.status,
+          label: service?.status === 'active' ? 'Active' : 'Inactive',
+          value: service?.status,
         },
-        coefficientTitle: coefficient.title || '',
-        coefficientDescription: coefficient.description || '',
-        coefficientValue: coefficient.value ? coefficient.value.toString() : '',
+        coefficientTitle: coefficient?.title || '',
+        coefficientDescription: coefficient?.description || '',
+        coefficientValue: coefficient?.value
+          ? coefficient.value.toString()
+          : '',
       });
     }
   }, [mode, editInfo, reset]);

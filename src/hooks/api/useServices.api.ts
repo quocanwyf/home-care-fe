@@ -1,6 +1,7 @@
 import {
   createServiceApi,
   deleteServiceApi,
+  getServiceDetailApi,
   getServiceEditApi,
   getServicesApi,
   updateServiceApi,
@@ -63,5 +64,14 @@ export const useUpdateService = () => {
       queryClient.invalidateQueries({ queryKey: ['services'] });
       queryClient.invalidateQueries({ queryKey: ['service-edit'] });
     },
+  });
+};
+
+export const useGetServiceDetail = (serviceId: string) => {
+  return useQuery({
+    queryKey: ['service-detail', serviceId],
+    queryFn: ({ signal }) => getServiceDetailApi(serviceId, signal),
+    enabled: !!serviceId,
+    refetchOnWindowFocus: false,
   });
 };

@@ -1,6 +1,7 @@
 import type {
   ServiceCreatePayload,
   ServiceCreateResponse,
+  ServiceDetailInfo,
   ServiceEditInfo,
   ServiceParams,
   ServiceUpdatePayload,
@@ -128,5 +129,28 @@ export const updateServiceApi = async (
   }
 
   const data: ServiceUpdateResponse = await response.json();
+  return data;
+};
+
+export const getServiceDetailApi = async (
+  serviceId: string,
+  signal?: AbortSignal
+): Promise<ServiceDetailInfo> => {
+  const url = `${import.meta.env.VITE_API_BASE_URL}/admin/services/detail/${serviceId}`;
+
+  const response = await fetch(url, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    credentials: 'include',
+    signal,
+  });
+
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
+
+  const data: ServiceDetailInfo = await response.json();
   return data;
 };

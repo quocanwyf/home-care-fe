@@ -72,3 +72,25 @@ export interface ServiceUpdateResponse {
   success: boolean;
   message?: string;
 }
+
+export interface ServiceDetailData {
+  _id: string;
+  title: string;
+  basicPrice: number;
+  coefficient_id: string;
+  description: string;
+  status: 'active' | 'inactive';
+  coefficient: {
+    title: string;
+    description: string;
+    value: number;
+    deleted: boolean;
+    status: 'active' | 'inactive';
+    _id: string;
+  };
+}
+
+export interface ServiceDetailInfo {
+  success: boolean;
+  result: ServiceDetailData;
+}

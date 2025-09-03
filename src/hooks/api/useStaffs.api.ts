@@ -1,11 +1,15 @@
 import {
   createStaffApi,
   getStaffCreateInfoApi,
+  getStaffEditApi,
   getStaffsApi,
+  updateStaffApi,
 } from '@/apis/staffs.api';
 import type {
   StaffCreateResponse,
   StaffParams,
+  StaffUpdatePayload,
+  StaffUpdateResponse,
 } from '@/types/params/staffs-params';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
@@ -34,6 +38,28 @@ export const useCreateStaff = () => {
     onSuccess: () => {
       // Invalidate staffs list to refresh data
       queryClient.invalidateQueries({ queryKey: ['staffs'] });
+    },
+  });
+};
+
+export const useGetStaffEdit = (id: string) => {
+  return useQuery({
+    queryKey: ['staff-edit', id],
+    queryFn: ({ signal }) => getStaffEditApi(id, signal),
+    enabled: !!id, // Only run query if id exists
+    refetchOnWindowFocus: false,
+  });
+};
+
+export const useUpdateStaff = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation<StaffUpdateResponse, Error, StaffUpdatePayload>({
+    mutationFn: ({ id, formData }) => updateStaffApi(id, formData),
+    onSuccess: () => {
+      // Invalidate staffs list and staff edit data
+      queryClient.invalidateQueries({ queryKey: ['staffs'] });
+      queryClient.invalidateQueries({ queryKey: ['staff-edit'] });
     },
   });
 };

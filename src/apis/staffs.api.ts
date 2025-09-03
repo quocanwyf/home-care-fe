@@ -1,7 +1,9 @@
 import type {
   StaffCreateInfo,
   StaffCreateResponse,
+  StaffEditInfo,
   StaffParams,
+  StaffUpdateResponse,
   StaffsResponse,
 } from '@/types/params/staffs-params';
 
@@ -83,5 +85,50 @@ export const createStaffApi = async (
   }
 
   const data: StaffCreateResponse = await response.json();
+  return data;
+};
+
+// Get staff for edit
+export const getStaffEditApi = async (
+  id: string,
+  signal?: AbortSignal
+): Promise<StaffEditInfo> => {
+  const url = `${import.meta.env.VITE_API_BASE_URL}/admin/staffs/edit/${id}`;
+
+  const response = await fetch(url, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    credentials: 'include',
+    signal,
+  });
+
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
+
+  const data: StaffEditInfo = await response.json();
+  return data;
+};
+
+// Update staff
+export const updateStaffApi = async (
+  id: string,
+  payload: FormData
+): Promise<StaffUpdateResponse> => {
+  const url = `${import.meta.env.VITE_API_BASE_URL}/admin/staffs/edit/${id}`;
+
+  const response = await fetch(url, {
+    method: 'PATCH',
+    body: payload,
+    credentials: 'include',
+  });
+
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
+
+  const data: StaffUpdateResponse = await response.json();
   return data;
 };

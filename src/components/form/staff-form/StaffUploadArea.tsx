@@ -31,7 +31,13 @@ const StaffUploadArea: React.FC<StaffUploadAreaProps> = ({
       <div className="space-y-4">
         <div>
           <h4 className="text-md mb-3 font-medium text-gray-700">
-            Avatar <span className="text-red-500">*</span>
+            Avatar{' '}
+            {mode === 'create' && <span className="text-red-500">*</span>}
+            {mode === 'edit' && (
+              <span className="text-gray-500">
+                (Optional - leave empty to keep current)
+              </span>
+            )}
           </h4>
 
           <DragAndDropUpload
@@ -61,8 +67,9 @@ const StaffUploadArea: React.FC<StaffUploadAreaProps> = ({
             </div>
           )}
 
-          <p className="mt-3 text-center text-xs text-gray-500">
+          <p className="mt-3 text-xs text-gray-500">
             Upload 1 image file (JPEG, PNG, GIF). Max size: 5MB
+            {mode === 'edit' && ' - Leave empty to keep current avatar'}
           </p>
         </div>
       </div>

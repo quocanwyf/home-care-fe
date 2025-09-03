@@ -20,10 +20,15 @@ export const staffFormSchema = z.object({
   birthDate: z
     .string()
     .min(1, 'Birth date is required')
-    .refine((date) => {
-      if (!date) return false;
+    .refine((dateString) => {
+      if (!dateString) return false;
 
-      const birthDate = new Date(date);
+      // Parse DD/MM/YYYY format
+      const [day, month, year] = dateString.split('/').map(Number);
+
+      if (!day || !month || !year) return false;
+
+      const birthDate = new Date(year, month - 1, day);
       const today = new Date();
 
       // Check if date is valid
@@ -32,7 +37,7 @@ export const staffFormSchema = z.object({
       // Check if date is in the future
       if (birthDate > today) return false;
 
-      // Calculate age
+      // Calculate age correctly
       let age = today.getFullYear() - birthDate.getFullYear();
       const monthDiff = today.getMonth() - birthDate.getMonth();
 

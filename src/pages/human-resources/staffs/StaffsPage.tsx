@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
 
 import { AppTable } from '@/components/table/app-table/AppTable';
-import { STATUS_HR } from '@/constants/dropdown/status-hr';
+// import { STATUS_HR } from '@/constants/dropdown/status-hr';
 // import { data } from '@/constants/mock-data/mock-data-staffs';
 import { useGetStaffs } from '@/hooks/api/useStaffs.api';
+import { useAppNavigate } from '@/hooks/common/useAppNavigate';
 import { usePageSize } from '@/hooks/common/usePageSize';
 import { useSearchConfig } from '@/hooks/common/useSearchConfig';
 import { useStatusFilter } from '@/hooks/common/useStatusFilter';
@@ -12,6 +13,7 @@ import { staffsColumns } from '@/types/table/column/staff-column';
 import type { PaginationState } from '@tanstack/react-table';
 
 const StaffsPage = () => {
+  const navigateTo = useAppNavigate();
   const { showError } = useToast();
   const [staffs, setStaffs] = useState([]);
 
@@ -76,14 +78,18 @@ const StaffsPage = () => {
     }
   }, [isError, error, showError]);
 
+  const handleEdit = (row: any) => {
+    navigateTo(`/staffs/edit/${row._id}`);
+  };
+
+  const handleView = (row: any) => {
+    navigateTo(`/staffs/detail/${row._id}`);
+  };
+
   return (
     <AppTable
       data={staffs}
-      columns={staffsColumns(
-        (row) => console.log('Xem', row),
-        (row) => console.log('Sửa', row),
-        (row) => console.log('Xoá', row)
-      )}
+      columns={staffsColumns(handleView, handleEdit)}
       pageHeaderTitle="Staffs List"
       permissionModule="staffs"
       //status variable and function

@@ -29,6 +29,12 @@ const StaffsPage = lazy(
 const AddStaffPage = lazy(
   () => import('@/pages/human-resources/staffs/AddStaffPage')
 );
+const EditStaffPage = lazy(
+  () => import('@/pages/human-resources/staffs/EditStaffPage')
+);
+const DetailStaffPage = lazy(
+  () => import('@/pages/human-resources/staffs/DetailStaffPage')
+);
 
 const OrdersPage = lazy(() => import('@/pages/orders/OrdersPage'));
 const AddOrderPage = lazy(() => import('@/pages/orders/AddOrderPage'));
@@ -136,6 +142,22 @@ const AppRouter = () => {
             element={
               <RouteGuard module="staffs">
                 <AddStaffPage />
+              </RouteGuard>
+            }
+          />
+          <Route
+            path="/staffs/edit/:id"
+            element={
+              <RouteGuard module="staffs">
+                <EditStaffPage />
+              </RouteGuard>
+            }
+          />
+          <Route
+            path="/staffs/detail/:id"
+            element={
+              <RouteGuard module="staffs">
+                <DetailStaffPage />
               </RouteGuard>
             }
           />

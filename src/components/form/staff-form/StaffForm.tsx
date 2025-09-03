@@ -1,7 +1,14 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 
-import { Building, DollarSign, Settings, User } from 'lucide-react';
+import {
+  Building,
+  DollarSign,
+  Eye,
+  EyeOff,
+  Settings,
+  User,
+} from 'lucide-react';
 
 import DatePicker from '@/components/common/date-picker/DatePicker';
 import LabelDropdown from '@/components/common/dropdowns/LabelDropdown';
@@ -16,6 +23,8 @@ import {
 import {
   useCreateStaff,
   useGetStaffCreateInfo,
+  useGetStaffEdit,
+  useUpdateStaff,
 } from '@/hooks/api/useStaffs.api';
 import { useAppNavigate } from '@/hooks/common/useAppNavigate';
 import { useToast } from '@/hooks/common/useToast';
@@ -32,14 +41,23 @@ interface StaffFormProps {
   staffId?: string;
 }
 
-const StaffForm: React.FC<StaffFormProps> = ({ mode = 'create' }) => {
+const StaffForm: React.FC<StaffFormProps> = ({ mode = 'create', staffId }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { showSuccess, showError } = useToast();
   const navigateTo = useAppNavigate();
 
+  // Password state for edit mode
+  const [isEditingPassword, setIsEditingPassword] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+
   const createStaffMutation = useCreateStaff();
+  const updateStaffMutation = useUpdateStaff();
+
   const { data: createInfo, isLoading: isLoadingInfo } =
     useGetStaffCreateInfo();
+  const { data: editInfo, isLoading: isLoadingEdit } = useGetStaffEdit(
+    mode === 'edit' && staffId ? staffId : ''
+  );
 
   const form = useForm<StaffFormData>({
     resolver: zodResolver(staffFormSchema),
@@ -62,10 +80,65 @@ const StaffForm: React.FC<StaffFormProps> = ({ mode = 'create' }) => {
     handleSubmit,
     formState: { errors, isValid },
     watch,
+    setValue,
+    reset,
   } = form;
 
   // State for avatar
   const [avatar, setAvatar] = useState<File[]>([]);
+
+  // Load data for edit mode
+  useEffect(() => {
+    if (mode === 'edit' && editInfo?.staff) {
+      const staff = editInfo.staff;
+      const roles = editInfo.roles || [];
+
+      console.log('Staff edit data received:', editInfo);
+
+      // Find role info
+      const roleInfo = roles.find((role) => role._id === staff.role_id);
+      const roleFormatted = roleInfo
+        ? {
+            label: roleInfo.title,
+            value: roleInfo._id,
+          }
+        : { label: '', value: '' };
+
+      // Set form data
+      reset({
+        staff_id: staff.staff_id || '',
+        fullName: staff.fullName || '',
+        password: '******', // Show masked password by default
+        birthDate: staff.birthDate || '',
+        phone: staff.phone || '',
+        email: staff.email || '',
+        birthPlace: staff.birthPlace || '',
+        salary: staff.salary ? staff.salary.toString() : '',
+        role: roleFormatted,
+        status: {
+          label: staff.status === 'active' ? 'Active' : 'Inactive',
+          value: staff.status,
+        },
+      });
+
+      // Reset password editing state
+      setIsEditingPassword(false);
+    }
+  }, [mode, editInfo, reset]);
+
+  // Handle password edit toggle
+  const handlePasswordEditToggle = () => {
+    if (isEditingPassword) {
+      // Cancel editing - reset to masked password
+      setValue('password', '******');
+      setIsEditingPassword(false);
+      setShowPassword(false);
+    } else {
+      // Start editing - clear field
+      setValue('password', '');
+      setIsEditingPassword(true);
+    }
+  };
 
   // Status options
   const statusOptions = [
@@ -73,24 +146,27 @@ const StaffForm: React.FC<StaffFormProps> = ({ mode = 'create' }) => {
     { label: 'Inactive', value: 'inactive' },
   ];
 
-  // Role options from API
+  // Role options from API (use createInfo for create, editInfo for edit)
   const roleOptions = useMemo(() => {
-    if (createInfo?.roles) {
-      return createInfo.roles.map((role) => ({
+    const roles = mode === 'edit' ? editInfo?.roles : createInfo?.roles;
+    if (roles) {
+      return roles.map((role) => ({
         label: role.title,
         value: role._id,
       }));
     }
     return [];
-  }, [createInfo]);
+  }, [createInfo, editInfo, mode]);
 
   // Form validation
   const isFormValid = useMemo(() => {
-    return isValid && avatar.length > 0;
-  }, [isValid, avatar]);
+    const hasRequiredFields = isValid;
+    const hasAvatar = mode === 'edit' || avatar.length > 0; // Avatar not required in edit if existing
+    return hasRequiredFields && hasAvatar;
+  }, [isValid, avatar, mode]);
 
   const validateForm = (): boolean => {
-    if (avatar.length === 0) {
+    if (mode === 'create' && avatar.length === 0) {
       showError('Avatar is required');
       return false;
     }
@@ -111,7 +187,19 @@ const StaffForm: React.FC<StaffFormProps> = ({ mode = 'create' }) => {
         // Add form fields
         formData.append('staff_id', data.staff_id);
         formData.append('fullName', data.fullName);
-        formData.append('password', data.password);
+
+        // Handle password for different modes
+        if (mode === 'create') {
+          //k cần gửi password
+        } else {
+          // Edit mode - only send password if user is editing it
+          if (isEditingPassword && data.password && data.password.trim()) {
+            formData.append('hasNewPassword', 'true');
+            formData.append('password', data.password);
+          }
+          // If not editing password, don't send password field
+        }
+
         formData.append('birthDate', parseDDMMYYYYToDate(data.birthDate));
         formData.append('phone', data.phone);
         formData.append('email', data.email);
@@ -120,15 +208,27 @@ const StaffForm: React.FC<StaffFormProps> = ({ mode = 'create' }) => {
         formData.append('role_id', data.role.value);
         formData.append('status', data.status.value);
 
-        // Add avatar file
-        if (avatar[0]) {
+        // Add avatar file if provided
+        if (avatar.length > 0 && avatar[0]) {
           formData.append('avatar', avatar[0]);
         }
 
-        const response = await createStaffMutation.mutateAsync(formData);
+        // console.log(data);
+
+        let response;
+        if (mode === 'create') {
+          response = await createStaffMutation.mutateAsync(formData);
+        } else {
+          response = await updateStaffMutation.mutateAsync({
+            id: staffId!,
+            formData,
+          });
+        }
 
         if (response.success) {
-          showSuccess('Staff created successfully!');
+          showSuccess(
+            `Staff ${mode === 'create' ? 'created' : 'updated'} successfully!`
+          );
           navigateTo('/staffs', {
             toast: {
               type: 'success',
@@ -137,15 +237,19 @@ const StaffForm: React.FC<StaffFormProps> = ({ mode = 'create' }) => {
             delay: 1000,
           });
         } else {
-          showError(response.message || 'Failed to create staff');
+          showError(response.message || `Failed to ${mode} staff`);
         }
       } catch (error: any) {
-        console.error('Error creating staff:', error);
+        console.error(`Error ${mode} staff:`, error);
         if (error.message.includes('Email existed')) {
           showError('Email already exists. Please use a different email.');
         } else if (error.message.includes('Phone existed')) {
           showError(
             'Phone number already exists. Please use a different phone number.'
+          );
+        } else if (error.message.includes('Staff id existed')) {
+          showError(
+            'Staff ID already exists. Please use a different staff ID.'
           );
         } else {
           showError('Network error occurred. Please try again later.');
@@ -156,21 +260,14 @@ const StaffForm: React.FC<StaffFormProps> = ({ mode = 'create' }) => {
     },
     (errors) => {
       console.log('Form validation errors:', errors);
-
-      // Find first error and show it
       const firstErrorField = Object.keys(errors)[0];
       const firstError = errors[firstErrorField as keyof typeof errors];
 
       if (firstError?.message) {
         showError(`Validation Error: ${firstError.message}`);
-      } else if (firstErrorField) {
-        showError(
-          `Please check the ${firstErrorField.replace(/([A-Z])/g, ' $1').toLowerCase()} field`
-        );
       }
 
-      // Check avatar separately since it's not in form
-      if (avatar.length === 0) {
+      if (mode === 'create' && avatar.length === 0) {
         showError('Avatar is required');
       }
     }
@@ -180,8 +277,9 @@ const StaffForm: React.FC<StaffFormProps> = ({ mode = 'create' }) => {
     setAvatar(files);
   };
 
-  if (isLoadingInfo) {
-    return <LoadingFallback content="Loading staff creation form..." />;
+  // Loading states
+  if (isLoadingInfo || (mode === 'edit' && isLoadingEdit)) {
+    return <LoadingFallback content={`Loading staff ${mode} form...`} />;
   }
 
   return (
@@ -245,29 +343,6 @@ const StaffForm: React.FC<StaffFormProps> = ({ mode = 'create' }) => {
             {/* Password, Birth Date */}
             <div className="max-tablet:grid-cols-1 grid w-full grid-cols-2 gap-4">
               <Controller
-                name="password"
-                control={control}
-                render={({ field }) => (
-                  <InputLabel
-                    label={{
-                      labelTitle: 'Password',
-                      icon: <Settings className="h-3 w-3" />,
-                    }}
-                    input={{
-                      inputId: 'password',
-                      className: 'w-full',
-                      type: 'password',
-                      placeholder: 'Enter password',
-                      required: true,
-                      value: field.value,
-                      onChange: field.onChange,
-                    }}
-                    error={errors.password?.message}
-                  />
-                )}
-              />
-
-              <Controller
                 name="birthDate"
                 control={control}
                 render={({ field }) => (
@@ -277,8 +352,8 @@ const StaffForm: React.FC<StaffFormProps> = ({ mode = 'create' }) => {
                       classNameTrigger="w-full h-10"
                       value={field.value}
                       onChange={field.onChange}
-                      minDate={maxAgeDate}
-                      maxDate={minAgeDate}
+                      minDate={maxAgeDate} // Không được quá 100 tuổi
+                      maxDate={minAgeDate} // Phải ít nhất 13 tuổi
                       required={true}
                       allowPastDates={true}
                     />
@@ -288,6 +363,28 @@ const StaffForm: React.FC<StaffFormProps> = ({ mode = 'create' }) => {
                       </p>
                     )}
                   </div>
+                )}
+              />
+              {/* Birth Place */}
+              <Controller
+                name="birthPlace"
+                control={control}
+                render={({ field }) => (
+                  <InputLabel
+                    label={{
+                      labelTitle: 'Birth Place',
+                      icon: <Building className="h-3 w-3" />,
+                    }}
+                    input={{
+                      inputId: 'birthPlace',
+                      className: 'w-full',
+                      placeholder: 'Enter birth place',
+                      required: true,
+                      value: field.value,
+                      onChange: field.onChange,
+                    }}
+                    error={errors.birthPlace?.message}
+                  />
                 )}
               />
             </div>
@@ -344,29 +441,75 @@ const StaffForm: React.FC<StaffFormProps> = ({ mode = 'create' }) => {
                 )}
               />
             </div>
+            <div className="max-tablet:grid-cols-1 grid w-full grid-cols-2 gap-4">
+              {/* Show masked password in edit mode when not editing */}
+              {mode === 'edit' && !isEditingPassword && (
+                <div>
+                  <label className="mb-2 flex items-center text-sm font-medium text-gray-700">
+                    <Settings className="mr-2 h-3 w-3" />
+                    Password
+                  </label>
+                  <div className="relative">
+                    <input
+                      type="text"
+                      value="******"
+                      disabled
+                      className="h-10 w-full cursor-not-allowed rounded-md border border-gray-300 bg-gray-100 px-3 text-gray-500"
+                    />
+                    <button
+                      type="button"
+                      className="absolute top-1/2 right-3 -translate-y-1/2 text-sm text-blue-600 hover:text-blue-800"
+                      onClick={handlePasswordEditToggle}
+                    >
+                      Change
+                    </button>
+                  </div>
+                  <p className="mt-1 text-xs text-gray-500">
+                    Click "Change" to update password
+                  </p>
+                </div>
+              )}
+              {/* Show password only in create mode OR when editing password in edit mode */}
+              {mode === 'edit' && isEditingPassword && (
+                <Controller
+                  name="password"
+                  control={control}
+                  render={({ field }) => (
+                    <div className="relative">
+                      <InputLabel
+                        label={{
+                          labelTitle:
+                            mode === 'edit' ? 'New Password' : 'Password',
+                          icon: <Settings className="h-3 w-3" />,
+                        }}
+                        input={{
+                          inputId: 'password',
+                          className: 'w-full pr-10',
+                          placeholder:
+                            mode === 'edit'
+                              ? 'Enter new password'
+                              : 'Enter password',
+                          value: field.value,
+                          onChange: field.onChange,
+                        }}
+                        error={errors.password?.message}
+                      />
 
-            {/* Birth Place */}
-            <Controller
-              name="birthPlace"
-              control={control}
-              render={({ field }) => (
-                <InputLabel
-                  label={{
-                    labelTitle: 'Birth Place',
-                    icon: <Building className="h-3 w-3" />,
-                  }}
-                  input={{
-                    inputId: 'birthPlace',
-                    className: 'w-full',
-                    placeholder: 'Enter birth place',
-                    required: true,
-                    value: field.value,
-                    onChange: field.onChange,
-                  }}
-                  error={errors.birthPlace?.message}
+                      {/* Cancel button for edit mode */}
+                      {mode === 'edit' && (
+                        <button
+                          type="button"
+                          className="mt-2 text-xs text-gray-500 hover:text-gray-700"
+                          onClick={handlePasswordEditToggle}
+                        >
+                          Cancel password change
+                        </button>
+                      )}
+                    </div>
+                  )}
                 />
               )}
-            />
+            </div>
           </div>
         </div>
 
@@ -418,7 +561,7 @@ const StaffForm: React.FC<StaffFormProps> = ({ mode = 'create' }) => {
                       label="Role"
                       options={roleOptions}
                       handleSelect={(selected) => {
-                        form.setValue('role', {
+                        setValue('role', {
                           label: selected.label,
                           value: selected.value as string,
                         });
@@ -447,7 +590,7 @@ const StaffForm: React.FC<StaffFormProps> = ({ mode = 'create' }) => {
                       label="Status"
                       options={statusOptions}
                       handleSelect={(selected) => {
-                        form.setValue('status', {
+                        setValue('status', {
                           label: selected.label,
                           value: selected.value as 'active' | 'inactive',
                         });
@@ -473,6 +616,7 @@ const StaffForm: React.FC<StaffFormProps> = ({ mode = 'create' }) => {
         <StaffUploadArea
           avatar={avatar}
           onAvatarChange={handleAvatarChange}
+          existingAvatar={mode === 'edit' ? editInfo?.staff?.avatar : undefined}
           mode={mode}
         />
 
@@ -483,17 +627,21 @@ const StaffForm: React.FC<StaffFormProps> = ({ mode = 'create' }) => {
             className={`float-right cursor-pointer disabled:cursor-not-allowed ${
               isSubmitting
                 ? 'bg-gray-400 hover:bg-gray-400'
-                : 'hover:bg-overlay-slider bg-overlay-slider/90 text-white'
+                : 'bg-overlay-slider/90 hover:bg-overlay-slider'
             }`}
             disabled={isSubmitting}
           >
-            {isSubmitting || createStaffMutation.isPending ? (
+            {isSubmitting ||
+            createStaffMutation.isPending ||
+            updateStaffMutation.isPending ? (
               <div className="flex items-center gap-2">
                 <div className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
-                Creating...
+                {mode === 'create' ? 'Creating...' : 'Updating...'}
               </div>
-            ) : (
+            ) : mode === 'create' ? (
               'Create Staff'
+            ) : (
+              'Update Staff'
             )}
           </Button>
         </div>

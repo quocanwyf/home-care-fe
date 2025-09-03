@@ -1,4 +1,4 @@
-import { SquareUser } from 'lucide-react';
+import { Settings, SquareUser } from 'lucide-react';
 
 import DatePicker from '@/components/common/date-picker/DatePicker';
 import LabelDropdown from '@/components/common/dropdowns/LabelDropdown';
@@ -9,11 +9,18 @@ import type { MaidFormData } from '@/types/schema/maid-form-schema-type';
 interface PersonalInformationAreaProps {
   data: MaidFormData;
   onUpdate: (updates: Partial<MaidFormData>) => void;
+  mode?: 'create' | 'edit';
+  // Add password handling props for edit mode
+  isEditingPassword?: boolean;
+  onPasswordEditToggle?: () => void;
 }
 
 const PersonalInformationArea: React.FC<PersonalInformationAreaProps> = ({
   data,
   onUpdate,
+  mode = 'create',
+  isEditingPassword = false,
+  onPasswordEditToggle,
 }) => {
   const genderOptions = [
     { label: 'Male', value: 'Male' },
@@ -200,18 +207,65 @@ const PersonalInformationArea: React.FC<PersonalInformationAreaProps> = ({
             required: true,
           }}
         />
-        <InputLabel
-          label={{
-            labelTitle: 'Password',
-            classNameLabel: 'text-gray-700',
-          }}
-          input={{
-            placeholder: 'Enter password',
-            value: data.password,
-            onChange: (e) => handleInputChange('password', e.target.value),
-            required: true,
-          }}
-        />
+
+        {/* Password - Only show in edit mode with proper handling */}
+        {mode === 'edit' && (
+          <div>
+            {!isEditingPassword ? (
+              // Show masked password with Change button
+              <div>
+                <label className="mb-2 flex items-center text-sm font-medium text-gray-700">
+                  <Settings className="mr-2 h-3 w-3" />
+                  Password
+                </label>
+                <div className="relative">
+                  <input
+                    type="text"
+                    value="******"
+                    disabled
+                    className="h-10 w-full cursor-not-allowed rounded-md border border-gray-300 bg-gray-100 px-3 text-gray-500"
+                  />
+                  <button
+                    type="button"
+                    className="absolute top-1/2 right-3 -translate-y-1/2 text-sm text-blue-600 hover:text-blue-800"
+                    onClick={onPasswordEditToggle}
+                  >
+                    Change
+                  </button>
+                </div>
+                <p className="mt-1 text-xs text-gray-500">
+                  Click "Change" to update password
+                </p>
+              </div>
+            ) : (
+              // Show editable password field
+              <div>
+                <InputLabel
+                  label={{
+                    labelTitle: 'New Password',
+                    classNameLabel: 'text-gray-700',
+                    icon: <Settings className="h-3 w-3" />,
+                  }}
+                  input={{
+                    type: 'password',
+                    placeholder: 'Enter new password',
+                    value: data.password || '',
+                    onChange: (e) =>
+                      handleInputChange('password', e.target.value),
+                    required: false,
+                  }}
+                />
+                <button
+                  type="button"
+                  className="mt-2 text-xs text-gray-500 hover:text-gray-700"
+                  onClick={onPasswordEditToggle}
+                >
+                  Cancel password change
+                </button>
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );

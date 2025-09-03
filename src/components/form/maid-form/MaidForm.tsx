@@ -21,10 +21,13 @@ interface MaidFormProps {
   helperId?: string;
 }
 
-const MaidForm: React.FC<MaidFormProps> = ({ mode, helperId }) => {
+const MaidForm: React.FC<MaidFormProps> = ({ mode = 'create', helperId }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { showSuccess, showError } = useToast();
   const navigateTo = useAppNavigate();
+
+  // Password state for edit mode
+  const [isEditingPassword, setIsEditingPassword] = useState(false);
 
   const createHelperMutation = useCreateHelper();
   const updateHelperMutation = useUpdateHelper();
@@ -49,8 +52,8 @@ const MaidForm: React.FC<MaidFormProps> = ({ mode, helperId }) => {
     experienceDescription: '',
     avatar: [],
     healthCertificates: [],
-    baseFactor: { label: '', value: 1 }, // Initialize baseFactor
-    password: '',
+    baseFactor: { label: '', value: 1 },
+    password: mode === 'edit' ? '' : undefined, // Only initialize for edit mode
   });
 
   useEffect(() => {
@@ -124,10 +127,26 @@ const MaidForm: React.FC<MaidFormProps> = ({ mode, helperId }) => {
         avatar: [],
         healthCertificates: [],
         baseFactor: baseFactorFormatted,
-        password: helper.password || '',
+        password: '', // Initialize as empty for edit mode
       });
+
+      // Reset password editing state
+      setIsEditingPassword(false);
     }
   }, [mode, helperEditData]);
+
+  // Handle password edit toggle
+  const handlePasswordEditToggle = () => {
+    if (isEditingPassword) {
+      // Cancel editing - clear password field
+      setFormData((prev) => ({ ...prev, password: '' }));
+      setIsEditingPassword(false);
+    } else {
+      // Start editing - clear field
+      setFormData((prev) => ({ ...prev, password: '' }));
+      setIsEditingPassword(true);
+    }
+  };
 
   // Update functions for each section
   const updatePersonalInfo = (updates: Partial<MaidFormData>) => {
@@ -155,7 +174,6 @@ const MaidForm: React.FC<MaidFormProps> = ({ mode, helperId }) => {
       'nationality',
       'height',
       'weight',
-      'password',
     ];
 
     for (const field of requiredFields) {
@@ -182,7 +200,7 @@ const MaidForm: React.FC<MaidFormProps> = ({ mode, helperId }) => {
       return false;
     }
 
-    // Check files
+    // Check files (avatar and health certificates required for both modes)
     if (
       formData.avatar.length === 0 ||
       formData.healthCertificates.length === 0
@@ -190,22 +208,8 @@ const MaidForm: React.FC<MaidFormProps> = ({ mode, helperId }) => {
       return false;
     }
 
-    // Check password
-    if (!formData.password.trim()) {
-      return false;
-    }
-
-    if (mode === 'create') {
-      if (
-        formData.avatar.length === 0 ||
-        formData.healthCertificates.length === 0
-      ) {
-        return false;
-      }
-    }
-
     return true;
-  }, [formData]);
+  }, [formData, mode]);
 
   const validateForm = (): boolean => {
     const requiredFields = [
@@ -218,7 +222,6 @@ const MaidForm: React.FC<MaidFormProps> = ({ mode, helperId }) => {
       'nationality',
       'height',
       'weight',
-      'password',
     ];
 
     for (const field of requiredFields) {
@@ -231,6 +234,7 @@ const MaidForm: React.FC<MaidFormProps> = ({ mode, helperId }) => {
       }
     }
 
+    // Age validation
     if (formData.birthDate) {
       const birthDate = new Date(formData.birthDate);
       const today = new Date();
@@ -285,11 +289,6 @@ const MaidForm: React.FC<MaidFormProps> = ({ mode, helperId }) => {
       return false;
     }
 
-    if (!formData.password.trim()) {
-      showError('Password is required');
-      return false;
-    }
-
     if (formData.healthCertificates.length === 0) {
       showError('Health certificates are required');
       return false;
@@ -323,7 +322,25 @@ const MaidForm: React.FC<MaidFormProps> = ({ mode, helperId }) => {
       apiFormData.append('educationLevel', formData.educationLevel.value);
       apiFormData.append('height', formData.height);
       apiFormData.append('weight', formData.weight);
-      apiFormData.append('password', formData.password);
+
+      // Handle password for different modes
+      if (mode === 'create') {
+        // Create mode: Don't send password at all
+        // No password field appended
+      } else {
+        // Edit mode: Handle password change
+        if (
+          isEditingPassword &&
+          formData.password &&
+          formData.password.trim()
+        ) {
+          apiFormData.append('hasNewPassword', 'true');
+          apiFormData.append('password', formData.password);
+        } else {
+          apiFormData.append('hasNewPassword', 'false');
+          // Don't append password field when not changing
+        }
+      }
 
       // Add baseFactor for edit mode
       if (mode === 'edit' && formData.baseFactor?.value) {
@@ -388,7 +405,7 @@ const MaidForm: React.FC<MaidFormProps> = ({ mode, helperId }) => {
             avatar: [],
             healthCertificates: [],
             baseFactor: { label: '', value: 1 },
-            password: '',
+            password: undefined, // Don't include password for create
           });
         }
         navigateTo('/maids', {
@@ -403,7 +420,7 @@ const MaidForm: React.FC<MaidFormProps> = ({ mode, helperId }) => {
         const errorMessage = result.message || '';
 
         if (errorMessage.toLowerCase().includes('existed')) {
-          showError(errorMessage + 'Please use different details.');
+          showError(errorMessage + ' Please use different details.');
         } else {
           showError(
             errorMessage || 'Failed to create helper. Please try again.'
@@ -419,7 +436,6 @@ const MaidForm: React.FC<MaidFormProps> = ({ mode, helperId }) => {
   };
 
   const isButtonDisabled =
-    !isFormValid ||
     isSubmitting ||
     createHelperMutation.isPending ||
     updateHelperMutation.isPending ||
@@ -435,6 +451,9 @@ const MaidForm: React.FC<MaidFormProps> = ({ mode, helperId }) => {
         <PersonalInformationArea
           data={formData}
           onUpdate={updatePersonalInfo}
+          mode={mode}
+          isEditingPassword={isEditingPassword}
+          onPasswordEditToggle={handlePasswordEditToggle}
         />
         <JobInformationArea
           data={formData}
@@ -465,7 +484,7 @@ const MaidForm: React.FC<MaidFormProps> = ({ mode, helperId }) => {
             className={`float-right cursor-pointer disabled:cursor-not-allowed ${
               isButtonDisabled
                 ? 'bg-gray-400 hover:bg-gray-400'
-                : 'bg-blue-600 hover:bg-blue-700'
+                : 'hover:bg-overlay-slider bg-overlay-slider/90'
             }`}
             disabled={isButtonDisabled}
           >

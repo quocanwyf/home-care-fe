@@ -1,13 +1,18 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 
 import { Building, DollarSign, FileText, Settings } from 'lucide-react';
 
 import LabelDropdown from '@/components/common/dropdowns/LabelDropdown';
 import InputLabel from '@/components/common/input/InputLabel';
+import LoadingFallback from '@/components/fallback/LoadingFallback';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { useCreateService } from '@/hooks/api/useServices.api';
+import {
+  useCreateService,
+  useGetServiceEdit,
+  useUpdateService,
+} from '@/hooks/api/useServices.api';
 import { useAppNavigate } from '@/hooks/common/useAppNavigate';
 import { useToast } from '@/hooks/common/useToast';
 import {
@@ -21,12 +26,20 @@ interface ServiceFormProps {
   serviceId?: string;
 }
 
-const ServiceForm: React.FC<ServiceFormProps> = ({ mode = 'create' }) => {
+const ServiceForm: React.FC<ServiceFormProps> = ({
+  mode = 'create',
+  serviceId,
+}) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { showSuccess, showError } = useToast();
   const navigateTo = useAppNavigate();
 
   const createServiceMutation = useCreateService();
+  const updateServiceMutation = useUpdateService();
+
+  const { data: editInfo, isLoading: isLoadingEdit } = useGetServiceEdit(
+    mode === 'edit' && serviceId ? serviceId : ''
+  );
 
   const form = useForm<ServiceFormData>({
     resolver: zodResolver(serviceFormSchema),
@@ -47,7 +60,32 @@ const ServiceForm: React.FC<ServiceFormProps> = ({ mode = 'create' }) => {
     formState: { errors, isValid },
     watch,
     setValue,
+    reset,
   } = form;
+
+  // Load data for edit mode
+  useEffect(() => {
+    if (mode === 'edit' && editInfo?.result) {
+      const service = editInfo.result;
+      const coefficient = service.coefficient;
+
+      console.log('Service edit data received:', editInfo);
+
+      // Set form data
+      reset({
+        serviceTitle: service.title || '',
+        basicPrice: service.basicPrice ? service.basicPrice.toString() : '',
+        serviceDescription: service.description || '',
+        serviceStatus: {
+          label: service.status === 'active' ? 'Active' : 'Inactive',
+          value: service.status,
+        },
+        coefficientTitle: coefficient.title || '',
+        coefficientDescription: coefficient.description || '',
+        coefficientValue: coefficient.value ? coefficient.value.toString() : '',
+      });
+    }
+  }, [mode, editInfo, reset]);
 
   // Status options
   const statusOptions = [
@@ -77,15 +115,26 @@ const ServiceForm: React.FC<ServiceFormProps> = ({ mode = 'create' }) => {
             title: data.coefficientTitle,
             description: data.coefficientDescription,
             value: Number(data.coefficientValue),
+            status: 'active', // Default to active for coefficient
           },
         };
 
         console.log('Submitting service payload:', payload);
 
-        const response = await createServiceMutation.mutateAsync(payload);
+        let response;
+        if (mode === 'create') {
+          response = await createServiceMutation.mutateAsync(payload);
+        } else {
+          response = await updateServiceMutation.mutateAsync({
+            id: serviceId!,
+            payload,
+          });
+        }
 
         if (response.success) {
-          showSuccess('Service created successfully!');
+          showSuccess(
+            `Service ${mode === 'create' ? 'created' : 'updated'} successfully!`
+          );
           navigateTo('/services', {
             toast: {
               type: 'success',
@@ -94,10 +143,10 @@ const ServiceForm: React.FC<ServiceFormProps> = ({ mode = 'create' }) => {
             delay: 1000,
           });
         } else {
-          showError(response.message || 'Failed to create service');
+          showError(response.message || `Failed to ${mode} service`);
         }
       } catch (error: any) {
-        console.error('Error creating service:', error);
+        console.error(`Error ${mode} service:`, error);
         if (error.message.includes('Server error')) {
           showError('Server error occurred. Please try again later.');
         } else {
@@ -118,8 +167,13 @@ const ServiceForm: React.FC<ServiceFormProps> = ({ mode = 'create' }) => {
     }
   );
 
+  // Loading states
+  if (mode === 'edit' && isLoadingEdit) {
+    return <LoadingFallback content={`Loading service ${mode} form...`} />;
+  }
+
   return (
-    <div className="h-full w-full overflow-y-auto pb-26">
+    <div className="h-full w-full overflow-y-auto py-4 pb-26">
       <form onSubmit={handleSubmitService}>
         {/* Service Information Section */}
         <div className="bg-overlay-slider/8 shadow-around my-6 w-full rounded-md px-4 pt-2 pb-4">
@@ -346,13 +400,17 @@ const ServiceForm: React.FC<ServiceFormProps> = ({ mode = 'create' }) => {
             }`}
             disabled={!isFormValid || isSubmitting}
           >
-            {isSubmitting || createServiceMutation.isPending ? (
+            {isSubmitting ||
+            createServiceMutation.isPending ||
+            updateServiceMutation.isPending ? (
               <div className="flex items-center gap-2">
                 <div className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
-                Creating...
+                {mode === 'create' ? 'Creating...' : 'Updating...'}
               </div>
-            ) : (
+            ) : mode === 'create' ? (
               'Create Service'
+            ) : (
+              'Update Service'
             )}
           </Button>
         </div>

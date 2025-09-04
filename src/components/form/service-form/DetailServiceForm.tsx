@@ -86,16 +86,16 @@ const DetailServiceForm = () => {
               <div className="text-center">
                 <div className="mb-4">
                   <span
-                    className={`inline-flex rounded-full border px-4 py-2 text-sm font-medium ${getStatusBadge(service.status)}`}
+                    className={`inline-flex rounded-full border px-4 py-2 text-sm font-medium ${getStatusBadge(service?.status)}`}
                   >
-                    {service.status === 'active' ? 'Active' : 'Inactive'}
+                    {service?.status === 'active' ? 'Active' : 'Inactive'}
                   </span>
                 </div>
                 <h3 className="text-lg font-semibold text-gray-900">
-                  {service.title}
+                  {service?.title}
                 </h3>
                 <p className="mt-2 text-xl font-bold text-blue-600">
-                  {formatPrice(service.basicPrice)}
+                  {formatPrice(service?.basicPrice)}
                 </p>
                 <p className="text-sm text-gray-500">Basic Price</p>
               </div>
@@ -112,16 +112,16 @@ const DetailServiceForm = () => {
                 <div className="text-center">
                   <div className="mb-2">
                     <span className="text-2xl font-bold text-green-600">
-                      {coefficient.value}x
+                      {coefficient?.value}x
                     </span>
                   </div>
                   <p className="text-sm font-medium text-gray-700">
-                    {coefficient.title}
+                    {coefficient?.title}
                   </p>
                   <span
-                    className={`mt-1 inline-flex rounded-full border px-2 py-1 text-xs font-medium ${getStatusBadge(coefficient.status)}`}
+                    className={`mt-1 inline-flex rounded-full border px-2 py-1 text-xs font-medium ${getStatusBadge(coefficient?.status)}`}
                   >
-                    {coefficient.status === 'active' ? 'Active' : 'Inactive'}
+                    {coefficient?.status === 'active' ? 'Active' : 'Inactive'}
                   </span>
                 </div>
               </div>
@@ -132,7 +132,7 @@ const DetailServiceForm = () => {
                 className="bg-overlay-slider/90 hover:bg-overlay-slider w-full min-w-[140px] cursor-pointer text-white hover:text-white"
                 variant="outline"
                 onClick={() => {
-                  navigateTo(`/services/edit/${service._id}`, {
+                  navigateTo(`/services/edit/${service?._id}`, {
                     toast: {
                       type: 'success',
                       message: 'Direction success!',
@@ -160,13 +160,13 @@ const DetailServiceForm = () => {
                   <label className="text-sm font-medium text-gray-500">
                     Service ID
                   </label>
-                  <p className="font-medium text-gray-900">{service._id}</p>
+                  <p className="font-medium text-gray-900">{service?._id}</p>
                 </div>
                 <div>
                   <label className="text-sm font-medium text-gray-500">
                     Service Title
                   </label>
-                  <p className="font-medium text-gray-900">{service.title}</p>
+                  <p className="font-medium text-gray-900">{service?.title}</p>
                 </div>
                 <div>
                   <label className="text-sm font-medium text-gray-500">
@@ -183,12 +183,12 @@ const DetailServiceForm = () => {
                   <div className="mt-1">
                     <span
                       className={`inline-flex rounded-full px-2 py-1 text-xs font-semibold ${
-                        service.status === 'active'
+                        service?.status === 'active'
                           ? 'bg-green-100 text-green-800'
                           : 'bg-red-100 text-red-800'
                       }`}
                     >
-                      {service.status === 'active' ? 'Active' : 'Inactive'}
+                      {service?.status === 'active' ? 'Active' : 'Inactive'}
                     </span>
                   </div>
                 </div>
@@ -218,14 +218,16 @@ const DetailServiceForm = () => {
                   <label className="text-sm font-medium text-gray-500">
                     Coefficient ID
                   </label>
-                  <p className="font-medium text-gray-900">{coefficient._id}</p>
+                  <p className="font-medium text-gray-900">
+                    {coefficient?._id}
+                  </p>
                 </div>
                 <div>
                   <label className="text-sm font-medium text-gray-500">
                     Coefficient Title
                   </label>
                   <p className="font-medium text-gray-900">
-                    {coefficient.title}
+                    {coefficient?.title}
                   </p>
                 </div>
                 <div>
@@ -233,7 +235,7 @@ const DetailServiceForm = () => {
                     Coefficient Value
                   </label>
                   <p className="text-lg font-semibold text-green-600">
-                    {coefficient.value}x
+                    {coefficient?.value}x
                   </p>
                 </div>
                 <div>
@@ -243,12 +245,12 @@ const DetailServiceForm = () => {
                   <div className="mt-1">
                     <span
                       className={`inline-flex rounded-full px-2 py-1 text-xs font-semibold ${
-                        coefficient.status === 'active'
+                        coefficient?.status === 'active'
                           ? 'bg-green-100 text-green-800'
                           : 'bg-red-100 text-red-800'
                       }`}
                     >
-                      {coefficient.status === 'active' ? 'Active' : 'Inactive'}
+                      {coefficient?.status === 'active' ? 'Active' : 'Inactive'}
                     </span>
                   </div>
                 </div>
@@ -260,7 +262,7 @@ const DetailServiceForm = () => {
                 </label>
                 <div className="mt-2 rounded-lg bg-gray-50 p-4">
                   <p className="leading-relaxed text-gray-700">
-                    {coefficient.description}
+                    {coefficient?.description}
                   </p>
                 </div>
               </div>
@@ -277,18 +279,18 @@ const DetailServiceForm = () => {
                 <div className="flex items-center justify-between text-sm">
                   <span className="text-gray-600">Basic Price:</span>
                   <span className="font-medium">
-                    {formatPrice(service.basicPrice)}
+                    {formatPrice(service?.basicPrice)}
                   </span>
                 </div>
                 <div className="mt-2 flex items-center justify-between text-sm">
                   <span className="text-gray-600">Coefficient:</span>
-                  <span className="font-medium">{coefficient.value}x</span>
+                  <span className="font-medium">{coefficient?.value}x</span>
                 </div>
                 <hr className="my-2 border-blue-200" />
                 <div className="flex items-center justify-between font-semibold">
                   <span className="text-gray-700">Final Price:</span>
                   <span className="text-lg text-blue-600">
-                    {formatPrice(service.basicPrice * coefficient.value)}
+                    {formatPrice(service?.basicPrice * coefficient?.value)}
                   </span>
                 </div>
               </div>

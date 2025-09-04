@@ -124,7 +124,7 @@ const DetailStaffForm = () => {
                 {staff.avatar ? (
                   <div className="group relative">
                     <img
-                      src={staff.avatar}
+                      src={staff.avatar || '/public/bg-imgage/photo-1.png'}
                       alt="Staff Avatar"
                       className="mx-auto h-32 w-32 cursor-pointer rounded-full border-4 border-gray-100 object-cover transition-opacity hover:opacity-80"
                       onClick={() => openImageInNewTab(staff.avatar)}

@@ -249,7 +249,7 @@ const DashboardForm = () => {
             </CardTitle>
           </div>
         </CardHeader>
-        <CardContent className="flex min-h-[300px] justify-center">
+        <CardContent className="flex overflow-x-auto overflow-y-hidden pb-6">
           {chartLoading ? (
             <div className="flex h-[250px] items-end justify-start gap-4 px-4">
               {Array.from({ length: 8 }).map((_, index) => (

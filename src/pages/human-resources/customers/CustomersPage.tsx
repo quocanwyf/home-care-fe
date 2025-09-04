@@ -102,6 +102,7 @@ const CustomersPage = () => {
       onResetFilters={resetAllFilters}
       isLoading={isLoading || isFetching}
       totalData={customersData?.totalCustomers || 1}
+      showAddButton={false}
     />
   );
 };

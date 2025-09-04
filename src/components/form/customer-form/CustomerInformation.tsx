@@ -80,7 +80,7 @@ const CustomerInformation = ({ customerData }: CustomerInformationProps) => {
                   Province:
                 </span>
                 <span className="text-overlay-slider text-sm font-medium">
-                  {customer.addresses.province}
+                  {customer.addresses?.province}
                 </span>
               </div>
               <div className="flex justify-between">
@@ -88,20 +88,20 @@ const CustomerInformation = ({ customerData }: CustomerInformationProps) => {
                   District:
                 </span>
                 <span className="text-overlay-slider text-sm font-medium">
-                  {customer.addresses.district}
+                  {customer.addresses?.district}
                 </span>
               </div>
               <div className="flex justify-between">
                 <span className="text-sm font-medium text-gray-600">Ward:</span>
                 <span className="text-overlay-slider text-sm font-medium">
-                  {customer.addresses.ward}
+                  {customer.addresses?.ward}
                 </span>
               </div>
               <div className="mt-3">
                 <span className="text-sm font-medium text-gray-600">
                   Detail Address:
                   <span className="text-overlay-slider ml-4">
-                    {customer.addresses.detailAddress}
+                    {customer.addresses?.detailAddress}
                   </span>
                 </span>
               </div>

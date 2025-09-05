@@ -1,52 +1,51 @@
-import StatusBadge from '@/components/common/badge/StatusOrdersBadge';
+import OrderStatusBadge from '@/components/common/badge/StatusOrdersBadge';
 import TableActions from '@/components/common/button/TableActions';
-import type { CostFactorList } from '@/types/table/objects/coefficient';
+import type { CoefficientItem } from '@/types/table/objects/coefficient';
 import type { ColumnDef } from '@tanstack/react-table';
 
 export const coefficientColumn = (
-  onView?: (row: CostFactorList) => void,
-  onEdit?: (row: CostFactorList) => void
-): ColumnDef<CostFactorList, unknown>[] => [
+  onEdit?: (row: CoefficientItem) => void
+): ColumnDef<CoefficientItem, unknown>[] => [
   {
     accessorKey: '_id',
-    header: 'ID',
+    header: 'Coefficient ID',
+    cell: ({ row }) => (
+      <span className="font-mono text-sm">{row.original._id.slice(-8)}</span>
+    ),
   },
   {
     accessorKey: 'title',
     header: 'Title',
+    cell: ({ row }) => <div className="font-medium">{row.original.title}</div>,
   },
   {
     accessorKey: 'description',
     header: 'Description',
+    cell: ({ row }) => (
+      <div className="text-muted-foreground max-w-[200px] text-sm">
+        {row.original.description}
+      </div>
+    ),
   },
   {
-    accessorKey: 'applyTo',
-    header: 'Apply To',
-    cell: ({ row }) => {
-      const applyTo = row.original.applyTo;
-      return <span className="font-medium capitalize">{applyTo}</span>;
-    },
-  },
-  {
-    accessorKey: 'coefficientList',
-    header: 'Coefficient Count',
-    cell: ({ row }) => {
-      const coefficientList = row.original.coefficientList || [];
-      return <span className="font-medium">{coefficientList.length}</span>;
-    },
+    accessorKey: 'value',
+    header: 'Multiplier',
+    cell: ({ row }) => (
+      <div className="text-center">
+        <span className="text-overlay-slider inline-flex items-center rounded-full bg-blue-100 px-3 py-1 text-sm">
+          ×{row.original.value}
+        </span>
+      </div>
+    ),
   },
   {
     accessorKey: 'status',
     header: 'Status',
-    cell: ({ row }) => <StatusBadge status={row.original.status} />,
+    cell: ({ row }) => <OrderStatusBadge status={row.original.status} />,
   },
   {
     id: 'actions',
     header: 'Actions',
-    cell: ({ row }) => {
-      return (
-        <TableActions onView={onView} onEdit={onEdit} row={row.original} />
-      );
-    },
+    cell: ({ row }) => <TableActions onEdit={onEdit} row={row.original} />,
   },
 ];

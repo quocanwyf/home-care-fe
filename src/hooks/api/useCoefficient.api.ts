@@ -1,30 +1,21 @@
 import {
   createCoefficientApi,
-  getCoefficientDetailApi,
   getCoefficientListApi,
-  updateCoefficientApi,
-} from '@/apis/coefficient.api';
-import type { CoefficientListParams } from '@/types/params/coefficient-params';
+  updateSingleCoefficientApi,
+} from '@/apis/coefficients.api';
 import type {
-  CreateCoefficientRequest,
-  UpdateCostFactorRequest,
-} from '@/types/table/objects/coefficient';
+  CoefficientCreatePayload,
+  CoefficientCreateResponse,
+  CoefficientParams,
+  CoefficientUpdateResponse,
+} from '@/types/params/coefficient-params';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
-export const useGetCoefficientList = (params: CoefficientListParams) => {
+export const useGetCoefficientList = (params: CoefficientParams) => {
   return useQuery({
-    queryKey: ['coefficient-list', params],
+    queryKey: ['coefficients', params],
     queryFn: ({ signal }) => getCoefficientListApi(params, signal),
     placeholderData: undefined,
-    refetchOnWindowFocus: false,
-  });
-};
-
-export const useGetCoefficientDetail = (id: string) => {
-  return useQuery({
-    queryKey: ['coefficient-detail', id],
-    queryFn: ({ signal }) => getCoefficientDetailApi(id, signal),
-    enabled: !!id,
     refetchOnWindowFocus: false,
   });
 };
@@ -32,31 +23,40 @@ export const useGetCoefficientDetail = (id: string) => {
 export const useCreateCoefficient = () => {
   const queryClient = useQueryClient();
 
-  return useMutation({
-    mutationFn: (data: CreateCoefficientRequest) => createCoefficientApi(data),
+  return useMutation<
+    CoefficientCreateResponse,
+    Error,
+    CoefficientCreatePayload
+  >({
+    mutationFn: createCoefficientApi,
     onSuccess: () => {
-      // Invalidate coefficient list queries
-      queryClient.invalidateQueries({
-        queryKey: ['coefficient-list'],
-      });
+      // Invalidate coefficients list to refresh data
+      queryClient.invalidateQueries({ queryKey: ['coefficients'] });
     },
   });
 };
 
-export const useUpdateCoefficient = () => {
+export const useUpdateSingleCoefficient = () => {
   const queryClient = useQueryClient();
 
-  return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: UpdateCostFactorRequest }) =>
-      updateCoefficientApi(id, data),
-    onSuccess: (_, { id }) => {
-      // Invalidate related queries
-      queryClient.invalidateQueries({
-        queryKey: ['coefficient-list'],
-      });
-      queryClient.invalidateQueries({
-        queryKey: ['coefficient-detail', id],
-      });
+  return useMutation<
+    CoefficientUpdateResponse,
+    Error,
+    {
+      parentId: string;
+      coefficientData: {
+        _id: string;
+        title: string;
+        description: string;
+        value: number;
+        status: 'active' | 'inactive';
+      };
+    }
+  >({
+    mutationFn: ({ parentId, coefficientData }) =>
+      updateSingleCoefficientApi(parentId, coefficientData),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['coefficients'] });
     },
   });
 };

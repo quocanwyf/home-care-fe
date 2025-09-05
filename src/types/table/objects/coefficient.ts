@@ -1,48 +1,20 @@
-export interface Coefficient {
-  _id: string;
+export interface CoefficientItem {
   title: string;
   description: string;
   value: number;
   deleted: boolean;
   status: 'active' | 'inactive';
+  _id: string;
+  parentTitle?: string;
+  parentApplyTo?: 'service' | 'helper' | 'other';
+  parentId?: string;
 }
 
-export interface CostFactor {
+export interface CostFactorList {
   _id: string;
   title: string;
   description: string;
   applyTo: 'service' | 'helper' | 'other';
   status: 'active' | 'inactive';
-  coefficientList: Coefficient[];
-}
-
-export interface CostFactorsResponse {
-  success: boolean;
-  totalCostFactors: number;
-  costFactorLists: CostFactor[];
-}
-
-export interface CostFactorDetailResponse {
-  success: boolean;
-  result: CostFactor;
-}
-
-export interface CreateCoefficientRequest {
-  title: string;
-  description: string;
-  value: number;
-  status: 'active' | 'inactive';
-}
-
-export interface UpdateCostFactorRequest {
-  title: string;
-  description: string;
-  status: 'active' | 'inactive';
-  coefficientList: {
-    _id?: string;
-    title: string;
-    description: string;
-    value: number;
-    status: 'active' | 'inactive';
-  }[];
+  coefficientList: CoefficientItem[];
 }

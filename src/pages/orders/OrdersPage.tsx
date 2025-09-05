@@ -98,6 +98,8 @@ const OrdersPage = () => {
     search: searchKeyword ?? '',
   };
 
+  console.log('Params for API:', params);
+
   const {
     data: ordersFetchData,
     isLoading,

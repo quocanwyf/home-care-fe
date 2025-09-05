@@ -65,8 +65,7 @@ const PersonalInformationArea: React.FC<PersonalInformationAreaProps> = ({
           input={{
             placeholder: 'Enter helper ID',
             value: data.helper_id,
-            onChange: (e) =>
-              handleInputChange('helper_id', e.target.value.replace(/\D/g, '')),
+            onChange: (e) => handleInputChange('helper_id', e.target.value),
             required: true,
           }}
         />

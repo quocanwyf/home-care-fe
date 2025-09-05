@@ -13,4 +13,9 @@ export const STATUS_DISPLAY_NAME: Record<string, string> = {
   online: 'Online',
   offline: 'Offline',
   working: 'Working',
+  available: 'Available',
+  unavailable: 'Unavailable',
+  service: 'Service',
+  helper: 'Helper',
+  other: 'Other',
 };

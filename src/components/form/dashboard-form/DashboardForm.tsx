@@ -299,7 +299,7 @@ const DashboardForm = () => {
   };
 
   return (
-    <div className="mt-4 flex h-full w-full flex-col gap-4 overflow-y-scroll">
+    <div className="mt-4 flex h-full w-full flex-col gap-4">
       {/* Filter Section */}
       <div className="bg-overlay-slider/8 shadow-around w-full rounded-md border px-4 pb-4">
         <div className="mb-4 flex flex-row items-center justify-between font-bold">
@@ -312,7 +312,7 @@ const DashboardForm = () => {
             data={exportData}
             options={exportOptions}
             onExportComplete={handleExportComplete}
-            className=""
+            className="mt-2"
             size="sm"
             variant="outline"
           />
@@ -640,7 +640,7 @@ const DashboardForm = () => {
         </Card>
 
         {/* Top Services */}
-        <Card className="bg-overlay-slider/8 shadow-around mb-20">
+        <Card className="bg-overlay-slider/8 shadow-around">
           <CardHeader>
             <div className="flex items-center">
               <DollarSign className="text-overlay-slider mr-2 h-5 w-5" />

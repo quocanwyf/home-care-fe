@@ -7,14 +7,20 @@ import {
   TrendingUp,
   Users,
 } from 'lucide-react';
+import {
+  Bar,
+  BarChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from 'recharts';
 
 import { DateRangePicker } from '@/components/common/date-picker/DateRangePicker';
 import type { FormattedDateRange } from '@/components/common/date-picker/DateRangePicker';
-// Remove LoadingFallback import
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
-// Add this import
 import { formatDateToDDMMYYYY } from '@/helpers/date-utitlity';
 import {
   useGetDashboardChart,
@@ -56,7 +62,7 @@ const DashboardForm = () => {
     useGetDashboardStats(dashboardParams);
   const { data: chartData, isLoading: chartLoading } =
     useGetDashboardChart(chartParams);
-
+  console.log(chartData);
   const handleDateRangeChange = (range: FormattedDateRange | undefined) => {
     if (range) {
       setDateRange(range);
@@ -67,11 +73,32 @@ const DashboardForm = () => {
     setInterval(newInterval);
   };
 
-  // Remove the global loading check
-  // const isLoading = statsLoading || chartLoading;
-  // if (isLoading) {
-  //   return <LoadingFallback content="Loading order information..." />;
-  // }
+  // Transform data for recharts
+  const chartDisplayData =
+    chartData?.data?.map((item) => ({
+      date: item._id,
+      revenue: item.revenue,
+      orders: item.orders,
+    })) || [];
+
+  // Custom Tooltip Component
+  const CustomTooltip = ({ active, payload, label }: any) => {
+    if (active && payload && payload.length) {
+      return (
+        <div className="rounded-lg border border-gray-200 bg-white p-3 shadow-lg">
+          <p className="font-medium text-gray-900">{`Date: ${label}`}</p>
+          {payload.map((entry: any, index: number) => (
+            <p key={index} style={{ color: entry.color }}>
+              {entry.dataKey === 'revenue'
+                ? `Revenue: ${Number(entry.value).toLocaleString()} VNĐ`
+                : `Orders: ${entry.value}`}
+            </p>
+          ))}
+        </div>
+      );
+    }
+    return null;
+  };
 
   return (
     <div className="mt-4 flex h-full w-full flex-col gap-4 overflow-y-scroll">
@@ -113,8 +140,8 @@ const DashboardForm = () => {
                   onClick={() => handleIntervalChange(type)}
                   className={`cursor-pointer rounded-xl text-xs transition duration-500 ease-in-out hover:scale-105 ${
                     interval === type
-                      ? 'bg-orange-100 text-orange-800 hover:bg-orange-100'
-                      : 'text-gray-700 hover:bg-orange-50'
+                      ? 'border-2 border-green-200 bg-green-100 font-bold text-green-800 hover:bg-green-100'
+                      : 'text-gray-700 hover:bg-green-50'
                   }`}
                 >
                   {type === 'day' ? 'Day' : type === 'month' ? 'Month' : 'Year'}
@@ -211,35 +238,37 @@ const DashboardForm = () => {
           </CardContent>
         </Card>
 
-        {/* Performance Card */}
-        <Card className="bg-overlay-slider/8 shadow-around scale-100 transform transition-transform duration-300 hover:scale-105">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-overlay-slider font-medium">
-              Performance
-            </CardTitle>
-            <TrendingUp className="text-overlay-slider h-4 w-4" />
+        {/* Performance Card (mini chart) */}
+        <Card className="bg-overlay-slider/8 shadow-around">
+          <CardHeader>
+            <div className="flex items-center">
+              <TrendingUp className="text-overlay-slider mr-2 h-5 w-5" />
+              <CardTitle className="text-overlay-slider text-sm font-bold">
+                MINI CHART
+              </CardTitle>
+            </div>
           </CardHeader>
           <CardContent>
-            {statsLoading ? (
-              <>
-                <Skeleton className="mb-2 h-6 w-12" />
-                <Skeleton className="h-4 w-36" />
-              </>
+            {chartLoading ? (
+              <div className="flex h-[100px] items-center justify-center">
+                <Skeleton className="h-full w-full" />
+              </div>
+            ) : chartDisplayData.length > 0 ? (
+              <ResponsiveContainer width="100%" height={100}>
+                <BarChart data={chartDisplayData}>
+                  <Bar dataKey="revenue" fill="#39c996" radius={[2, 2, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
             ) : (
-              <>
-                <div className="font-bold text-gray-900">
-                  {statsData?.orders?.completionRate || '0'}%
-                </div>
-                <p className="text-muted-foreground text-xs">
-                  Done | Cancelled: {statsData?.orders?.cancelRate || '0'}%
-                </p>
-              </>
+              <div className="flex h-[100px] items-center justify-center text-gray-500">
+                <TrendingUp className="h-8 w-8" />
+              </div>
             )}
           </CardContent>
         </Card>
       </div>
 
-      {/* Chart Section */}
+      {/* Main Chart Section */}
       <Card className="bg-overlay-slider/8 shadow-around">
         <CardHeader>
           <div className="flex items-center">
@@ -249,68 +278,80 @@ const DashboardForm = () => {
             </CardTitle>
           </div>
         </CardHeader>
-        <CardContent className="flex overflow-x-auto overflow-y-hidden pb-6">
+        <CardContent>
           {chartLoading ? (
-            <div className="flex h-[250px] items-end justify-start gap-4 px-4">
-              {Array.from({ length: 8 }).map((_, index) => (
-                <div
-                  key={index}
-                  className="flex min-w-[80px] flex-col items-center gap-2"
-                >
-                  <Skeleton className="h-32 w-16" />
-                  <Skeleton className="h-4 w-20" />
-                </div>
-              ))}
-            </div>
-          ) : chartData?.data && chartData.data.length > 0 ? (
-            <div className=" ">
-              <div className="flex h-[250px] min-w-max items-end justify-start gap-4 px-4">
-                {chartData.data.map((item, index) => {
-                  const maxRevenue = Math.max(
-                    ...chartData.data.map((d) => d.revenue)
-                  );
-                  const barHeight =
-                    maxRevenue > 0 ? (item.revenue / maxRevenue) * 180 : 20;
-
-                  return (
-                    <div
+            <div className="flex h-[400px] items-center justify-center">
+              <div className="w-full space-y-4">
+                <Skeleton className="mx-auto h-8 w-48" />
+                <div className="flex h-[300px] items-end justify-center gap-4">
+                  {Array.from({ length: 8 }).map((_, index) => (
+                    <Skeleton
                       key={index}
-                      className="flex min-w-[80px] flex-col items-center gap-3"
-                    >
-                      {/* Revenue value on top */}
-                      <div className="text-xs font-medium text-gray-600">
-                        {item.revenue.toLocaleString()}
-                      </div>
-
-                      {/* Bar */}
-                      <div
-                        className="relative flex w-16 items-center justify-center rounded-t bg-blue-500"
-                        style={{ height: `${Math.max(barHeight, 25)}px` }}
-                      >
-                        {/* Orders count in center of bar */}
-                        <div className="text-xs font-bold text-white">
-                          {item.orders}
-                        </div>
-                      </div>
-
-                      {/* Date label */}
-                      <div className="text-center text-xs font-medium text-gray-700">
-                        {item._id}
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-
-              {/* Simple legend */}
-              <div className="mt-4 flex justify-center gap-6 border-t pt-3 text-xs text-gray-600">
-                <span>Revenue (VNĐ)</span>
-                <span>Orders (count)</span>
+                      className="w-8"
+                      style={{ height: `${Math.random() * 150 + 50}px` }}
+                    />
+                  ))}
+                </div>
               </div>
             </div>
+          ) : chartDisplayData.length > 0 ? (
+            <ResponsiveContainer width="100%" height={400}>
+              <BarChart
+                data={chartDisplayData}
+                margin={{
+                  top: 20,
+                  right: 30,
+                  left: 20,
+                  bottom: 60,
+                }}
+              >
+                <XAxis
+                  dataKey="date"
+                  tickLine={false}
+                  axisLine={false}
+                  className="text-xs"
+                  angle={-45}
+                  textAnchor="end"
+                  height={60}
+                />
+                <YAxis
+                  yAxisId="revenue"
+                  orientation="left"
+                  tickLine={false}
+                  axisLine={false}
+                  className="text-xs"
+                  tickFormatter={(value) => `${(value / 1000).toFixed(0)}K`}
+                />
+                <YAxis
+                  yAxisId="orders"
+                  orientation="right"
+                  tickLine={false}
+                  axisLine={false}
+                  className="text-xs"
+                />
+                <Tooltip content={<CustomTooltip />} />
+                <Bar
+                  yAxisId="revenue"
+                  dataKey="revenue"
+                  fill="#3b82f6"
+                  name="revenue"
+                  radius={[4, 4, 0, 0]}
+                />
+                <Bar
+                  yAxisId="orders"
+                  dataKey="orders"
+                  fill="#39c996"
+                  name="orders"
+                  radius={[4, 4, 0, 0]}
+                />
+              </BarChart>
+            </ResponsiveContainer>
           ) : (
-            <div className="flex h-full items-center justify-center text-gray-500">
-              No data available
+            <div className="flex h-[400px] items-center justify-center text-gray-500">
+              <div className="text-center">
+                <TrendingUp className="mx-auto mb-2 h-12 w-12 text-gray-400" />
+                <p>No chart data available</p>
+              </div>
             </div>
           )}
         </CardContent>
@@ -418,7 +459,7 @@ const DashboardForm = () => {
                     className="flex items-center justify-between rounded-lg bg-white p-3"
                   >
                     <div className="flex items-center gap-3">
-                      <span className="flex h-6 w-6 items-center justify-center rounded-full bg-orange-100 text-xs font-bold text-orange-800">
+                      <span className="flex h-6 w-6 items-center justify-center rounded-full bg-green-100 text-xs font-bold text-green-800">
                         {index + 1}
                       </span>
                       <div>
@@ -430,7 +471,7 @@ const DashboardForm = () => {
                         </p>
                       </div>
                     </div>
-                    <span className="text-sm font-bold text-orange-600">
+                    <span className="text-overlay-slider text-sm font-bold">
                       {service.revenue.toLocaleString()} VNĐ
                     </span>
                   </div>

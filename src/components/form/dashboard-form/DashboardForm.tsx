@@ -1,15 +1,23 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
+import CountUp from 'react-countup';
 
 import {
+  Activity,
+  BarChart3,
   DollarSign,
+  TrendingUp as LineIcon,
   ShoppingCart,
   TableProperties,
   TrendingUp,
   Users,
 } from 'lucide-react';
 import {
+  Area,
+  AreaChart,
   Bar,
   BarChart,
+  Line,
+  LineChart,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -32,6 +40,40 @@ import type {
 } from '@/types/params/dashboard-params';
 
 type IntervalType = 'day' | 'month' | 'year';
+type ChartType = 'bar' | 'line' | 'area';
+
+// Animated Number Component
+const AnimatedNumber = ({
+  value,
+  prefix = '',
+  suffix = '',
+  decimals = 0,
+  duration = 1.5,
+  className = '',
+}: {
+  value: number;
+  prefix?: string;
+  suffix?: string;
+  decimals?: number;
+  duration?: number;
+  className?: string;
+}) => {
+  return (
+    <div className={`font-bold text-gray-900 ${className}`}>
+      {prefix}
+      <CountUp
+        start={0}
+        end={value || 0}
+        duration={duration}
+        separator=","
+        decimals={decimals}
+        decimal="."
+        preserveValue
+      />
+      {suffix}
+    </div>
+  );
+};
 
 const DashboardForm = () => {
   // Set default date range (last 30 days)
@@ -45,6 +87,7 @@ const DashboardForm = () => {
   });
 
   const [interval, setInterval] = useState<IntervalType>('day');
+  const [chartType, setChartType] = useState<ChartType>('bar');
 
   // API calls with current filters
   const dashboardParams: DashboardParams = {
@@ -100,6 +143,131 @@ const DashboardForm = () => {
     return null;
   };
 
+  // Render chart based on type
+  const renderChart = () => {
+    const commonProps = {
+      data: chartDisplayData,
+      margin: {
+        top: 20,
+        right: 30,
+        left: 20,
+        bottom: 60,
+      },
+    };
+
+    const commonAxisProps = {
+      xAxis: {
+        dataKey: 'date',
+        tickLine: false,
+        axisLine: false,
+        className: 'text-xs',
+        angle: -45,
+        textAnchor: 'end' as const,
+        height: 60,
+      },
+      yAxisRevenue: {
+        yAxisId: 'revenue',
+        orientation: 'left' as const,
+        tickLine: false,
+        axisLine: false,
+        className: 'text-xs',
+        tickFormatter: (value: number) => `${(value / 1000).toFixed(0)}K`,
+      },
+      yAxisOrders: {
+        yAxisId: 'orders',
+        orientation: 'right' as const,
+        tickLine: false,
+        axisLine: false,
+        className: 'text-xs',
+      },
+    };
+
+    switch (chartType) {
+      case 'bar':
+        return (
+          <BarChart {...commonProps}>
+            <XAxis {...commonAxisProps.xAxis} />
+            <YAxis {...commonAxisProps.yAxisRevenue} />
+            <YAxis {...commonAxisProps.yAxisOrders} />
+            <Tooltip content={<CustomTooltip />} />
+            <Bar
+              yAxisId="revenue"
+              dataKey="revenue"
+              fill="#3b82f6"
+              name="revenue"
+              radius={[4, 4, 0, 0]}
+            />
+            <Bar
+              yAxisId="orders"
+              dataKey="orders"
+              fill="#39c996"
+              name="orders"
+              radius={[4, 4, 0, 0]}
+            />
+          </BarChart>
+        );
+
+      case 'line':
+        return (
+          <LineChart {...commonProps}>
+            <XAxis {...commonAxisProps.xAxis} />
+            <YAxis {...commonAxisProps.yAxisRevenue} />
+            <YAxis {...commonAxisProps.yAxisOrders} />
+            <Tooltip content={<CustomTooltip />} />
+            <Line
+              yAxisId="revenue"
+              type="monotone"
+              dataKey="revenue"
+              stroke="#3b82f6"
+              strokeWidth={3}
+              dot={{ fill: '#3b82f6', strokeWidth: 2, r: 4 }}
+              activeDot={{ r: 6, fill: '#3b82f6' }}
+            />
+            <Line
+              yAxisId="orders"
+              type="monotone"
+              dataKey="orders"
+              stroke="#39c996"
+              strokeWidth={3}
+              dot={{ fill: '#39c996', strokeWidth: 2, r: 4 }}
+              activeDot={{ r: 6, fill: '#39c996' }}
+            />
+          </LineChart>
+        );
+
+      case 'area':
+        return (
+          <AreaChart {...commonProps}>
+            <XAxis {...commonAxisProps.xAxis} />
+            <YAxis {...commonAxisProps.yAxisRevenue} />
+            <YAxis {...commonAxisProps.yAxisOrders} />
+            <Tooltip content={<CustomTooltip />} />
+            <Area
+              yAxisId="revenue"
+              type="monotone"
+              dataKey="revenue"
+              stroke="#3b82f6"
+              fill="#3b82f6"
+              fillOpacity={0.6}
+              strokeWidth={2}
+            />
+            <Area
+              yAxisId="orders"
+              type="monotone"
+              dataKey="orders"
+              stroke="#39c996"
+              fill="#39c996"
+              fillOpacity={0.6}
+              strokeWidth={2}
+            />
+          </AreaChart>
+        );
+
+      default:
+        return null;
+    }
+  };
+
   return (
     <div className="mt-4 flex h-full w-full flex-col gap-4 overflow-y-scroll">
       {/* Filter Section */}
@@ -149,6 +317,35 @@ const DashboardForm = () => {
               ))}
             </div>
           </div>
+
+          {/* Chart Type Selector */}
+          <div className="flex flex-col gap-2">
+            <label className="ml-2 text-sm font-medium text-gray-700">
+              Chart Type :
+            </label>
+            <div className="flex gap-2">
+              {[
+                { type: 'bar' as ChartType, icon: BarChart3, label: 'Bar' },
+                { type: 'line' as ChartType, icon: LineIcon, label: 'Line' },
+                { type: 'area' as ChartType, icon: Activity, label: 'Area' },
+              ].map(({ type, icon: Icon, label }) => (
+                <Button
+                  key={type}
+                  variant={chartType === type ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => setChartType(type)}
+                  className={`cursor-pointer rounded-xl text-xs transition duration-500 ease-in-out hover:scale-105 ${
+                    chartType === type
+                      ? 'border-2 border-blue-200 bg-blue-100 font-bold text-blue-800 hover:bg-blue-100'
+                      : 'text-gray-700 hover:bg-blue-50'
+                  }`}
+                >
+                  <Icon className="mr-1 h-3 w-3" />
+                  {label}
+                </Button>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
 
@@ -170,12 +367,20 @@ const DashboardForm = () => {
               </>
             ) : (
               <>
-                <div className="font-bold text-gray-900">
-                  {statsData?.customers?.total || 0}
-                </div>
+                <AnimatedNumber
+                  value={statsData?.customers?.total || 0}
+                  duration={2.5}
+                />
                 <p className="text-muted-foreground text-xs">
-                  +{statsData?.customers?.growth || 0} (
-                  {statsData?.customers?.growthPercent || '0'}%) previous period
+                  +
+                  <CountUp
+                    start={0}
+                    end={statsData?.customers?.growth || 0}
+                    duration={2}
+                    preserveValue
+                  />{' '}
+                  ({statsData?.customers?.growthPercent || '0'}%) previous
+                  period
                 </p>
               </>
             )}
@@ -198,12 +403,19 @@ const DashboardForm = () => {
               </>
             ) : (
               <>
-                <div className="font-bold text-gray-900">
-                  {statsData?.orders?.total || 0}
-                </div>
+                <AnimatedNumber
+                  value={statsData?.orders?.total || 0}
+                  duration={2.8}
+                />
                 <p className="text-muted-foreground text-xs">
-                  +{statsData?.orders?.growth || 0} (
-                  {statsData?.orders?.growthPercent || '0'}%) previous period
+                  +
+                  <CountUp
+                    start={0}
+                    end={statsData?.orders?.growth || 0}
+                    duration={2.2}
+                    preserveValue
+                  />{' '}
+                  ({statsData?.orders?.growthPercent || '0'}%) previous period
                 </p>
               </>
             )}
@@ -226,11 +438,20 @@ const DashboardForm = () => {
               </>
             ) : (
               <>
-                <div className="font-bold text-gray-900">
-                  {statsData?.revenue?.total?.toLocaleString() || 0} VNĐ
-                </div>
+                <AnimatedNumber
+                  value={statsData?.revenue?.total || 0}
+                  suffix=" VNĐ"
+                  duration={3}
+                />
                 <p className="text-muted-foreground text-xs">
-                  TB: {statsData?.revenue?.avgPerOrder?.toLocaleString() || 0}{' '}
+                  TB:{' '}
+                  <CountUp
+                    start={0}
+                    end={statsData?.revenue?.avgPerOrder || 0}
+                    duration={2.5}
+                    separator=","
+                    preserveValue
+                  />{' '}
                   VNĐ/order
                 </p>
               </>
@@ -271,11 +492,16 @@ const DashboardForm = () => {
       {/* Main Chart Section */}
       <Card className="bg-overlay-slider/8 shadow-around">
         <CardHeader>
-          <div className="flex items-center">
-            <TrendingUp className="text-overlay-slider mr-2 h-5 w-5" />
-            <CardTitle className="text-overlay-slider text-sm font-bold">
-              REVENUE CHART & ORDERS
-            </CardTitle>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center">
+              <TrendingUp className="text-overlay-slider mr-2 h-5 w-5" />
+              <CardTitle className="text-overlay-slider text-sm font-bold">
+                REVENUE CHART & ORDERS
+              </CardTitle>
+            </div>
+            <div className="text-xs text-gray-500 capitalize">
+              {chartType} Chart
+            </div>
           </div>
         </CardHeader>
         <CardContent>
@@ -296,55 +522,7 @@ const DashboardForm = () => {
             </div>
           ) : chartDisplayData.length > 0 ? (
             <ResponsiveContainer width="100%" height={400}>
-              <BarChart
-                data={chartDisplayData}
-                margin={{
-                  top: 20,
-                  right: 30,
-                  left: 20,
-                  bottom: 60,
-                }}
-              >
-                <XAxis
-                  dataKey="date"
-                  tickLine={false}
-                  axisLine={false}
-                  className="text-xs"
-                  angle={-45}
-                  textAnchor="end"
-                  height={60}
-                />
-                <YAxis
-                  yAxisId="revenue"
-                  orientation="left"
-                  tickLine={false}
-                  axisLine={false}
-                  className="text-xs"
-                  tickFormatter={(value) => `${(value / 1000).toFixed(0)}K`}
-                />
-                <YAxis
-                  yAxisId="orders"
-                  orientation="right"
-                  tickLine={false}
-                  axisLine={false}
-                  className="text-xs"
-                />
-                <Tooltip content={<CustomTooltip />} />
-                <Bar
-                  yAxisId="revenue"
-                  dataKey="revenue"
-                  fill="#3b82f6"
-                  name="revenue"
-                  radius={[4, 4, 0, 0]}
-                />
-                <Bar
-                  yAxisId="orders"
-                  dataKey="orders"
-                  fill="#39c996"
-                  name="orders"
-                  radius={[4, 4, 0, 0]}
-                />
-              </BarChart>
+              {renderChart()}
             </ResponsiveContainer>
           ) : (
             <div className="flex h-[400px] items-center justify-center text-gray-500">

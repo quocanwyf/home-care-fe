@@ -24,6 +24,7 @@ import {
   YAxis,
 } from 'recharts';
 
+import { ExportButton } from '@/components/common/button/ExportButton';
 import { DateRangePicker } from '@/components/common/date-picker/DateRangePicker';
 import type { FormattedDateRange } from '@/components/common/date-picker/DateRangePicker';
 import { Button } from '@/components/ui/button';
@@ -34,6 +35,8 @@ import {
   useGetDashboardChart,
   useGetDashboardStats,
 } from '@/hooks/api/useDashboard.api';
+import { useDashboardExport } from '@/hooks/common/useDashboardExport';
+import { useIsTabletOrMobile } from '@/hooks/common/useIsTabletOrMobile';
 import type {
   ChartParams,
   DashboardParams,
@@ -80,6 +83,7 @@ const DashboardForm = () => {
   const defaultEndDate = new Date();
   const defaultStartDate = new Date();
   defaultStartDate.setDate(defaultStartDate.getDate() - 30);
+  const isMobile = useIsTabletOrMobile();
 
   const [dateRange, setDateRange] = useState<FormattedDateRange>({
     startDate: formatDateToDDMMYYYY(defaultStartDate),
@@ -124,6 +128,26 @@ const DashboardForm = () => {
       orders: item.orders,
     })) || [];
 
+  const { exportData, exportOptions } = useDashboardExport({
+    statsData,
+    chartData: chartDisplayData,
+    dateRange,
+    interval,
+    chartType,
+  });
+
+  const handleExportComplete = (success: boolean, message: string) => {
+    if (success) {
+      // Show success notification (replace with your toast library)
+      console.log('✅ Export Success:', message);
+      // toast.success(message);
+    } else {
+      // Show error notification
+      console.error('❌ Export Error:', message);
+      // toast.error(message);
+    }
+  };
+
   // Custom Tooltip Component
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
@@ -147,12 +171,9 @@ const DashboardForm = () => {
   const renderChart = () => {
     const commonProps = {
       data: chartDisplayData,
-      margin: {
-        top: 20,
-        right: 30,
-        left: 20,
-        bottom: 60,
-      },
+      margin: isMobile
+        ? { top: 10, right: 10, left: 10, bottom: 40 } // Compact margins on mobile
+        : { top: 20, right: 30, left: 20, bottom: 60 },
     };
 
     const commonAxisProps = {
@@ -161,9 +182,11 @@ const DashboardForm = () => {
         tickLine: false,
         axisLine: false,
         className: 'text-xs',
-        angle: -45,
+        angle: isMobile ? -90 : -45, // Vertical on mobile, diagonal on desktop
         textAnchor: 'end' as const,
-        height: 60,
+        height: isMobile ? 40 : 60,
+        interval: isMobile ? 'preserveStartEnd' : 0, // Show fewer ticks on mobile
+        tick: { fontSize: isMobile ? 10 : 12 },
       },
       yAxisRevenue: {
         yAxisId: 'revenue',
@@ -171,7 +194,12 @@ const DashboardForm = () => {
         tickLine: false,
         axisLine: false,
         className: 'text-xs',
-        tickFormatter: (value: number) => `${(value / 1000).toFixed(0)}K`,
+        tickFormatter: (value: number) =>
+          isMobile
+            ? `${(value / 1000000).toFixed(0)}M` // Compact format: 5M
+            : `${(value / 1000).toFixed(0)}K`, // Desktop format: 5000K
+        tick: { fontSize: isMobile ? 10 : 12 },
+        width: isMobile ? 35 : 60,
       },
       yAxisOrders: {
         yAxisId: 'orders',
@@ -179,6 +207,8 @@ const DashboardForm = () => {
         tickLine: false,
         axisLine: false,
         className: 'text-xs',
+        tick: { fontSize: isMobile ? 10 : 12 },
+        width: isMobile ? 25 : 50,
       },
     };
 
@@ -277,9 +307,18 @@ const DashboardForm = () => {
             <TableProperties className="text-overlay-slider mr-2 h-5 w-5" />
             <p className="text-overlay-slider text-sm">DASHBOARD FILTERS</p>
           </div>
+
+          <ExportButton
+            data={exportData}
+            options={exportOptions}
+            onExportComplete={handleExportComplete}
+            className=""
+            size="sm"
+            variant="outline"
+          />
         </div>
 
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
+        <div className="tablet:flex-row tablet:items-center flex flex-col gap-4">
           {/* Date Range Picker */}
           <div className="flex flex-col gap-2">
             <label className="ml-2 text-sm font-medium text-gray-700">
@@ -490,7 +529,7 @@ const DashboardForm = () => {
       </div>
 
       {/* Main Chart Section */}
-      <Card className="bg-overlay-slider/8 shadow-around">
+      <Card className="bg-overlay-slider/8 shadow-around max-mobile:-mx-10">
         <CardHeader>
           <div className="flex items-center justify-between">
             <div className="flex items-center">

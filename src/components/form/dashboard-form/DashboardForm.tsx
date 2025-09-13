@@ -309,8 +309,7 @@ const DashboardForm = () => {
           </div>
 
           <ExportButton
-            data={exportData}
-            options={exportOptions}
+            dateRange={dateRange}
             onExportComplete={handleExportComplete}
             className="mt-2"
             size="sm"

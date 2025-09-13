@@ -67,12 +67,12 @@ export const orderFormSchema = z.object({
 
   // Location codes
   wardCode: z.string().min(1).default(''),
-  districtCode: z.string().min(1).default(''),
+  // districtCode: z.string().min(1).default(''),
   provinceCode: z.string().min(1).default(''),
 
   // Location names
   ward: z.string().min(1, 'Ward is required').default(''),
-  district: z.string().min(1, 'District is required').default(''),
+  // district: z.string().min(1, 'District is required').default(''),
   province: z.string().min(1, 'Province is required').default(''),
 
   // Account status

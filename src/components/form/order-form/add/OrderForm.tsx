@@ -103,7 +103,6 @@ export default function OrderForm() {
 
         // Location names
         ward: data.ward,
-        district: data.district,
         province: data.province,
 
         // Account status

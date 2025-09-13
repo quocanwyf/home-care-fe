@@ -87,6 +87,9 @@ export const calculateTotalCost = (
   }
   const { hoursBreakdown, formData } = data;
 
+  console.log('Calculating total cost with data:', data);
+  console.log('Hours Breakdown:', hoursBreakdown);
+
   const {
     serviceBasePrice,
     coefficient_service,
@@ -114,6 +117,12 @@ export const calculateTotalCost = (
     // totalDays++;
     const isWeekendDay = isWeekend(currentDate);
 
+    // max cuoi tuan hoac le
+    const max_coefficient_other =
+      data.activeCoeffs.weekend > data.activeCoeffs.holiday
+        ? data.activeCoeffs.weekend
+        : data.activeCoeffs.holiday;
+
     // if (isWeekendDay) {
     //   weekendDays++;
     // } else {
@@ -126,12 +135,15 @@ export const calculateTotalCost = (
     //if weekend then nhân hs weekend dô
     if (isWeekendDay) {
       dailyCostT1 =
-        coefficient_ot * hoursBreakdown.overtimeHours * coefficient_other;
-      dailyCostT2 = coefficient_other * hoursBreakdown.officeHours;
+        coefficient_ot * hoursBreakdown.overtimeHours * max_coefficient_other;
+      dailyCostT2 = max_coefficient_other * hoursBreakdown.officeHours;
     } else {
       //if k có weekend then  khỏi nhân hs weekend dô
-      dailyCostT1 = coefficient_ot * hoursBreakdown.overtimeHours;
-      dailyCostT2 = hoursBreakdown.officeHours;
+      dailyCostT1 =
+        coefficient_ot *
+        hoursBreakdown.overtimeHours *
+        data.activeCoeffs.holiday;
+      dailyCostT2 = hoursBreakdown.officeHours * data.activeCoeffs.holiday;
     }
     //   Calculate final cost
     const dailyCost = baseCost * (dailyCostT1 + dailyCostT2);

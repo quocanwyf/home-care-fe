@@ -75,7 +75,6 @@ export const getDistrictsApi = async (
 
 export const getWardsApi = async (
   provinceCode: string,
-  districtCode: string,
   search?: string,
   signal?: AbortSignal
 ): Promise<WardResponse> => {
@@ -85,7 +84,7 @@ export const getWardsApi = async (
     queryParams.append('search', normalizeSearchTerm(search.trim()));
   }
 
-  const url = `${import.meta.env.VITE_API_BASE_URL}/admin/locations/ward/${provinceCode}/${districtCode}${
+  const url = `${import.meta.env.VITE_API_BASE_URL}/admin/locations/ward/${provinceCode}${
     queryParams.toString() ? `?${queryParams.toString()}` : ''
   }`;
 

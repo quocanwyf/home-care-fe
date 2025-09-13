@@ -9,17 +9,16 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import {
-  type ExportData,
-  type ExportOptions,
-  useExport,
-} from '@/hooks/common/useExport';
+import { useDownloadExcelExport } from '@/hooks/api/useExport.api';
 
 import TooltipInfo from '../primitives/TooltipInfo';
 
 interface ExportButtonProps {
-  data: ExportData;
-  options?: ExportOptions;
+  // ✅ Simplified props - only need date range for API
+  dateRange: {
+    startDate: string;
+    endDate: string;
+  };
   onExportComplete?: (success: boolean, message: string) => void;
   className?: string;
   size?: 'sm' | 'md' | 'lg';
@@ -28,23 +27,36 @@ interface ExportButtonProps {
 }
 
 export const ExportButton: React.FC<ExportButtonProps> = ({
-  data,
-  options = {},
+  dateRange,
   onExportComplete,
   className = '',
   size = 'sm',
   variant = 'outline',
   disabled = false,
 }) => {
-  const { isExporting, handleExport } = useExport();
+  // ✅ Use API hook instead of client-side export
+  const exportMutation = useDownloadExcelExport();
 
-  const onExport = async (format: 'csv' | 'excel' | 'pdf') => {
-    const result = await handleExport(format, data, options);
+  const handleExportExcel = async () => {
+    try {
+      await exportMutation.mutateAsync({
+        startDate: dateRange.startDate,
+        endDate: dateRange.endDate,
+      });
 
-    if (onExportComplete) {
-      onExportComplete(result.success, result.message);
+      // Success callback
+      if (onExportComplete) {
+        onExportComplete(true, 'Successfully exported Excel file');
+      }
+    } catch (error) {
+      // Error callback
+      if (onExportComplete) {
+        onExportComplete(false, 'Server error');
+      }
     }
   };
+
+  const isExporting = exportMutation.isPending;
 
   return (
     <DropdownMenu>
@@ -70,29 +82,14 @@ export const ExportButton: React.FC<ExportButtonProps> = ({
       </TooltipInfo>
 
       <DropdownMenuContent align="end" className="w-48">
+        {/* ✅ Only Excel export via API */}
         <DropdownMenuItem
-          onClick={() => onExport('csv')}
+          onClick={handleExportExcel}
           className="cursor-pointer"
           disabled={isExporting}
         >
           <Download className="mr-2 h-4 w-4" />
-          Export as CSV
-        </DropdownMenuItem>
-        <DropdownMenuItem
-          onClick={() => onExport('excel')}
-          className="cursor-pointer"
-          disabled={isExporting}
-        >
-          <Download className="mr-2 h-4 w-4" />
-          Export as Excel
-        </DropdownMenuItem>
-        <DropdownMenuItem
-          onClick={() => onExport('pdf')}
-          className="cursor-pointer"
-          disabled={isExporting}
-        >
-          <Download className="mr-2 h-4 w-4" />
-          Export as PDF
+          {isExporting ? 'Exporting...' : 'Export as Excel'}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

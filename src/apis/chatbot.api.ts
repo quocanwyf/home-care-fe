@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-import type { OpenAIResponse } from '@/types/table/objects/chatbot';
+import type { GroqResponse } from '@/types/table/objects/chatbot';
 
 const GROQ_API_KEY = import.meta.env.VITE_GROQ_API_KEY;
 const GROQ_API_URL = import.meta.env.VITE_GROQ_API_URL;
@@ -13,7 +13,7 @@ export const sendMessageToOpenAI = async (message: string): Promise<string> => {
   try {
     console.log('Sending request to Groq...');
 
-    const response = await axios.post<OpenAIResponse>(
+    const response = await axios.post<GroqResponse>(
       GROQ_API_URL,
       {
         model: 'llama-3.1-8b-instant', // Groq's free model

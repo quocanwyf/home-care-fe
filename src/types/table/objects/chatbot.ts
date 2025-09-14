@@ -11,7 +11,7 @@ export interface ChatBotState {
   isOpen: boolean;
 }
 
-export interface OpenAIResponse {
+export interface GroqResponse {
   choices: {
     message: {
       content: string;

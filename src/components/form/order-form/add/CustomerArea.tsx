@@ -38,16 +38,12 @@ const CustomerArea = ({
   } = form;
   const watchedPhone = watch('phone');
   const watchedProvince = watch('province');
-  const watchedDistrict = watch('district');
   const watchedProvinceCode = watch('provinceCode');
-  const watchedDistrictCode = watch('districtCode');
 
   const selectedProvinceCode = getValues('provinceCode');
-  const selectedDistrictCode = getValues('districtCode');
 
   const [isSearching, setIsSearching] = useState(false);
   const [provinceSearch, setProvinceSearch] = useState('');
-  const [districtSearch, setDistrictSearch] = useState('');
   const [wardSearch, setWardSearch] = useState('');
 
   const { showSuccess, showError, showInfo } = useToast();
@@ -61,17 +57,13 @@ const CustomerArea = ({
     error: provincesError,
   } = useGetProvinces(provinceSearch);
 
-  const {
-    data: districtsData,
-    isLoading: districtsLoading,
-    error: districtsError,
-  } = useGetDistricts(selectedProvinceCode, districtSearch);
+  console.log('Provinces Data:', provincesData);
 
   const {
     data: wardsData,
     isLoading: wardsLoading,
     error: wardsError,
-  } = useGetWards(selectedProvinceCode, selectedDistrictCode, wardSearch);
+  } = useGetWards(selectedProvinceCode, wardSearch);
 
   const handleSearchCustomer = async () => {
     if (!watchedPhone?.trim()) return;
@@ -91,10 +83,8 @@ const CustomerArea = ({
         setValue('fullName', customerData.cusName, { shouldValidate: true });
         setValue('address', address.detailAddress, { shouldValidate: true });
         setValue('province', address.province, { shouldValidate: true });
-        setValue('district', address.district, { shouldValidate: true });
         setValue('ward', address.ward, { shouldValidate: true });
         setValue('provinceCode', address.provinceId, { shouldValidate: true });
-        setValue('districtCode', address.districtId, { shouldValidate: true });
         setValue('wardCode', address.wardId, { shouldValidate: true });
         setValue('isCusHasAcc', true, { shouldValidate: true });
 
@@ -122,21 +112,6 @@ const CustomerArea = ({
     });
     setValue('provinceCode', provinceCode, { shouldValidate: true });
     // Reset dependent fields
-    setValue('district', '', { shouldValidate: true });
-    setValue('ward', '', { shouldValidate: true });
-    setValue('districtCode', '', { shouldValidate: true });
-    setValue('wardCode', '', { shouldValidate: true });
-  };
-
-  const handleDistrictSelect = (
-    districtCode: string,
-    districtName?: string
-  ) => {
-    setValue('district', districtName || districtCode, {
-      shouldValidate: true,
-    });
-    setValue('districtCode', districtCode, { shouldValidate: true });
-    // Reset ward
     setValue('ward', '', { shouldValidate: true });
     setValue('wardCode', '', { shouldValidate: true });
   };
@@ -151,12 +126,6 @@ const CustomerArea = ({
     provincesData?.result?.map((province) => ({
       label: province.provinceName,
       value: province.provinceId,
-    })) || [];
-
-  const districtOptions =
-    districtsData?.result?.map((district) => ({
-      label: district.districtName,
-      value: district.districtCode,
     })) || [];
 
   const wardOptions =
@@ -278,72 +247,50 @@ const CustomerArea = ({
               )}
             />
           </div>
-          <div className="flex-1">
-            <SearchableDropdown
-              className="px-2"
-              label={{
-                labelTitle: 'City',
-                icon: <Hotel className="h-3 w-3" />,
-              }}
-              input={{
-                inputId: 'cityCustomer',
-                inputName: 'cityCustomer',
-                className: 'w-full',
-                placeholder: 'Select city',
-                value: watchedProvince || '',
-              }}
-              options={provinceOptions}
-              onSelect={handleCitySelect}
-              onSearch={setProvinceSearch}
-              isLoading={provincesLoading}
-              error={errors.province?.message || provincesError?.message}
-            />
-          </div>
-        </div>
-        <div className="max-tablet:grid-cols-1 mb-4 grid w-full grid-cols-2 gap-4">
-          <div className="flex-1">
-            <SearchableDropdown
-              className="px-2"
-              label={{
-                labelTitle: 'District',
-                icon: <MemoryStick className="h-3 w-3" />,
-              }}
-              input={{
-                inputId: 'districtCustomer',
-                inputName: 'districtCustomer',
-                className: 'w-full',
-                placeholder: 'Select district',
-                value: watchedDistrict || '',
-                disabled: !watchedProvinceCode,
-              }}
-              options={districtOptions}
-              onSelect={handleDistrictSelect}
-              onSearch={setDistrictSearch}
-              isLoading={districtsLoading}
-              error={errors.district?.message || districtsError?.message}
-            />
-          </div>
-          <div className="flex-1">
-            <SearchableDropdown
-              className="px-2"
-              label={{
-                labelTitle: 'Ward',
-                icon: <Factory className="h-3 w-3" />,
-              }}
-              input={{
-                inputId: 'wardCustomer',
-                inputName: 'wardCustomer',
-                className: 'w-full',
-                placeholder: 'Select ward',
-                value: watch('ward') || '',
-                disabled: !watchedDistrictCode || !watchedProvinceCode,
-              }}
-              options={wardOptions}
-              onSelect={handleWardSelect}
-              onSearch={setWardSearch}
-              isLoading={wardsLoading}
-              error={errors.ward?.message || wardsError?.message}
-            />
+          <div className="max-tablet:grid-cols-1 grid flex-1 grid-cols-2 gap-4">
+            <div className="flex-1">
+              <SearchableDropdown
+                className="px-2"
+                label={{
+                  labelTitle: 'City',
+                  icon: <Hotel className="h-3 w-3" />,
+                }}
+                input={{
+                  inputId: 'cityCustomer',
+                  inputName: 'cityCustomer',
+                  className: 'w-full',
+                  placeholder: 'Select city',
+                  value: watchedProvince || '',
+                }}
+                options={provinceOptions}
+                onSelect={handleCitySelect}
+                onSearch={setProvinceSearch}
+                isLoading={provincesLoading}
+                error={errors.province?.message || provincesError?.message}
+              />
+            </div>
+            <div className="flex-1">
+              <SearchableDropdown
+                className="px-2"
+                label={{
+                  labelTitle: 'Ward',
+                  icon: <Factory className="h-3 w-3" />,
+                }}
+                input={{
+                  inputId: 'wardCustomer',
+                  inputName: 'wardCustomer',
+                  className: 'w-full',
+                  placeholder: 'Select ward',
+                  value: watch('ward') || '',
+                  disabled: !watchedProvinceCode,
+                }}
+                options={wardOptions}
+                onSelect={handleWardSelect}
+                onSearch={setWardSearch}
+                isLoading={wardsLoading}
+                error={errors.ward?.message || wardsError?.message}
+              />
+            </div>
           </div>
         </div>
       </div>

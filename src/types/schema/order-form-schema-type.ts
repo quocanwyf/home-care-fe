@@ -31,12 +31,12 @@ export const defaultOrderFormValues: OrderFormSchemaType = {
 
   // Location codes
   wardCode: '',
-  districtCode: '',
+  // districtCode: '',
   provinceCode: '',
 
   // Location names
   ward: '',
-  district: '',
+  // district: '',
   province: '',
 
   // Account status

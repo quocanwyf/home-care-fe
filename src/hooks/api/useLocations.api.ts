@@ -29,16 +29,11 @@ export const useGetDistricts = (provinceCode: string, search?: string) => {
   });
 };
 
-export const useGetWards = (
-  provinceCode: string,
-  districtCode: string,
-  search?: string
-) => {
+export const useGetWards = (provinceCode: string, search?: string) => {
   return useQuery<WardResponse, Error>({
-    queryKey: ['wards', provinceCode, districtCode, search],
-    queryFn: ({ signal }) =>
-      getWardsApi(provinceCode, districtCode, search, signal),
-    enabled: !!provinceCode && !!districtCode, // Only run when provinceCode and districtCode exist
+    queryKey: ['wards', provinceCode, search],
+    queryFn: ({ signal }) => getWardsApi(provinceCode, search, signal),
+    enabled: !!provinceCode, // Only run when provinceCode exists
     staleTime: 5 * 60 * 1000,
     refetchOnWindowFocus: false,
   });

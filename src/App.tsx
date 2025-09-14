@@ -2,7 +2,7 @@ import 'animate.css';
 
 import { TooltipProvider } from '@radix-ui/react-tooltip';
 
-import Chatbot from './components/chatbot/ChatBot';
+import Chatbot from './components/chatbot/Chatbot';
 import ConfigToaster from './config/ConfigToaster';
 import { ThemeProvider } from './context/ThemeContext';
 import AppRouter from './router/AppRouter';

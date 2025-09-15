@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react';
 
 import ConfirmDialog from '@/components/common/float-display/ConfirmDialog';
+import NotificationBanner from '@/components/socketio/NotificationBanner';
 import { AppTable } from '@/components/table/app-table/AppTable';
 import { STATUS_ORDERS } from '@/constants/dropdown/status-orders';
+import { useSocket } from '@/context/SocketContext';
 import { handleView } from '@/helpers/handle-table-actions';
 // import { data } from '@/constants/mock-data/mock-data-orders';
 import { useDeleteOrder, useGetOrders } from '@/hooks/api/useOrders.api';
@@ -20,6 +22,13 @@ const OrdersPage = () => {
   const { showError } = useToast();
   const [orders, setOrders] = useState([]);
   const navigateTo = useAppNavigate();
+
+  const {
+    newRequestsCount,
+    showNotificationBanner,
+    resetNotificationCount,
+    hideNotificationBanner,
+  } = useSocket();
 
   const deleteOrderMutation = useDeleteOrder();
 
@@ -122,8 +131,25 @@ const OrdersPage = () => {
     }
   }, [isError, error, showError]);
 
+  const handleUpdateOrders = () => {
+    refetchOrders(); // Refresh data
+    resetNotificationCount(); // Reset counter
+  };
+
+  const handleCloseBanner = () => {
+    hideNotificationBanner();
+  };
+
+  console.log('Orders data:', orders);
+
   return (
     <>
+      <NotificationBanner
+        count={newRequestsCount}
+        onUpdate={handleUpdateOrders}
+        onClose={handleCloseBanner}
+        isVisible={showNotificationBanner}
+      />
       <AppTable
         data={orders}
         columns={orderColumn(

@@ -19,7 +19,7 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSend, isLoading }) => {
   return (
     <form onSubmit={handleSend} className="flex gap-2 border-t bg-white p-2">
       <input
-        className="flex-1 rounded border px-3 py-2 text-sm"
+        className="flex-1 rounded-xl border px-3 py-2 text-sm"
         type="text"
         value={input}
         onChange={(e) => setInput(e.target.value)}
@@ -28,10 +28,10 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSend, isLoading }) => {
       />
       <button
         type="submit"
-        className="rounded bg-blue-600 px-4 py-2 text-white transition hover:bg-blue-700"
+        className="bg-overlay-slider/90 hover:bg-overlay-slider rounded-2xl px-4 py-2 text-white transition"
         disabled={isLoading}
       >
-        Gửi
+        <span className="text-sm">{isLoading ? 'Sending...' : 'Send'}</span>
       </button>
     </form>
   );

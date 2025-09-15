@@ -71,6 +71,8 @@ export default function OrderForm() {
 
   const handleSubmitOrder = handleSubmit(async (data: OrderFormSchemaType) => {
     try {
+      sessionStorage.setItem('admin-creating-order', 'true');
+
       const orderPayload = {
         // Service info
         serviceTitle: data.serviceTitle,
@@ -119,9 +121,11 @@ export default function OrderForm() {
           delay: 700,
         });
       } else {
+        sessionStorage.removeItem('admin-creating-order');
         showError(response.message || 'Failed to add order');
       }
     } catch (error: any) {
+      sessionStorage.removeItem('admin-creating-order');
       console.error('Submit order error:', error);
       showError(
         error?.response?.data?.message ||

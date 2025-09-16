@@ -48,7 +48,7 @@ export const HeaderAvatarDropdown = ({
           isLoading ? 'cursor-not-allowed opacity-50' : ''
         }`}
         contentTooltip={
-          isLoading ? 'Processing...' : user?.user?.fullName || 'User Menu'
+          isLoading ? 'Processing...' : user?.fullName || 'User Menu'
         }
       />
     </AppDropdown>

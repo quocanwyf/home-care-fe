@@ -87,6 +87,7 @@ export default function TimePickerDropdown({
     if (checkSelectedDateInPastTime === todayString) {
       // If it's today, disable past times
       const now = new Date();
+      now.setHours(now.getHours() + 2);
       const currentTime = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
 
       return timeString <= currentTime;

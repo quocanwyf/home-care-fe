@@ -25,7 +25,7 @@ export const useGetOrders = (params: OrderParams) => {
   return useQuery({
     queryKey: ['orders', params], // `params` là một phần của key, khi nó thay đổi, query sẽ fetch lại
     queryFn: ({ signal }) => getOrdersApi(params, signal),
-    refetchOnWindowFocus: true,
+    refetchOnWindowFocus: false,
   });
 };
 

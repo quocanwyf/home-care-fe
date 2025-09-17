@@ -57,8 +57,6 @@ const CustomerArea = ({
     error: provincesError,
   } = useGetProvinces(provinceSearch);
 
-  console.log('Provinces Data:', provincesData);
-
   const {
     data: wardsData,
     isLoading: wardsLoading,

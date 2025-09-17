@@ -77,11 +77,8 @@ const CustomersPage = () => {
     }
   }, [isError, error, showError]);
 
-  console.log(customers);
-
   const handleView = (row: any) => {
     navigateTo(`/customers/detail/${row.phoneNumber}`);
-    console.log(row);
   };
 
   return (

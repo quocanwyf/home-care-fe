@@ -19,7 +19,6 @@ const CustomerOrdersInformation = ({
   const navigateTo = useAppNavigate();
 
   const handleViewOrderDetail = (order: string) => {
-    console.log('testcc', order);
     navigateTo(`/orders/detail/${order.orderId}`, {
       toast: {
         type: 'success',

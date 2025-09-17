@@ -74,8 +74,6 @@ const CoefficientPage = () => {
     limit: pageSize || 10,
   };
 
-  console.log('Params for API:', params);
-
   // API Call
   const {
     data: coefficientFetchData,
@@ -124,7 +122,6 @@ const CoefficientPage = () => {
     setEditingCoefficient(null);
   };
 
-  console.log(coefficientFetchData);
   return (
     <>
       <AppTable

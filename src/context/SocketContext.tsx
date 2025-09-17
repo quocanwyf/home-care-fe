@@ -48,8 +48,8 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
     });
 
     // Lắng nghe event "request" từ Backend
-    socketInstance.on('request', (newRequest: any) => {
-      console.log('New request received:', newRequest);
+    socketInstance.on('new_request', (newRequest: any) => {
+      console.log('New request receiveddđ:', newRequest);
 
       // Chỉ hiển thị notification khi đang ở trang orders
       const isAdminCreated = sessionStorage.getItem('admin-creating-order');

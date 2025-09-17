@@ -93,8 +93,6 @@ const StaffForm: React.FC<StaffFormProps> = ({ mode = 'create', staffId }) => {
       const staff = editInfo.staff;
       const roles = editInfo.roles || [];
 
-      console.log('Staff edit data received:', editInfo);
-
       // Find role info
       const roleInfo = roles.find((role) => role._id === staff.role_id);
       const roleFormatted = roleInfo
@@ -259,7 +257,6 @@ const StaffForm: React.FC<StaffFormProps> = ({ mode = 'create', staffId }) => {
       }
     },
     (errors) => {
-      console.log('Form validation errors:', errors);
       const firstErrorField = Object.keys(errors)[0];
       const firstError = errors[firstErrorField as keyof typeof errors];
 

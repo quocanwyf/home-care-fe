@@ -109,7 +109,6 @@ const DashboardForm = () => {
     useGetDashboardStats(dashboardParams);
   const { data: chartData, isLoading: chartLoading } =
     useGetDashboardChart(chartParams);
-  console.log(chartData);
   const handleDateRangeChange = (range: FormattedDateRange | undefined) => {
     if (range) {
       setDateRange(range);
@@ -127,14 +126,6 @@ const DashboardForm = () => {
       revenue: item.revenue,
       orders: item.orders,
     })) || [];
-
-  const { exportData, exportOptions } = useDashboardExport({
-    statsData,
-    chartData: chartDisplayData,
-    dateRange,
-    interval,
-    chartType,
-  });
 
   const handleExportComplete = (success: boolean, message: string) => {
     if (success) {

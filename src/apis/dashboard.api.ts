@@ -44,7 +44,6 @@ export const getDashboardChartApi = async (
   queryParams.append('startDate', params.startDate);
   queryParams.append('endDate', params.endDate);
   queryParams.append('interval', params.interval);
-  console.log('dcmmmmmmmmmmmm', params);
 
   const url = `${import.meta.env.VITE_API_BASE_URL}/admin/dashboard/chart?${queryParams.toString()}`;
 

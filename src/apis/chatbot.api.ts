@@ -11,8 +11,6 @@ export const sendMessageToOpenAI = async (message: string): Promise<string> => {
   }
 
   try {
-    console.log('Sending request to Groq...');
-
     const response = await axios.post<GroqResponse>(
       GROQ_API_URL,
       {

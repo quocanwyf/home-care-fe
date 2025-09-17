@@ -8,7 +8,6 @@ interface CustomerInformationProps {
 }
 
 const CustomerInformation = ({ customerData }: CustomerInformationProps) => {
-  console.log('lozzque', customerData);
   const customer = customerData?.customer;
 
   if (!customer) {

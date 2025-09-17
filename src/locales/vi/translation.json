@@ -1,0 +1,44 @@
+{
+  "common": {
+    "save": "Lưu",
+    "cancel": "Hủy",
+    "delete": "Xóa",
+    "edit": "Sửa",
+    "add": "Thêm",
+    "search": "Tìm kiếm",
+    "loading": "Đang tải...",
+    "success": "Thành công",
+    "error": "Lỗi",
+    "confirm": "Xác nhận",
+    "back": "Quay lại",
+    "next": "Tiếp theo",
+    "previous": "Trước"
+  },
+  "navigation": {
+    "dashboard": "Trang chủ",
+    "orders": "Đơn hàng",
+    "customers": "Khách hàng",
+    "services": "Dịch vụ",
+    "staff": "Nhân viên",
+    "reports": "Báo cáo",
+    "settings": "Cài đặt"
+  },
+  "auth": {
+    "login": "Đăng nhập",
+    "logout": "Đăng xuất",
+    "email": "Email",
+    "password": "Mật khẩu",
+    "forgotPassword": "Quên mật khẩu?",
+    "rememberMe": "Ghi nhớ đăng nhập"
+  },
+  "orders": {
+    "title": "Quản lý đơn hàng",
+    "addOrder": "Thêm đơn hàng",
+    "orderDetails": "Chi tiết đơn hàng",
+    "status": "Trạng thái",
+    "customer": "Khách hàng",
+    "service": "Dịch vụ",
+    "date": "Ngày",
+    "amount": "Số tiền"
+  }
+}

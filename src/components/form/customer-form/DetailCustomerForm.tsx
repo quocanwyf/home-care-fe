@@ -29,10 +29,6 @@ const DetailCustomerForm = () => {
     error: ordersError,
   } = useGetCustomerOrders(id || ''); // Use id as phone number
 
-  console.log('Customer ID (Phone):', id);
-  console.log('Customer Detail Data:', customerDetailData);
-  console.log('Customer Orders Data:', customerOrdersData);
-
   useEffect(() => {
     if (isCustomerError && customerError) {
       showError(`Customer Error: ${customerError.message}`);

@@ -10,6 +10,7 @@ import { useSearch } from '@/context/SearchContext';
 
 import { DateRangePicker } from '../common/date-picker/DateRangePicker';
 import { HeaderAvatarDropdown } from '../common/dropdowns/HeaderAvatarDropdown';
+import LanguageSwitcher from '../common/dropdowns/LanguageSwitcher';
 import ThemeDropdown from '../common/dropdowns/ThemeDropdown';
 import SearchInput from '../common/input/SearchInput';
 
@@ -116,7 +117,12 @@ const Header = ({
               className="transition-transform duration-300 ease-in-out hover:scale-110"
               contentTooltip="Toggle theme mode"
             /> */}
-            <ThemeDropdown />
+            <div className="max-tablet:hidden">
+              <ThemeDropdown />
+            </div>
+            <div className="max-tablet:hidden -mr-4">
+              <LanguageSwitcher />
+            </div>
           </div>
         </div>
       </div>

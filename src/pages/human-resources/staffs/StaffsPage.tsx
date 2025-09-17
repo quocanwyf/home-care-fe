@@ -70,7 +70,6 @@ const StaffsPage = () => {
       setStaffs(test.staffs || []);
     }
   }, [staffsData]);
-  console.log(staffs);
 
   useEffect(() => {
     if (isError) {

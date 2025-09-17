@@ -61,8 +61,6 @@ const MaidForm: React.FC<MaidFormProps> = ({ mode = 'create', helperId }) => {
       const helper = helperEditData.helper;
       const coefficientList = helperEditData.coefficientList || [];
 
-      console.log('Helper data received:', helperEditData);
-
       // Convert jobs from API format to form format
       const jobsFormatted = helper.jobs
         ? helper.jobs.map((job: any) => ({
@@ -368,13 +366,10 @@ const MaidForm: React.FC<MaidFormProps> = ({ mode = 'create', helperId }) => {
         apiFormData.append('healthCertificates', file);
       });
 
-      console.log('Submitting form data:', formData);
-
       let result;
       if (mode === 'create') {
         result = await createHelperMutation.mutateAsync(apiFormData);
       } else {
-        console.log('Updating helper with ID:', helperId);
         result = await updateHelperMutation.mutateAsync({
           id: helperId!,
           formData: apiFormData,

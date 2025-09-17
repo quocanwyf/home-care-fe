@@ -21,8 +21,8 @@ interface DatePickerProps {
   label: string;
   className?: string;
   classNameTrigger?: string;
-  value?: string; // ✅ Change to string (dd/mm/yyyy format)
-  onChange?: (dateString: string) => void; // ✅ Return string format
+  value?: string;
+  onChange?: (dateString: string) => void;
   disabled?: boolean;
   minDate?: Date;
   maxDate?: Date;
@@ -44,15 +44,12 @@ const DatePicker = ({
 }: DatePickerProps) => {
   const [open, setOpen] = useState(false);
 
-  // ✅ Convert string value to Date for calendar
   const selectedDate: Date | undefined = value
     ? parseDDMMYYYYToDate(value)
     : undefined;
 
-  // ✅ Handle date selection
   const handleDateSelect = (date: Date | undefined) => {
     if (date) {
-      // ✅ Convert Date to dd/mm/yyyy string
       const formattedDate = formatDateToDDMMYYYY(date);
       onChange?.(formattedDate);
     } else {
@@ -64,7 +61,6 @@ const DatePicker = ({
   //  Check if date should be disabled
   const isDateDisabled = (date: Date): boolean => {
     // Check if date is in the past
-
     if (!allowPastDates && isDateInPast(date)) {
       return true;
     }
@@ -118,11 +114,12 @@ const DatePicker = ({
             onSelect={handleDateSelect}
             disabled={isDateDisabled} //  Use date utility for validation
             defaultMonth={selectedDate || new Date()} // Start from selected date or today
+            startMonth={new Date(new Date().getFullYear(), 0)}
+            endMonth={new Date(new Date().getFullYear() + 10, 11)}
           />
         </PopoverContent>
       </Popover>
 
-      {/* ✅ Show validation error if needed */}
       {!allowPastDates &&
         value &&
         selectedDate &&

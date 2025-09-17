@@ -133,17 +133,14 @@ export const orderDetailColumns = (
       const detailId = row.original.detailId;
 
       const handleCancel = () => {
-        console.log('Calling onCancel with:', detailId);
         onCancel(detailId);
       };
 
       const handleStart = () => {
-        console.log('Calling onStart with:', detailId);
         onStart(detailId);
       };
 
       const handleComplete = () => {
-        console.log('Calling onComplete with:', detailId);
         onComplete(detailId);
       };
 

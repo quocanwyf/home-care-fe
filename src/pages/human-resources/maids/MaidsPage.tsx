@@ -69,7 +69,6 @@ const MaidsPage = () => {
       setMaids(test.helpers || []); // Thay đổi từ staffs thành helpers
     }
   }, [maidsData]);
-  console.log(maids);
   useEffect(() => {
     if (isError) {
       showError(error?.message || 'An error occurred while fetching maids.');

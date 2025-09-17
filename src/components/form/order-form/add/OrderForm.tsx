@@ -111,7 +111,6 @@ export default function OrderForm() {
         isCusHasAcc: data.isCusHasAcc,
       };
 
-      console.log('Order payload:', orderPayload);
       const response = await addOrderMutation.mutateAsync(orderPayload);
 
       if (response.success) {

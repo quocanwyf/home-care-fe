@@ -69,8 +69,6 @@ const ServiceForm: React.FC<ServiceFormProps> = ({
       const service = editInfo.result;
       const coefficient = service.coefficient;
 
-      console.log('Service edit data received:', editInfo);
-
       // Set form data
       reset({
         serviceTitle: service?.title || '',
@@ -121,8 +119,6 @@ const ServiceForm: React.FC<ServiceFormProps> = ({
           },
         };
 
-        console.log('Submitting service payload:', payload);
-
         let response;
         if (mode === 'create') {
           response = await createServiceMutation.mutateAsync(payload);
@@ -159,7 +155,6 @@ const ServiceForm: React.FC<ServiceFormProps> = ({
       }
     },
     (errors) => {
-      console.log('Form validation errors:', errors);
       const firstErrorField = Object.keys(errors)[0];
       const firstError = errors[firstErrorField as keyof typeof errors];
 

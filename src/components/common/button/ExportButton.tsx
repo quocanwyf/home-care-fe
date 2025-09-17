@@ -34,7 +34,6 @@ export const ExportButton: React.FC<ExportButtonProps> = ({
   variant = 'outline',
   disabled = false,
 }) => {
-  // ✅ Use API hook instead of client-side export
   const exportMutation = useDownloadExcelExport();
 
   const handleExportExcel = async () => {

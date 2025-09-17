@@ -87,9 +87,6 @@ export const calculateTotalCost = (
   }
   const { hoursBreakdown, formData } = data;
 
-  console.log('Calculating total cost with data:', data);
-  console.log('Hours Breakdown:', hoursBreakdown);
-
   const {
     serviceBasePrice,
     coefficient_service,

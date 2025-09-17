@@ -27,7 +27,6 @@ const DetailMaidForm = () => {
 
   const { data: helperData, isLoading, error } = useGetHelperDetail(id || '');
 
-  console.log(helperData);
   if (!id) {
     return (
       <div className="flex h-full items-center justify-center">

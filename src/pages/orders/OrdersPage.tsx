@@ -107,8 +107,6 @@ const OrdersPage = () => {
     search: searchKeyword ?? '',
   };
 
-  console.log('Params for API:', params);
-
   const {
     data: ordersFetchData,
     isLoading,
@@ -139,8 +137,6 @@ const OrdersPage = () => {
   const handleCloseBanner = () => {
     hideNotificationBanner();
   };
-
-  console.log('Orders data:', orders);
 
   return (
     <>

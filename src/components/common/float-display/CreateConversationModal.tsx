@@ -9,26 +9,26 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import { useAuth } from '@/context/AuthContext';
 import {
   useCreateConversation,
   useGetAvailableStaff,
 } from '@/hooks/api/useChat.api';
 import { useToast } from '@/hooks/common/useToast';
-import type { AvailableStaff } from '@/types/chat';
+import type { AvailableStaff } from '@/types/params/chat-params';
 
 interface CreateConversationModalProps {
   isOpen: boolean;
   onClose: () => void;
-  staffId: string;
   conversationType: 'staff' | 'customer' | 'helper';
 }
 
 const CreateConversationModal: React.FC<CreateConversationModalProps> = ({
   isOpen,
   onClose,
-  staffId,
   conversationType,
 }) => {
+  const { user } = useAuth();
   const [selectedStaffId, setSelectedStaffId] = useState('');
   const { showSuccess, showError } = useToast();
 
@@ -36,7 +36,7 @@ const CreateConversationModal: React.FC<CreateConversationModalProps> = ({
     data: availableStaffData,
     isLoading,
     error,
-  } = useGetAvailableStaff(staffId);
+  } = useGetAvailableStaff(user._id);
   const createConversationMutation = useCreateConversation();
 
   const handleClose = () => {
@@ -53,7 +53,7 @@ const CreateConversationModal: React.FC<CreateConversationModalProps> = ({
     try {
       await createConversationMutation.mutateAsync({
         participants: [
-          { id: staffId, type: 'staff' },
+          { id: user._id, type: 'staff' },
           { id: selectedStaffId, type: 'staff' },
         ],
         conversationType: conversationType,
@@ -130,11 +130,11 @@ const CreateConversationModal: React.FC<CreateConversationModalProps> = ({
   );
 
   const renderEmptyState = () => (
-    <div className="py-8 text-center">
-      <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gray-100">
-        <Users className="h-8 w-8 text-gray-400" />
+    <div className="py-4 text-center">
+      <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-gray-100">
+        <Users className="h-5 w-5 text-gray-400" />
       </div>
-      <h3 className="mb-2 text-lg font-medium text-gray-900">
+      <h3 className="mb-2 text-sm font-medium text-gray-900">
         Không có nhân viên khả dụng
       </h3>
       <p className="text-sm text-gray-500">
@@ -160,8 +160,8 @@ const CreateConversationModal: React.FC<CreateConversationModalProps> = ({
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="flex items-center text-lg">
-            <Users className="mr-2 h-5 w-5 text-blue-500" />
-            Tạo cuộc hội thoại mới
+            <Users className="mr-2 h-4 w-4 text-blue-500" />
+            <p className="text-sm">Tạo cuộc hội thoại mới</p>
           </DialogTitle>
         </DialogHeader>
 
@@ -189,7 +189,7 @@ const CreateConversationModal: React.FC<CreateConversationModalProps> = ({
           {/* Action Buttons */}
           <div className="flex justify-end space-x-3 pt-4">
             <Button variant="outline" onClick={handleClose}>
-              Hủy
+              <p className="text-xs">Hủy</p>
             </Button>
             <Button
               onClick={handleCreate}
@@ -198,7 +198,7 @@ const CreateConversationModal: React.FC<CreateConversationModalProps> = ({
                 createConversationMutation.isPending ||
                 staffList.length === 0
               }
-              className="bg-blue-500 hover:bg-blue-600"
+              className="bg-overlay-slider/90 hover:bg-overlay-slider"
             >
               {createConversationMutation.isPending ? (
                 <>
@@ -208,7 +208,7 @@ const CreateConversationModal: React.FC<CreateConversationModalProps> = ({
               ) : (
                 <>
                   <Check className="mr-1 h-4 w-4" />
-                  Tạo cuộc hội thoại
+                  <p className="text-xs">Tạo cuộc hội thoại</p>
                 </>
               )}
             </Button>
@@ -222,15 +222,9 @@ const CreateConversationModal: React.FC<CreateConversationModalProps> = ({
               </div>
               <div className="ml-3">
                 <p className="text-sm text-blue-800">
-                  <strong>Lưu ý:</strong> Bạn đang tạo cuộc hội thoại loại{' '}
-                  <span className="font-semibold">
-                    {conversationType === 'staff'
-                      ? 'Nhân viên'
-                      : conversationType === 'customer'
-                        ? 'Khách hàng'
-                        : 'Người giúp việc'}
-                  </span>
-                  . Cuộc hội thoại sẽ xuất hiện trong tab tương ứng.
+                  <strong>Lưu ý:</strong> Bạn đang tạo cuộc hội thoại với{' '}
+                  <span className="font-semibold">nhân viên</span> khác trong hệ
+                  thống. Cuộc hội thoại sẽ xuất hiện trong tab "Nhân viên".
                 </p>
               </div>
             </div>

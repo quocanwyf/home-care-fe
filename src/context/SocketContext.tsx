@@ -38,19 +38,15 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
 
     // Lắng nghe sự kiện kết nối
     socketInstance.on('connect', () => {
-      console.log('Socket connected:', socketInstance.id);
       setIsConnected(true);
     });
 
     socketInstance.on('disconnect', () => {
-      console.log('Socket disconnected');
       setIsConnected(false);
     });
 
     // Lắng nghe event "request" từ Backend
-    socketInstance.on('new_request', (newRequest: any) => {
-      console.log('New request receiveddđ:', newRequest);
-
+    socketInstance.on('new_request', () => {
       // Chỉ hiển thị notification khi đang ở trang orders
       const isAdminCreated = sessionStorage.getItem('admin-creating-order');
       const currentPath = window.location.pathname;

@@ -38,7 +38,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   const login = async (credentials: LoginRequest): Promise<void> => {
     const response = await loginMutation.mutateAsync(credentials);
-    console.log(response);
 
     setUser(response);
   };

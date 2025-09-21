@@ -156,13 +156,6 @@ const StaffForm: React.FC<StaffFormProps> = ({ mode = 'create', staffId }) => {
     return [];
   }, [createInfo, editInfo, mode]);
 
-  // Form validation
-  const isFormValid = useMemo(() => {
-    const hasRequiredFields = isValid;
-    const hasAvatar = mode === 'edit' || avatar.length > 0; // Avatar not required in edit if existing
-    return hasRequiredFields && hasAvatar;
-  }, [isValid, avatar, mode]);
-
   const validateForm = (): boolean => {
     if (mode === 'create' && avatar.length === 0) {
       showError('Avatar is required');
@@ -349,8 +342,8 @@ const StaffForm: React.FC<StaffFormProps> = ({ mode = 'create', staffId }) => {
                       classNameTrigger="w-full h-10"
                       value={field.value}
                       onChange={field.onChange}
-                      minDate={maxAgeDate} // Không được quá 100 tuổi
-                      maxDate={minAgeDate} // Phải ít nhất 13 tuổi
+                      minDate={minAgeDate} // Không được quá 100 tuổi
+                      maxDate={maxAgeDate} // Phải ít nhất 13 tuổi
                       required={true}
                       allowPastDates={true}
                     />

@@ -2,7 +2,7 @@ import { format, isToday, isYesterday } from 'date-fns';
 import { vi } from 'date-fns/locale';
 import { Check, CheckCheck } from 'lucide-react';
 
-import type { ChatMessage } from '@/types/chat';
+import type { ChatMessage } from '@/types/table/objects/chat';
 
 interface MessageListProps {
   messages: ChatMessage[];

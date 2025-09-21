@@ -11,7 +11,7 @@ import type {
   CreateConversationRequest,
   GetConversationsRequest,
   SendMessageRequest,
-} from '@/types/chat';
+} from '@/types/params/chat-params';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 // Hook lấy danh sách nhân viên có thể tạo cuộc hội thoại
@@ -29,8 +29,10 @@ export const useCreateConversation = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (payload: CreateConversationRequest) =>
-      createConversationApi(payload),
+    mutationFn: (payload: CreateConversationRequest) => {
+      console.log('payload', payload);
+      return createConversationApi(payload);
+    },
     onSuccess: () => {
       // Invalidate các queries liên quan
       queryClient.invalidateQueries({ queryKey: ['chat', 'conversations'] });

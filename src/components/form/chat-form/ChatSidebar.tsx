@@ -8,7 +8,7 @@ import CreateConversationModal from '@/components/common/float-display/CreateCon
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useGetConversations } from '@/hooks/api/useChat.api';
-import type { ChatConversation } from '@/types/chat';
+import type { ChatConversation } from '@/types/table/objects/chat';
 
 interface ChatSidebarProps {
   staffId: string;
@@ -133,9 +133,9 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
 
   return (
     <div className="flex w-80 flex-col border-r bg-gray-50">
-      {/* Header */}
+      {/* Header - chỉ có title và nút Tạo mới */}
       <div className="border-b bg-white p-4">
-        <div className="mb-4 flex items-center justify-between">
+        <div className="flex items-center justify-between">
           <h2 className="flex items-center text-xl font-bold text-gray-900">
             <MessageCircle className="mr-2 h-6 w-6 text-blue-500" />
             Tin nhắn
@@ -144,37 +144,26 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
             size="sm"
             onClick={() => setShowCreateModal(true)}
             className="bg-blue-500 text-white shadow-sm hover:bg-blue-600"
+            title="Tạo cuộc hội thoại với nhân viên"
           >
             <Plus className="mr-1 h-4 w-4" />
             Tạo mới
           </Button>
         </div>
 
-        {/* Tabs */}
-        <div className="flex gap-2">
-          {tabs.map((tab) => {
-            const Icon = tab.icon;
-            return (
-              <button
-                key={tab.key}
-                onClick={() => onTabChange(tab.key)}
-                className={`flex items-center rounded-lg px-3 py-2 text-xs transition-all duration-200 ${
-                  activeTab === tab.key
-                    ? `${tab.color} text-white shadow-md`
-                    : 'bg-gray-200 text-gray-600 hover:bg-gray-300'
-                }`}
-              >
-                <Icon className="mr-1 h-3 w-3" />
-                {tab.label}
-              </button>
-            );
-          })}
-        </div>
-
         {/* Stats */}
         <div className="mt-3 text-xs text-gray-500">
           {conversationsData && (
-            <span>{conversationsData.totalConversations} cuộc hội thoại</span>
+            <span>
+              {conversationsData.totalConversations} cuộc hội thoại{' '}
+              <span className="font-medium">
+                {activeTab === 'staff'
+                  ? 'nhân viên'
+                  : activeTab === 'customer'
+                    ? 'khách hàng'
+                    : 'người giúp việc'}
+              </span>
+            </span>
           )}
         </div>
       </div>
@@ -192,7 +181,11 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
               Chưa có cuộc hội thoại
             </h3>
             <p className="text-xs text-gray-500">
-              Tạo cuộc hội thoại mới để bắt đầu trò chuyện
+              {activeTab === 'staff'
+                ? 'Tạo cuộc hội thoại mới với nhân viên'
+                : activeTab === 'customer'
+                  ? 'Chưa có cuộc hội thoại với khách hàng'
+                  : 'Chưa có cuộc hội thoại với người giúp việc'}
             </p>
           </div>
         ) : (
@@ -202,12 +195,39 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
         )}
       </div>
 
-      {/* Create Conversation Modal */}
+      {/* Tabs ở cuối - Footer */}
+      <div className="border-t bg-white p-3">
+        <div className="mb-2">
+          <p className="text-xs font-medium text-gray-600">Loại hội thoại:</p>
+        </div>
+        <div className="flex gap-2">
+          {tabs.map((tab) => {
+            const Icon = tab.icon;
+            return (
+              <button
+                key={tab.key}
+                onClick={() => onTabChange(tab.key)}
+                className={`flex flex-1 items-center justify-center rounded-lg px-2 py-2 text-xs transition-all duration-200 ${
+                  activeTab === tab.key
+                    ? `${tab.color} text-white shadow-md`
+                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                }`}
+                title={tab.label}
+              >
+                <Icon className="mr-1 h-3 w-3" />
+                <span className="hidden sm:inline">{tab.label}</span>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Create Conversation Modal - chỉ tạo với staff */}
       <CreateConversationModal
         isOpen={showCreateModal}
         onClose={() => setShowCreateModal(false)}
         staffId={staffId}
-        conversationType={activeTab}
+        conversationType="staff" // Cố định là staff
       />
     </div>
   );

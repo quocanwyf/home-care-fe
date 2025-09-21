@@ -45,18 +45,18 @@ export default function Sidebar() {
         <GradientText content="- ADMIN" />
       </div>
 
-      <div className="border-border-primary mx-4 mb-4 border-b-3" />
+      <div className="border-border-primary mx-4 border-b-3" />
 
       <nav>
         {menuItems.map((item, idx) => (
           <div key={idx}>
             {item.children ? (
-              <div className="text-text-primary my-1 mr-10 flex justify-center font-bold">
+              <div className="text-text-primary mr-10 flex justify-center font-bold">
                 {item.label}
               </div>
             ) : (
               <div
-                className={`group mx-4 my-1 flex cursor-pointer items-center gap-4 rounded-xl p-3 pl-8 transition-all duration-500 ease-in-out ${
+                className={`group mx-4 my-1 flex cursor-pointer items-center gap-4 rounded-xl px-3 py-2.5 pl-8 transition-all duration-500 ease-in-out ${
                   isActiveItem(item.path)
                     ? 'bg-tab-hover text-text-secondary font-semibold'
                     : 'hover:bg-tab-hover'
@@ -86,7 +86,7 @@ export default function Sidebar() {
                 {item.children.map((child, i) => (
                   <div
                     key={i}
-                    className={`group mx-4 my-1 flex cursor-pointer items-center gap-4 rounded-xl p-3 pl-8 transition-all duration-500 ease-in-out ${
+                    className={`group mx-4 my-1 flex cursor-pointer items-center gap-4 rounded-xl px-3 py-2.5 pl-8 transition-all duration-500 ease-in-out ${
                       isActiveItem(child.path)
                         ? 'bg-tab-hover text-text-secondary font-semibold'
                         : 'hover:bg-tab-hover'

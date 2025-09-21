@@ -50,7 +50,7 @@ const SidebarMobile = ({
             <GradientText content="- ADMIN" />
           </div>
 
-          <div className="border-border-primary mx-4 mb-2 border-b-3" />
+          <div className="border-border-primary mx-4 mb-1 border-b-3" />
 
           <nav>
             {menuItems.map((item, idx) => (
@@ -61,7 +61,7 @@ const SidebarMobile = ({
                   </div>
                 ) : (
                   <div
-                    className={`group mx-4 flex cursor-pointer items-center gap-4 rounded-xl p-4 pl-8 transition-all duration-500 ease-in-out ${
+                    className={`group mx-4 flex cursor-pointer items-center gap-4 rounded-xl px-3 py-2.5 pl-8 transition-all duration-500 ease-in-out ${
                       isActiveItem(item.path)
                         ? 'bg-tab-hover text-text-secondary font-semibold'
                         : 'hover:bg-tab-hover'
@@ -91,7 +91,7 @@ const SidebarMobile = ({
                     {item.children.map((child, i) => (
                       <div
                         key={i}
-                        className={`group mx-4 flex cursor-pointer items-center gap-4 rounded-xl p-4 pl-8 transition-all duration-500 ease-in-out ${
+                        className={`group mx-4 flex cursor-pointer items-center gap-4 rounded-xl px-3 py-3 pl-8 transition-all duration-500 ease-in-out ${
                           isActiveItem(child.path)
                             ? 'bg-tab-hover text-text-secondary font-semibold'
                             : 'hover:bg-tab-hover'

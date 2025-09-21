@@ -6,6 +6,7 @@ import Icon from '@/components/common/icons/ImageIcon';
 import MenuIcon from '@/components/common/icons/MenuIcon';
 import NotificationBell from '@/components/common/icons/NotificationBell';
 import { useAuth } from '@/context/AuthContext';
+import { useLanguage } from '@/context/LanguageContext';
 import { useSearch } from '@/context/SearchContext';
 
 import { DateRangePicker } from '../common/date-picker/DateRangePicker';
@@ -23,19 +24,20 @@ const Header = ({
   onMobileSidebarOpen: boolean;
   title: string;
 }) => {
+  const { t } = useLanguage();
   const { config } = useSearch();
   const [value, setValue] = useState('');
   const { user, logout, isLoading } = useAuth();
 
   const getUserDisplayName = useCallback(() => {
     if (!user) {
-      return isLoading ? 'Loading...' : 'HomeCare';
+      return isLoading ? t('common.loading') : 'HomeCare';
     }
 
-    const fullName = user?.fullName || 'User';
-    const role = user?.role || 'Role';
-    return `${fullName} - ${role} / ${title} Page`;
-  }, [user, isLoading, title]);
+    const fullName = user?.fullName || t('header.user');
+    const role = user?.role ? t(`roles.${user.role}`) : t('header.role');
+    return `${fullName} - ${role} / ${t(`navigation.${title.toLowerCase()}`)}  `;
+  }, [user, isLoading, title, t]);
 
   // Tạo debounced function bằng useMemo thay vì useCallback
   const debouncedSearch = useMemo(
@@ -76,7 +78,7 @@ const Header = ({
               <SearchInput
                 value={value}
                 onChange={handleChangeSearch}
-                placeholder={config.placeholder || 'Search...'}
+                placeholder={config.placeholder || t('common.search') + '...'}
               />
             )}
             {config.enableDateRange && (
@@ -134,7 +136,7 @@ const Header = ({
             <SearchInput
               value={value}
               onChange={handleChangeSearch}
-              placeholder={config.placeholder || 'Search...'}
+              placeholder={config.placeholder || t('common.search') + '...'}
             />
           )}
         </div>

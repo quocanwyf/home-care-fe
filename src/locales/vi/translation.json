@@ -14,14 +14,23 @@
     "next": "Tiếp theo",
     "previous": "Trước"
   },
+  "header": {
+    "title": "Tiêu đề Header",
+    "user": "Người dùng",
+    "role": "Vai trò"
+  },
+  "roles": {
+    "Admin": "Quản trị viên",
+    "Staff": "Nhân viên"
+  },
   "navigation": {
     "dashboard": "Trang chủ",
-    "orders": "Đơn hàng",
-    "customers": "Khách hàng",
-    "services": "Dịch vụ",
-    "staff": "Nhân viên",
-    "reports": "Báo cáo",
-    "settings": "Cài đặt"
+    "orders": "Trang đơn hàng",
+    "customers": "Trang khách hàng",
+    "services": "Trang dịch vụ",
+    "staff": "Trang nhân viên",
+    "reports": "Trang báo cáo",
+    "settings": "Trang cài đặt"
   },
   "auth": {
     "login": "Đăng nhập",

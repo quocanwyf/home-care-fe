@@ -14,14 +14,23 @@
     "next": "Next",
     "previous": "Previous"
   },
+  "header": {
+    "title": "Header Title",
+    "user": "User",
+    "role": "Role"
+  },
+  "roles": {
+    "Admin": "Administrator",
+    "Staff": "Staff"
+  },
   "navigation": {
-    "dashboard": "Dashboard",
-    "orders": "Orders",
-    "customers": "Customers",
-    "services": "Services",
-    "staff": "Staff",
-    "reports": "Reports",
-    "settings": "Settings"
+    "dashboard": "Dashboard Page",
+    "orders": "Orders Page",
+    "customers": "Customers Page",
+    "services": "Services Page",
+    "staff": "Staff Page",
+    "reports": "Reports Page",
+    "settings": "Settings Page"
   },
   "auth": {
     "login": "Login",

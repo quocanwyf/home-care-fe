@@ -50,6 +50,11 @@ export const MENU_ITEMS = [
     path: '/inventory',
     children: [
       {
+        label: 'Messages',
+        icon: '/icon-image/message-circle.png',
+        path: '/messages',
+      },
+      {
         label: 'Services',
         icon: 'icon-image/card-sim.png',
         path: '/services',

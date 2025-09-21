@@ -28,8 +28,12 @@
     "orders": "Orders Page",
     "customers": "Customers Page",
     "services": "Services Page",
-    "staff": "Staff Page",
-    "reports": "Reports Page",
+    "staffs": "Staffs Page",
+    "maids": "Maids Page",
+    "cost-coefficients": "Cost Coefficients Page",
+    "permissions": "Permissions Page",
+    "system": "System Page",
+    "messages": "Messages Page",
     "settings": "Settings Page"
   },
   "auth": {

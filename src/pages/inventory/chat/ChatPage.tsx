@@ -1,0 +1,36 @@
+import { useState } from 'react';
+
+import ChatArea from '@/components/form/chat-form/ChatArea';
+import ChatSidebar from '@/components/form/chat-form/ChatSidebar';
+import { useAuth } from '@/context/AuthContext';
+
+const ChatPage = () => {
+  const { user } = useAuth();
+  console.log('user', user);
+  const [selectedConversationId, setSelectedConversationId] =
+    useState<string>('');
+  const [activeTab, setActiveTab] = useState<'staff' | 'customer' | 'helper'>(
+    'staff'
+  );
+
+  return (
+    <div className="h-[calc(100vh-120px)] overflow-hidden rounded-xl border bg-white shadow-sm">
+      <div className="flex h-full">
+        <ChatSidebar
+          staffId={user?.staff_id || ''}
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
+          selectedConversationId={selectedConversationId}
+          onSelectConversation={setSelectedConversationId}
+        />
+
+        <ChatArea
+          conversationId={selectedConversationId}
+          currentUserId={user?.staff_id || ''}
+        />
+      </div>
+    </div>
+  );
+};
+
+export default ChatPage;

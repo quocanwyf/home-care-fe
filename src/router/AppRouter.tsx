@@ -64,6 +64,8 @@ const PermissionsPage = lazy(
 );
 const SystemPage = lazy(() => import('@/pages/inventory/system/SystemPage'));
 
+const ChatPage = lazy(() => import('@/pages/inventory/chat/ChatPage'));
+
 const UnauthorizedPage = lazy(
   () => import('@/pages/unauthorized-access/FallbackPage')
 );
@@ -272,6 +274,8 @@ const AppRouter = () => {
               </RouteGuard>
             }
           />
+
+          <Route path="/messages" element={<ChatPage />} />
         </Route>
 
         {/* Catch all route */}

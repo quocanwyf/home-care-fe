@@ -26,4 +26,5 @@ export const ROUTE_TITLES: Record<string, string> = {
   '/cost-coefficients': 'Cost Coefficients',
   '/permissions': 'Permissions',
   '/system': 'System',
+  '/messages': 'Messages',
 };

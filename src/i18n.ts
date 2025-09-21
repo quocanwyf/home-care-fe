@@ -41,13 +41,6 @@ i18n
     fallbackLng: 'vi', // Fallback to Vietnamese
     lng: 'vi', // Default language
 
-    // Debug mode (turn off in production)
-    debug: process.env.NODE_ENV === 'development',
-
-    interpolation: {
-      escapeValue: false, // Not needed for React as it escapes by default
-    },
-
     // React specific options
     react: {
       useSuspense: false, // Turn off suspense for now

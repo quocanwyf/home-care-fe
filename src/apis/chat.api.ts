@@ -9,7 +9,7 @@ import type {
   MarkAsReadResponse,
   SendMessageRequest,
   SendMessageResponse,
-} from '@/types/chat';
+} from '@/types/params/chat-params';
 
 // API để lấy danh sách nhân viên chưa có cuộc hội thoại
 export const getAvailableStaffApi = async (

@@ -114,8 +114,16 @@ const DatePicker = ({
             onSelect={handleDateSelect}
             disabled={isDateDisabled} //  Use date utility for validation
             defaultMonth={selectedDate || new Date()} // Start from selected date or today
-            startMonth={new Date(new Date().getFullYear(), 0)}
-            endMonth={new Date(new Date().getFullYear() + 10, 11)}
+            startMonth={
+              !allowPastDates
+                ? new Date(new Date().getFullYear(), 0)
+                : new Date(new Date().getFullYear() - 100, 0)
+            }
+            endMonth={
+              !allowPastDates
+                ? new Date(new Date().getFullYear() + 10, 11)
+                : new Date(new Date().getFullYear() - 13, 11)
+            }
           />
         </PopoverContent>
       </Popover>

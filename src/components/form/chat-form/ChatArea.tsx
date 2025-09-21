@@ -26,8 +26,10 @@ const ChatArea: React.FC<ChatAreaProps> = ({
   const { data: messagesData, isLoading: isLoadingMessages } =
     useGetMessages(conversationId);
   const markAsReadMutation = useMarkAsRead();
+
   console.log('Messages Data:', messagesData);
   console.log('conversationdetail', conversationDetail);
+
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   // Auto scroll to bottom when new messages arrive

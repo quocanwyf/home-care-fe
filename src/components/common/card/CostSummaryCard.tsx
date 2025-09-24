@@ -5,6 +5,7 @@ import { ChevronDown } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import { useLanguage } from '@/context/LanguageContext';
 import { calculateOrderCost } from '@/helpers/calculate-total-cost';
 import { formatCurrency } from '@/helpers/format-currency';
 import type { OrderFormSchemaType } from '@/types/schema/order-form-schema-type';
@@ -40,7 +41,7 @@ export default function CostSummaryCard({
     watch,
     formState: { errors },
   } = form;
-
+  const { t } = useLanguage();
   const currentTotalCost = watch('totalCost');
   const currentDetailCost = watch('detailCost');
 
@@ -189,7 +190,7 @@ export default function CostSummaryCard({
       <CardContent className="mx-auto w-140 space-y-4">
         {/* Total cost display with validation error */}
         <div className="flex justify-between border-b border-gray-200 pb-2">
-          <span className="text-gray-600">Total cost order:</span>
+          <span className="text-gray-600">{t('orders.totalCostOrder')}:</span>
           <div className="flex flex-col items-end">
             <span>
               {discountAmount === 0 ? (
@@ -217,7 +218,7 @@ export default function CostSummaryCard({
 
         {/* Dropdown Discount */}
         <div className="flex items-center justify-between">
-          <span className="text-gray-600">Discounts:</span>
+          <span className="text-gray-600">{t('orders.discounts')}:</span>
 
           <div className="flex items-center gap-4">
             <span className="text-red-600">
@@ -227,7 +228,7 @@ export default function CostSummaryCard({
             <Popover open={isPopoverOpen} onOpenChange={setIsPopoverOpen}>
               <PopoverTrigger asChild>
                 <Button
-                  type="button" // ✅ Prevent form submission
+                  type="button"
                   variant="outline"
                   size="sm"
                   className="flex items-center space-x-2 px-3 py-1.5"
@@ -253,7 +254,7 @@ export default function CostSummaryCard({
                   {discountOptions.map((option) => (
                     <Button
                       key={option.id}
-                      type="button" // ✅ Prevent form submission
+                      type="button"
                       variant="ghost"
                       size="sm"
                       onClick={() => handleDiscountChange(option.id)}

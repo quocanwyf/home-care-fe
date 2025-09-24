@@ -2,6 +2,7 @@ import { useState } from 'react';
 
 import { MESSAGES_AUTH } from '@/constants/messages/messages-auth';
 import { useAuth } from '@/context/AuthContext';
+import { useLanguage } from '@/context/LanguageContext';
 import { useAppNavigate } from '@/hooks/common/useAppNavigate';
 import type { LoginRequest } from '@/types/auth';
 
@@ -12,6 +13,7 @@ import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 
 const LoginForm = () => {
+  const { t } = useLanguage();
   const navigateTo = useAppNavigate<{ from: string }>();
   const [formData, setFormData] = useState<LoginRequest>({
     hmrId: '',
@@ -60,12 +62,12 @@ const LoginForm = () => {
       <div className="mx-4 mt-6 flex flex-wrap justify-center gap-6 md:flex-row">
         <div className="grid w-full max-w-sm items-center gap-3">
           <Label className="font-semibold" htmlFor="hmrId">
-            User ID
+            {t('userId')}
           </Label>
           <Input
             type="text"
             id="hmrId"
-            name="hmrId" // ✅ Thêm name attribute
+            name="hmrId"
             placeholder="Enter your User ID"
             className="focus:border-border-primary/50 shadow-sm"
             value={formData.hmrId}
@@ -76,12 +78,12 @@ const LoginForm = () => {
         </div>
         <div className="grid w-full max-w-sm items-center gap-3">
           <Label className="font-semibold" htmlFor="password">
-            Password
+            {t('password')}
           </Label>
           <Input
             type="password"
             id="password"
-            name="password" // ✅ Thêm name attribute
+            name="password"
             placeholder="Enter your password"
             className="focus:border-border-primary/50 shadow-sm"
             value={formData.password}
@@ -91,7 +93,6 @@ const LoginForm = () => {
           />
         </div>
 
-        {/* ✅ Error display */}
         {error && (
           <div className="w-full rounded bg-red-50 p-2 text-center text-sm text-red-600">
             {error}

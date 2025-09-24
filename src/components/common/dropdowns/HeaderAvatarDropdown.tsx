@@ -1,5 +1,6 @@
 import Icon from '@/components/common/icons/ImageIcon';
 import { headerAvatarOptions } from '@/constants/dropdown/header-avatar-options';
+import { useLanguage } from '@/context/LanguageContext';
 import { handleUserMenuSelect } from '@/helpers/handle-header-avatar-select';
 import type { User } from '@/types/auth';
 
@@ -14,6 +15,7 @@ export const HeaderAvatarDropdown = ({
   logout: () => Promise<void>;
   isLoading?: boolean;
 }) => {
+  const { t } = useLanguage();
   const customLabel = (
     <div className="flex items-center gap-2">
       <Icon
@@ -22,7 +24,7 @@ export const HeaderAvatarDropdown = ({
         className="h-6 w-6 rounded-full"
       />
       <span className="text-sm font-semibold">
-        {user?.fullName + ' - ' + user?.role || 'User Menu'}
+        {user?.fullName + ' - ' + user?.role || t('header.userMenu')}
       </span>
     </div>
   );
@@ -48,7 +50,7 @@ export const HeaderAvatarDropdown = ({
           isLoading ? 'cursor-not-allowed opacity-50' : ''
         }`}
         contentTooltip={
-          isLoading ? 'Processing...' : user?.fullName || 'User Menu'
+          isLoading ? 'Processing...' : user?.fullName || t('header.userMenu')
         }
       />
     </AppDropdown>

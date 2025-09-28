@@ -1,6 +1,9 @@
+import { Eye } from 'lucide-react';
+
 import OrderStatusBadge from '@/components/common/badge/StatusOrdersBadge';
 import TableActions from '@/components/common/button/TableActions';
 import TableDetailActions from '@/components/common/button/TableDetailActions';
+import TooltipInfo from '@/components/common/primitives/TooltipInfo';
 import type { Orders, RequestDetail } from '@/types/table/objects/orders';
 import type { ColumnDef } from '@tanstack/react-table';
 
@@ -79,6 +82,7 @@ export const orderDetailColumns = (
   onCancel: (detailId: string) => void,
   onStart: (detailId: string) => void,
   onComplete: (detailId: string) => void,
+  onViewEvaluation: (detailId: string) => void, // Thêm function mới
   isActionLoading: boolean = false
 ): ColumnDef<RequestDetail>[] => [
   {
@@ -126,12 +130,39 @@ export const orderDetailColumns = (
     },
   },
   {
-    id: 'actions',
+    accessorKey: 'cost',
+    header: 'Cost',
+    cell: ({ row }) => {
+      const costValue = row.original.cost;
+      if (costValue == null) return 'N/A';
+      const costNumber = parseFloat(String(costValue));
+      if (isNaN(costNumber)) return 'N/A';
+      return `${costNumber.toLocaleString()} đ`;
+    },
+  },
+  {
+    id: 'actions-or-evaluation',
     header: 'Actions',
     cell: ({ row }) => {
       const status = row.getValue('status') as string;
+      const comment = row.original.comment;
       const detailId = row.original.detailId;
 
+      // Nếu status là completed và có comment -> hiển thị button View Evaluation
+      if (status === 'completed' && comment && comment.review) {
+        return (
+          <TooltipInfo content="View Evaluation">
+            <button
+              onClick={() => onViewEvaluation(detailId)}
+              className="cursor-pointer p-1 text-yellow-400 transition-colors hover:text-yellow-600"
+            >
+              <Eye className="h-4 w-4" />
+            </button>
+          </TooltipInfo>
+        );
+      }
+
+      // Ngược lại -> hiển thị actions bình thường
       const handleCancel = () => {
         onCancel(detailId);
       };

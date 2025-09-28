@@ -38,8 +38,8 @@ i18n
     },
 
     // Default language
-    fallbackLng: 'vi', // Fallback to Vietnamese
-    lng: 'vi', // Default language
+    fallbackLng: 'en', // Fallback to English
+    lng: 'en', // Default language
 
     // React specific options
     react: {

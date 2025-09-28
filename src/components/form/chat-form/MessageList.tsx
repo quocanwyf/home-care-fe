@@ -1,5 +1,5 @@
 import { format, isToday, isYesterday } from 'date-fns';
-import { vi } from 'date-fns/locale';
+import { enUS } from 'date-fns/locale';
 import { Check, CheckCheck } from 'lucide-react';
 
 import type { ChatMessage } from '@/types/table/objects/chat';
@@ -18,9 +18,9 @@ const MessageList: React.FC<MessageListProps> = ({
     if (isToday(date)) {
       return format(date, 'HH:mm');
     } else if (isYesterday(date)) {
-      return `Hôm qua ${format(date, 'HH:mm')}`;
+      return `Yesterday ${format(date, 'HH:mm')}`;
     } else {
-      return format(date, 'dd/MM/yyyy HH:mm', { locale: vi });
+      return format(date, 'dd/MM/yyyy HH:mm', { locale: enUS });
     }
   };
 
@@ -32,11 +32,11 @@ const MessageList: React.FC<MessageListProps> = ({
       let dateKey = '';
 
       if (isToday(date)) {
-        dateKey = 'Hôm nay';
+        dateKey = 'Today';
       } else if (isYesterday(date)) {
-        dateKey = 'Hôm qua';
+        dateKey = 'Yesterday';
       } else {
-        dateKey = format(date, 'EEEE, dd/MM/yyyy', { locale: vi });
+        dateKey = format(date, 'EEEE, dd/MM/yyyy', { locale: enUS });
       }
 
       if (!groups[dateKey]) {
@@ -74,7 +74,7 @@ const MessageList: React.FC<MessageListProps> = ({
         className={`flex ${isOwnMessage ? 'justify-end' : 'justify-start'}`}
       >
         <div
-          className={`flex max-w-xs items-end space-x-2 lg:max-w-md ${
+          className={`flex max-w-50 items-end space-x-2 lg:max-w-80 ${
             isOwnMessage ? 'flex-row-reverse space-x-reverse' : ''
           }`}
         >
@@ -99,7 +99,7 @@ const MessageList: React.FC<MessageListProps> = ({
               </p>
             )}
 
-            <p className="text-sm leading-relaxed break-words">
+            <p className="overflow-wrap-anywhere text-sm leading-relaxed break-words break-all">
               {message.content}
             </p>
 
@@ -124,9 +124,9 @@ const MessageList: React.FC<MessageListProps> = ({
           <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-gray-200">
             <Check className="h-6 w-6 text-gray-400" />
           </div>
-          <p className="text-gray-500">Chưa có tin nhắn nào</p>
+          <p className="text-gray-500">No messages yet</p>
           <p className="text-sm text-gray-400">
-            Gửi tin nhắn đầu tiên để bắt đầu cuộc trò chuyện
+            Send the first message to start the conversation
           </p>
         </div>
       </div>

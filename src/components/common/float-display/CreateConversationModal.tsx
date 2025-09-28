@@ -46,7 +46,7 @@ const CreateConversationModal: React.FC<CreateConversationModalProps> = ({
 
   const handleCreate = async () => {
     if (!selectedStaffId) {
-      showError('Vui lòng chọn nhân viên để tạo cuộc hội thoại');
+      showError('Please select a staff member to start a conversation.');
       return;
     }
 
@@ -59,11 +59,13 @@ const CreateConversationModal: React.FC<CreateConversationModalProps> = ({
         conversationType: conversationType,
       });
 
-      showSuccess('Tạo cuộc hội thoại thành công!');
+      showSuccess('Conversation created successfully!');
       handleClose();
     } catch (error) {
       console.error('Error creating conversation:', error);
-      showError('Có lỗi xảy ra khi tạo cuộc hội thoại. Vui lòng thử lại.');
+      showError(
+        'An error occurred while creating the conversation. Please try again.'
+      );
     }
   };
 
@@ -135,10 +137,10 @@ const CreateConversationModal: React.FC<CreateConversationModalProps> = ({
         <Users className="h-5 w-5 text-gray-400" />
       </div>
       <h3 className="mb-2 text-sm font-medium text-gray-900">
-        Không có nhân viên khả dụng
+        No available staff members
       </h3>
       <p className="text-sm text-gray-500">
-        Tất cả nhân viên đã có cuộc hội thoại hoặc không có quyền truy cập.
+        All staff members are in a conversation or do not have access.
       </p>
     </div>
   );
@@ -148,9 +150,11 @@ const CreateConversationModal: React.FC<CreateConversationModalProps> = ({
       <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-red-100">
         <X className="h-8 w-8 text-red-500" />
       </div>
-      <h3 className="mb-2 text-lg font-medium text-gray-900">Có lỗi xảy ra</h3>
+      <h3 className="mb-2 text-lg font-medium text-gray-900">
+        An error occurred
+      </h3>
       <p className="text-sm text-gray-500">
-        Không thể tải danh sách nhân viên. Vui lòng thử lại.
+        Unable to load staff list. Please try again.
       </p>
     </div>
   );
@@ -161,14 +165,14 @@ const CreateConversationModal: React.FC<CreateConversationModalProps> = ({
         <DialogHeader>
           <DialogTitle className="flex items-center text-lg">
             <Users className="mr-2 h-4 w-4 text-blue-500" />
-            <p className="text-sm">Tạo cuộc hội thoại mới</p>
+            <p className="text-sm">Create a new conversation</p>
           </DialogTitle>
         </DialogHeader>
 
         <div className="space-y-4">
           <div>
             <label className="mb-3 block text-sm font-medium text-gray-700">
-              Chọn nhân viên để trò chuyện:
+              Select a staff member to chat with:
             </label>
 
             <div className="max-h-80 overflow-y-auto">
@@ -189,7 +193,7 @@ const CreateConversationModal: React.FC<CreateConversationModalProps> = ({
           {/* Action Buttons */}
           <div className="flex justify-end space-x-3 pt-4">
             <Button variant="outline" onClick={handleClose}>
-              <p className="text-xs">Hủy</p>
+              <p className="text-xs">Cancel</p>
             </Button>
             <Button
               onClick={handleCreate}
@@ -203,31 +207,15 @@ const CreateConversationModal: React.FC<CreateConversationModalProps> = ({
               {createConversationMutation.isPending ? (
                 <>
                   <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
-                  Đang tạo...
+                  Creating...
                 </>
               ) : (
                 <>
                   <Check className="mr-1 h-4 w-4" />
-                  <p className="text-xs">Tạo cuộc hội thoại</p>
+                  <p className="text-xs">Create a conversation</p>
                 </>
               )}
             </Button>
-          </div>
-
-          {/* Info Text */}
-          <div className="rounded-lg bg-blue-50 p-3">
-            <div className="flex items-start">
-              <div className="flex-shrink-0">
-                <Users className="h-5 w-5 text-blue-400" />
-              </div>
-              <div className="ml-3">
-                <p className="text-sm text-blue-800">
-                  <strong>Lưu ý:</strong> Bạn đang tạo cuộc hội thoại với{' '}
-                  <span className="font-semibold">nhân viên</span> khác trong hệ
-                  thống. Cuộc hội thoại sẽ xuất hiện trong tab "Nhân viên".
-                </p>
-              </div>
-            </div>
           </div>
         </div>
       </DialogContent>

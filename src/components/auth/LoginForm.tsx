@@ -62,7 +62,7 @@ const LoginForm = () => {
       <div className="mx-4 mt-6 flex flex-wrap justify-center gap-6 md:flex-row">
         <div className="grid w-full max-w-sm items-center gap-3">
           <Label className="font-semibold" htmlFor="hmrId">
-            {t('userId')}
+            User id
           </Label>
           <Input
             type="text"
@@ -78,7 +78,7 @@ const LoginForm = () => {
         </div>
         <div className="grid w-full max-w-sm items-center gap-3">
           <Label className="font-semibold" htmlFor="password">
-            {t('password')}
+            Password
           </Label>
           <Input
             type="password"

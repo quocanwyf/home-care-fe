@@ -8,19 +8,14 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import type { ChatParticipant } from '@/types/chat';
+import type { ChatParticipant } from '@/types/table/objects/chat';
 
 interface ChatHeaderProps {
   participant?: ChatParticipant;
   isLoading?: boolean;
-  conversationType?: string;
 }
 
-const ChatHeader: React.FC<ChatHeaderProps> = ({
-  participant,
-  isLoading,
-  conversationType,
-}) => {
+const ChatHeader: React.FC<ChatHeaderProps> = ({ participant, isLoading }) => {
   const handleCall = () => {
     if (participant?.userPhone) {
       window.open(`tel:${participant.userPhone}`);
@@ -57,32 +52,6 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
     return null;
   }
 
-  const getConversationTypeColor = (type?: string) => {
-    switch (type) {
-      case 'staff':
-        return 'bg-blue-100 text-blue-800';
-      case 'customer':
-        return 'bg-green-100 text-green-800';
-      case 'helper':
-        return 'bg-purple-100 text-purple-800';
-      default:
-        return 'bg-gray-100 text-gray-800';
-    }
-  };
-
-  const getConversationTypeLabel = (type?: string) => {
-    switch (type) {
-      case 'staff':
-        return 'Nhân viên';
-      case 'customer':
-        return 'Khách hàng';
-      case 'helper':
-        return 'Người giúp việc';
-      default:
-        return 'Không xác định';
-    }
-  };
-
   return (
     <div className="border-b bg-white px-6 py-4 shadow-sm">
       <div className="flex items-center justify-between">
@@ -98,16 +67,12 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
 
           <div className="min-w-0 flex-1">
             <div className="flex items-center space-x-2">
-              <h3 className="truncate text-lg font-semibold text-gray-900">
+              <h3 className="truncate text-sm font-semibold text-gray-900">
                 {participant.userFullName || 'Unknown User'}
               </h3>
-              <Badge
-                className={`text-xs ${getConversationTypeColor(conversationType)}`}
-              >
-                {getConversationTypeLabel(conversationType)}
-              </Badge>
+              <Badge className="bg-blue-100 text-xs text-blue-800">Staff</Badge>
             </div>
-            <div className="flex items-center space-x-2 text-sm text-gray-500">
+            <div className="mt-0.5 flex items-center space-x-2 text-xs text-gray-500">
               <span>{participant.userPhone}</span>
               <span>•</span>
               <div className="flex items-center">
@@ -124,7 +89,7 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
             size="sm"
             onClick={handleCall}
             className="hover:bg-gray-100"
-            title="Gọi điện"
+            title="Call"
           >
             <Phone className="h-4 w-4" />
           </Button>
@@ -145,15 +110,15 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
                 variant="ghost"
                 size="sm"
                 className="hover:bg-gray-100"
-                title="Tùy chọn khác"
+                title="Other options"
               >
                 <MoreVertical className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem>Xem thông tin</DropdownMenuItem>
-              <DropdownMenuItem>Tìm kiếm tin nhắn</DropdownMenuItem>
-              <DropdownMenuItem>Xóa cuộc hội thoại</DropdownMenuItem>
+              <DropdownMenuItem>View Profile</DropdownMenuItem>
+              <DropdownMenuItem>Search Messages</DropdownMenuItem>
+              <DropdownMenuItem>Delete Conversation</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>

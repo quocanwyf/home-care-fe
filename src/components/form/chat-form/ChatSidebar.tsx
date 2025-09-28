@@ -1,8 +1,8 @@
 import { useState } from 'react';
 
 import { formatDistanceToNow } from 'date-fns';
-import { vi } from 'date-fns/locale';
-import { MessageCircle, Plus, UserCheck, Users } from 'lucide-react';
+import { enUS } from 'date-fns/locale';
+import { MessageCircle, Plus, Users } from 'lucide-react';
 
 import CreateConversationModal from '@/components/common/float-display/CreateConversationModal';
 import { Badge } from '@/components/ui/badge';
@@ -12,16 +12,12 @@ import type { ChatConversation } from '@/types/table/objects/chat';
 
 interface ChatSidebarProps {
   staffId: string;
-  activeTab: 'staff' | 'customer' | 'helper';
-  onTabChange: (tab: 'staff' | 'customer' | 'helper') => void;
   selectedConversationId: string;
   onSelectConversation: (id: string) => void;
 }
 
 const ChatSidebar: React.FC<ChatSidebarProps> = ({
   staffId,
-  activeTab,
-  onTabChange,
   selectedConversationId,
   onSelectConversation,
 }) => {
@@ -29,31 +25,10 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
 
   const { data: conversationsData, isLoading } = useGetConversations({
     staffId,
-    type: activeTab,
+    type: 'staff',
   });
 
-  console.log('Conversations Dataa:', conversationsData);
-
-  const tabs = [
-    {
-      key: 'staff' as const,
-      label: 'Nhân viên',
-      icon: Users,
-      color: 'bg-blue-500 hover:bg-blue-600',
-    },
-    {
-      key: 'customer' as const,
-      label: 'Khách hàng',
-      icon: UserCheck,
-      color: 'bg-green-500 hover:bg-green-600',
-    },
-    {
-      key: 'helper' as const,
-      label: 'Người giúp việc',
-      icon: MessageCircle,
-      color: 'bg-purple-500 hover:bg-purple-600',
-    },
-  ];
+  console.log('Conversations Data:', conversationsData);
 
   const conversations = conversationsData?.conversationData || [];
 
@@ -91,13 +66,13 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
               <span className="flex-shrink-0 text-xs text-gray-500">
                 {formatDistanceToNow(new Date(conversation.lastUpdated), {
                   addSuffix: true,
-                  locale: vi,
+                  locale: enUS,
                 })}
               </span>
             </div>
 
             <p className="mb-1 truncate text-sm text-gray-600">
-              {conversation.lastMessage || 'Chưa có tin nhắn'}
+              {conversation.lastMessage || 'No messages yet'}
             </p>
 
             <div className="flex items-center justify-between">
@@ -105,7 +80,7 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
                 {otherParticipant?.userPhone}
               </span>
               <Badge variant="secondary" className="px-2 py-0.5 text-xs">
-                {conversation.conversationType}
+                Staff
               </Badge>
             </div>
           </div>
@@ -133,21 +108,21 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
 
   return (
     <div className="flex w-80 flex-col border-r bg-gray-50">
-      {/* Header - chỉ có title và nút Tạo mới */}
+      {/* Header */}
       <div className="border-b bg-white p-4">
         <div className="flex items-center justify-between">
-          <h2 className="flex items-center text-xl font-bold text-gray-900">
-            <MessageCircle className="mr-2 h-6 w-6 text-blue-500" />
-            Tin nhắn
+          <h2 className="flex items-center font-semibold text-black">
+            <MessageCircle className="text-overlay-slider mr-2 mb-1 h-6 w-6" />
+            Staff Chat
           </h2>
           <Button
             size="sm"
             onClick={() => setShowCreateModal(true)}
-            className="bg-blue-500 text-white shadow-sm hover:bg-blue-600"
-            title="Tạo cuộc hội thoại với nhân viên"
+            className="bg-overlay-slider/90 hover:bg-overlay-slider cursor-pointer text-white shadow-sm"
+            title="Create New Chat"
           >
-            <Plus className="mr-1 h-4 w-4" />
-            Tạo mới
+            <Plus className="h-4 w-4" />
+            <span className="text-xs">New Chat</span>
           </Button>
         </div>
 
@@ -155,14 +130,8 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
         <div className="mt-3 text-xs text-gray-500">
           {conversationsData && (
             <span>
-              {conversationsData.totalConversations} cuộc hội thoại{' '}
-              <span className="font-medium">
-                {activeTab === 'staff'
-                  ? 'nhân viên'
-                  : activeTab === 'customer'
-                    ? 'khách hàng'
-                    : 'người giúp việc'}
-              </span>
+              {conversationsData.totalConversations} conversations with{' '}
+              <span className="font-medium">staff</span>
             </span>
           )}
         </div>
@@ -175,17 +144,13 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
         ) : conversations.length === 0 ? (
           <div className="p-6 text-center">
             <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gray-200">
-              <MessageCircle className="h-8 w-8 text-gray-400" />
+              <Users className="h-8 w-8 text-gray-400" />
             </div>
             <h3 className="mb-1 text-sm font-medium text-gray-900">
-              Chưa có cuộc hội thoại
+              No conversations yet
             </h3>
             <p className="text-xs text-gray-500">
-              {activeTab === 'staff'
-                ? 'Tạo cuộc hội thoại mới với nhân viên'
-                : activeTab === 'customer'
-                  ? 'Chưa có cuộc hội thoại với khách hàng'
-                  : 'Chưa có cuộc hội thoại với người giúp việc'}
+              Create a new conversation with a staff member
             </p>
           </div>
         ) : (
@@ -195,39 +160,20 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
         )}
       </div>
 
-      {/* Tabs ở cuối - Footer */}
+      {/* Footer với thông tin */}
       <div className="border-t bg-white p-3">
-        <div className="mb-2">
-          <p className="text-xs font-medium text-gray-600">Loại hội thoại:</p>
-        </div>
-        <div className="flex gap-2">
-          {tabs.map((tab) => {
-            const Icon = tab.icon;
-            return (
-              <button
-                key={tab.key}
-                onClick={() => onTabChange(tab.key)}
-                className={`flex flex-1 items-center justify-center rounded-lg px-2 py-2 text-xs transition-all duration-200 ${
-                  activeTab === tab.key
-                    ? `${tab.color} text-white shadow-md`
-                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                }`}
-                title={tab.label}
-              >
-                <Icon className="mr-1 h-3 w-3" />
-                <span className="hidden sm:inline">{tab.label}</span>
-              </button>
-            );
-          })}
+        <div className="flex items-center justify-center rounded-lg bg-blue-50 px-3 py-2">
+          <Users className="mr-2 h-4 w-4 text-blue-500" />
+          <span className="text-xs font-medium text-blue-700">Staff Chat</span>
         </div>
       </div>
 
-      {/* Create Conversation Modal - chỉ tạo với staff */}
+      {/* Create Conversation Modal - chỉ cho staff */}
       <CreateConversationModal
         isOpen={showCreateModal}
         onClose={() => setShowCreateModal(false)}
         staffId={staffId}
-        conversationType="staff" // Cố định là staff
+        conversationType="staff"
       />
     </div>
   );

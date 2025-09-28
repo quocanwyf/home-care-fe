@@ -44,7 +44,14 @@ export const useCreateConversation = () => {
 // Hook lấy danh sách cuộc hội thoại
 export const useGetConversations = (params: GetConversationsRequest) => {
   return useQuery({
-    queryKey: ['chat', 'conversations', params],
+    queryKey: [
+      'chat',
+      'conversations',
+      params.staffId,
+      params.type,
+      params.page,
+      params.limit,
+    ],
     queryFn: () => getConversationsApi(params),
     enabled: !!params.staffId && !!params.type,
     staleTime: 30 * 1000, // 30 giây

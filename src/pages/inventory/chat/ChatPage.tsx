@@ -15,7 +15,6 @@ const ChatPage = () => {
     <div className="h-[calc(100vh-120px)] overflow-hidden rounded-xl border bg-white shadow-sm">
       <div className="flex h-full">
         <ChatSidebar
-          staffId={user?.staff_id || ''}
           selectedConversationId={selectedConversationId}
           onSelectConversation={setSelectedConversationId}
         />

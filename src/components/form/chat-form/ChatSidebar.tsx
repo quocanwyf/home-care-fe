@@ -12,13 +12,11 @@ import { useGetConversations } from '@/hooks/api/useChat.api';
 import type { ChatConversation } from '@/types/table/objects/chat';
 
 interface ChatSidebarProps {
-  staffId: string;
   selectedConversationId: string;
   onSelectConversation: (id: string) => void;
 }
 
 const ChatSidebar: React.FC<ChatSidebarProps> = ({
-  staffId,
   selectedConversationId,
   onSelectConversation,
 }) => {
@@ -176,7 +174,6 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
       <CreateConversationModal
         isOpen={showCreateModal}
         onClose={() => setShowCreateModal(false)}
-        staffId={staffId}
         conversationType="staff"
       />
     </div>

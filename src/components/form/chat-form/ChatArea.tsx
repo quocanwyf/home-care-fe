@@ -27,9 +27,6 @@ const ChatArea: React.FC<ChatAreaProps> = ({
     useGetMessages(conversationId);
   const markAsReadMutation = useMarkAsRead();
 
-  console.log('Messages Data:', messagesData);
-  console.log('conversationdetail', conversationDetail);
-
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   // Auto scroll to bottom when new messages arrive
@@ -42,7 +39,6 @@ const ChatArea: React.FC<ChatAreaProps> = ({
   // Mark messages as read when conversation is opened
   useEffect(() => {
     if (conversationId && currentUserId && messagesData?.messages) {
-      // Delay để đảm bảo user đã thấy tin nhắn
       const timer = setTimeout(() => {
         markAsReadMutation.mutate({ conversationId, userId: currentUserId });
       }, 1000);
@@ -60,16 +56,16 @@ const ChatArea: React.FC<ChatAreaProps> = ({
             <MessageCircle className="h-12 w-12 text-blue-500" />
           </div>
           <h3 className="mb-3 text-xl font-semibold text-gray-900">
-            Chọn một cuộc hội thoại
+            Choose a conversation
           </h3>
           <p className="mb-6 text-gray-500">
-            Chọn cuộc hội thoại từ danh sách bên trái để bắt đầu nhắn tin với
-            đồng nghiệp hoặc khách hàng
+            Select a conversation from the list on the left to start messaging
+            with staff colleagues
           </p>
           <div className="flex items-center justify-center space-x-6 text-sm text-gray-400">
             <div className="flex items-center">
               <Users className="mr-2 h-4 w-4" />
-              <span>Nhiều loại hội thoại</span>
+              <span>Group chat</span>
             </div>
             <div className="flex items-center">
               <MessageCircle className="mr-2 h-4 w-4" />
@@ -90,11 +86,7 @@ const ChatArea: React.FC<ChatAreaProps> = ({
   return (
     <div className="flex flex-1 flex-col bg-white">
       {/* Chat Header */}
-      <ChatHeader
-        participant={otherParticipant}
-        isLoading={isLoadingDetail}
-        conversationType={conversation?.conversationType}
-      />
+      <ChatHeader participant={otherParticipant} isLoading={isLoadingDetail} />
 
       {/* Messages Area */}
       <div className="flex-1 overflow-y-auto bg-gray-50">
@@ -102,7 +94,7 @@ const ChatArea: React.FC<ChatAreaProps> = ({
           <div className="flex h-full items-center justify-center">
             <div className="text-center">
               <div className="mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-4 border-blue-500 border-t-transparent"></div>
-              <p className="text-sm text-gray-500">Đang tải tin nhắn...</p>
+              <p className="text-sm text-gray-500">Loading messages...</p>
             </div>
           </div>
         ) : (

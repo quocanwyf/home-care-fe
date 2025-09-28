@@ -1,10 +1,19 @@
-import { useEffect, useRef, useState } from 'react';
+import { Suspense, lazy, useEffect, useRef, useState } from 'react';
 
-import { Paperclip, Send, Smile } from 'lucide-react';
+import { Send, Smile } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
 import { useSendMessage } from '@/hooks/api/useChat.api';
 import { useToast } from '@/hooks/common/useToast';
+
+// Lazy load EmojiPicker
+const EmojiPicker = lazy(() => import('emoji-picker-react'));
 
 interface MessageInputProps {
   conversationId: string;
@@ -19,7 +28,8 @@ const MessageInput: React.FC<MessageInputProps> = ({
 }) => {
   const [message, setMessage] = useState('');
   const [isTyping, setIsTyping] = useState(false);
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const textareaRef = useRef<HTMLInputElement>(null);
   const { showError } = useToast();
   const sendMessageMutation = useSendMessage();
 
@@ -38,6 +48,12 @@ const MessageInput: React.FC<MessageInputProps> = ({
 
     try {
       setIsTyping(true);
+      console.log('Message payload sent:', {
+        conversationId,
+        senderId: currentUserId,
+        senderType: 'staff',
+        content: trimmedMessage,
+      });
       await sendMessageMutation.mutateAsync({
         conversationId,
         senderId: currentUserId,
@@ -52,7 +68,7 @@ const MessageInput: React.FC<MessageInputProps> = ({
       }
     } catch (error) {
       console.error('Error sending message:', error);
-      showError('Có lỗi khi gửi tin nhắn. Vui lòng thử lại.');
+      showError('Failed to send message. Please try again.');
     } finally {
       setIsTyping(false);
     }
@@ -65,58 +81,73 @@ const MessageInput: React.FC<MessageInputProps> = ({
     }
   };
 
-  const handleFileAttach = () => {
-    // Implement file attachment logic
-    console.log('File attachment clicked');
-  };
+  const handleEmojiSelect = (emojiData: any) => {
+    const emoji = emojiData.emoji;
+    setMessage((prev) => prev + emoji);
+    setShowEmojiPicker(false);
 
-  const handleEmojiClick = () => {
-    // Implement emoji picker logic
-    console.log('Emoji picker clicked');
+    // Focus back to input
+    setTimeout(() => {
+      textareaRef.current?.focus();
+    }, 100);
   };
 
   const isSending = sendMessageMutation.isPending || isTyping;
 
   return (
-    <div className="border-t bg-white p-4">
-      <div className="flex items-end space-x-3">
-        {/* Attachment button */}
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={handleFileAttach}
-          disabled={disabled}
-          className="flex-shrink-0 hover:bg-gray-100"
-          title="Đính kèm tệp"
-        >
-          <Paperclip className="h-4 w-4" />
-        </Button>
-
+    <div className="mr-10 border-t bg-white p-2">
+      <div className="flex items-center space-x-3">
         {/* Message input area */}
         <div className="relative flex-1">
-          <textarea
+          <Input
             ref={textareaRef}
             value={message}
             onChange={(e) => setMessage(e.target.value)}
             onKeyPress={handleKeyPress}
-            placeholder={disabled ? 'Đang tải...' : 'Nhập tin nhắn...'}
+            placeholder={disabled ? 'Loading...' : 'Type a message...'}
             disabled={disabled || isSending}
-            className="w-full resize-none rounded-2xl border border-gray-300 px-4 py-3 pr-12 text-sm placeholder-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none disabled:bg-gray-50 disabled:text-gray-400"
-            rows={1}
+            className="focus:border-overlay-slider w-full resize-none rounded-2xl border px-4 py-3 pr-12 text-sm placeholder-gray-500 disabled:bg-gray-50 disabled:text-gray-400"
             style={{ minHeight: '44px', maxHeight: '120px' }}
           />
 
-          {/* Emoji button */}
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={handleEmojiClick}
-            disabled={disabled || isSending}
-            className="absolute top-1/2 right-2 -translate-y-1/2 hover:bg-gray-100"
-            title="Thêm emoji"
-          >
-            <Smile className="h-4 w-4" />
-          </Button>
+          {/* Emoji picker */}
+          <Popover open={showEmojiPicker} onOpenChange={setShowEmojiPicker}>
+            <PopoverTrigger asChild>
+              <Button
+                variant="ghost"
+                size="sm"
+                disabled={disabled || isSending}
+                className={`absolute top-1/2 right-2 -translate-y-1/2 hover:bg-gray-100 ${
+                  showEmojiPicker ? 'bg-gray-100' : ''
+                }`}
+                title="Add emoji"
+              >
+                <Smile className="h-4 w-4" />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent
+              side="top"
+              align="end"
+              className="w-auto border-0 bg-transparent p-0 shadow-lg"
+              sideOffset={10}
+            >
+              {showEmojiPicker && (
+                <Suspense fallback={<div className="p-2">Loading...</div>}>
+                  <EmojiPicker
+                    onEmojiClick={handleEmojiSelect}
+                    width={300}
+                    height={350}
+                    searchDisabled={true}
+                    skinTonePickerLocation="PREVIEW"
+                    previewConfig={{
+                      showPreview: false,
+                    }}
+                    lazyLoadEmojis={true}
+                  />
+                </Suspense>
+              )}
+            </PopoverContent>
+          </Popover>
         </div>
 
         {/* Send button */}
@@ -133,13 +164,6 @@ const MessageInput: React.FC<MessageInputProps> = ({
           )}
         </Button>
       </div>
-
-      {/* Typing indicator placeholder */}
-      {isSending && (
-        <div className="mt-2 text-xs text-gray-500">
-          <span>Đang gửi tin nhắn...</span>
-        </div>
-      )}
     </div>
   );
 };

@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
 
+import { useLanguage } from '@/context/LanguageContext';
+
 interface ChatInputProps {
   onSend: (message: string) => void;
   isLoading: boolean;
 }
 
 const ChatInput: React.FC<ChatInputProps> = ({ onSend, isLoading }) => {
+  const { t } = useLanguage();
   const [input, setInput] = useState('');
 
   const handleSend = (e: React.FormEvent) => {
@@ -31,7 +34,7 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSend, isLoading }) => {
         className="bg-overlay-slider/90 hover:bg-overlay-slider rounded-2xl px-4 py-2 text-white transition"
         disabled={isLoading}
       >
-        <span className="text-sm">{isLoading ? 'Sending...' : 'Send'}</span>
+        <span className="text-sm">{isLoading ? t('sending') : t('send')}</span>
       </button>
     </form>
   );

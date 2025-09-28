@@ -61,7 +61,7 @@ export const getConversationsApi = async (
   params: GetConversationsRequest
 ): Promise<GetConversationsResponse> => {
   const queryParams = new URLSearchParams({
-    staffId: params.staffId,
+    staffId: params.userId,
     type: params.type,
     page: String(params.page ?? 1),
     limit: String(params.limit ?? 10),

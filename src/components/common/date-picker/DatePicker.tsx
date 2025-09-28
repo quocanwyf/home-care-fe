@@ -1,7 +1,7 @@
 // src/components/common/date-picker/DatePicker.tsx
 import { useState } from 'react';
 
-import { CalendarIcon, ChevronDownIcon } from 'lucide-react';
+import { CalendarIcon } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
@@ -11,6 +11,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
+import { useLanguage } from '@/context/LanguageContext';
 import {
   formatDateToDDMMYYYY,
   isDateInPast,
@@ -43,6 +44,7 @@ const DatePicker = ({
   allowPastDates = false,
 }: DatePickerProps) => {
   const [open, setOpen] = useState(false);
+  const { t } = useLanguage();
 
   const selectedDate: Date | undefined = value
     ? parseDDMMYYYYToDate(value)
@@ -132,7 +134,9 @@ const DatePicker = ({
         value &&
         selectedDate &&
         isDateInPast(selectedDate) && (
-          <p className="text-xs text-red-500">Cannot select past dates</p>
+          <p className="text-xs text-red-500">
+            {t('orders.cannotSelectPastDates')}
+          </p>
         )}
     </div>
   );

@@ -9,6 +9,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { useLanguage } from '@/context/LanguageContext';
 import { useDownloadExcelExport } from '@/hooks/api/useExport.api';
 
 import TooltipInfo from '../primitives/TooltipInfo';
@@ -34,6 +35,7 @@ export const ExportButton: React.FC<ExportButtonProps> = ({
   variant = 'outline',
   disabled = false,
 }) => {
+  const { t } = useLanguage();
   const exportMutation = useDownloadExcelExport();
 
   const handleExportExcel = async () => {
@@ -68,10 +70,10 @@ export const ExportButton: React.FC<ExportButtonProps> = ({
             disabled={disabled || isExporting}
           >
             <span className="mobile:hidden">
-              {isExporting ? 'Exporting...' : 'Export'}
+              {isExporting ? t('common.exporting') : t('common.export')}
             </span>
             <span className="mobile:inline hidden">
-              {isExporting ? 'Exporting...' : 'Export'}
+              {isExporting ? t('common.exporting') : t('common.export')}
             </span>
             <Download
               className={`ml-1 h-2 w-2 ${isExporting ? 'animate-spin' : ''}`}
@@ -81,14 +83,13 @@ export const ExportButton: React.FC<ExportButtonProps> = ({
       </TooltipInfo>
 
       <DropdownMenuContent align="end" className="w-48">
-        {/* ✅ Only Excel export via API */}
         <DropdownMenuItem
           onClick={handleExportExcel}
           className="cursor-pointer"
           disabled={isExporting}
         >
           <Download className="mr-2 h-4 w-4" />
-          {isExporting ? 'Exporting...' : 'Export as Excel'}
+          {isExporting ? t('common.exporting') : t('common.exportAsExcel')}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

@@ -10,6 +10,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
+import { useLanguage } from '@/context/LanguageContext';
 import {
   formatDateToDDMMYYYY,
   isDateInPast,
@@ -42,7 +43,7 @@ interface DateRangePickerProps {
   initialRange?: DateRange;
   quickSelectionMode?: QuickSelectionMode;
   minDate?: Date;
-  value?: FormattedDateRange; // ✅ Accept formatted strings
+  value?: FormattedDateRange;
 }
 
 export function DateRangePicker({
@@ -58,6 +59,7 @@ export function DateRangePicker({
   minDate = new Date(),
   value,
 }: DateRangePickerProps) {
+  const { t } = useLanguage();
   //  Convert formatted value to Date range for internal state
   const getInitialDateRange = (): DateRange => {
     if (value?.startDate && value?.endDate) {
@@ -141,7 +143,6 @@ export function DateRangePicker({
               {date?.from ? (
                 date.to ? (
                   <span className="truncate">
-                    {/* ✅ Use date utility for formatting */}
                     {formatDateToDDMMYYYY(date.from)} -{' '}
                     {formatDateToDDMMYYYY(date.to)}
                   </span>
@@ -161,7 +162,7 @@ export function DateRangePicker({
               onClick={handleClear}
             >
               <X className="h-3 w-3" />
-              <span className="sr-only">Clear</span>
+              <span className="sr-only">{t('datePicker.clear')}</span>
             </div>
           )}
         </div>
@@ -191,7 +192,7 @@ export function DateRangePicker({
                       className="text-muted-foreground hover:text-destructive h-7 text-xs"
                       onClick={handleClear}
                     >
-                      Clear
+                      {t('datePicker.clear')}
                     </Button>
                   )}
                 </div>

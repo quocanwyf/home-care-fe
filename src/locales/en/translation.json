@@ -12,12 +12,21 @@
     "confirm": "Confirm",
     "back": "Back",
     "next": "Next",
-    "previous": "Previous"
+    "previous": "Previous",
+    "sending": "Sending ...",
+    "send": "Send",
+    "export": "Export",
+    "exporting": "Exporting ...",
+    "exportAsExcel": "Export as Excel"
   },
   "header": {
     "title": "Header Title",
     "user": "User",
-    "role": "Role"
+    "role": "Role",
+    "myAccount": "My Account",
+    "profile": "Profile",
+    "settings": "Settings",
+    "userMenu": "User Menu"
   },
   "roles": {
     "Admin": "Administrator",
@@ -42,7 +51,8 @@
     "email": "Email",
     "password": "Password",
     "forgotPassword": "Forgot Password?",
-    "rememberMe": "Remember Me"
+    "rememberMe": "Remember Me",
+    "userId": "User ID"
   },
   "orders": {
     "title": "Orders Management",
@@ -52,6 +62,32 @@
     "customer": "Customer",
     "service": "Service",
     "date": "Date",
-    "amount": "Amount"
+    "amount": "Amount",
+    "totalCostOrder": "Total cost order",
+    "discounts": "Discounts",
+    "noDiscount": "No discount",
+    "cannotSelectPastDates": "Cannot select past dates"
+  },
+  "chatbot": {
+    "sendMessage": "Send Message",
+    "typeMessage": "Type your message here...",
+    "closeChatbot": "Close Chatbot",
+    "openChatbot": "Open Chatbot",
+    "welcomeMessage": "Hello! How can I assist you today?"
+  },
+  "datePicker": {
+    "chooseDateRange": "Choose date range",
+    "clear": "Clear"
+  },
+  "dropdown": {
+    "selectOption": "Select option",
+    "noResults": "No results found",
+    "chooseTheme": "Choose Theme"
+  },
+  "theme": {
+    "dark": "Dark",
+    "blue": "Blue",
+    "green": "Green",
+    "system": "System"
   }
 }

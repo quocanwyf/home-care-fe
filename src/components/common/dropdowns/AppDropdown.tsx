@@ -77,7 +77,6 @@ export default function AppDropdown({
           {showIcon && <ChevronDown className="h-4 w-4" />}
         </Button> */}
         {children ? (
-          // ✅ Custom trigger
           <div
             className={`cursor-pointer ${triggerClassName} ${triggerClassName} ${disabled ? 'pointer-events-none' : ''}`}
           >

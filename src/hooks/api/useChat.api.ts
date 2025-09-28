@@ -43,10 +43,18 @@ export const useCreateConversation = () => {
 
 // Hook lấy danh sách cuộc hội thoại
 export const useGetConversations = (params: GetConversationsRequest) => {
+  console.log('params', params);
   return useQuery({
-    queryKey: ['chat', 'conversations', params],
+    queryKey: [
+      'chat',
+      'conversations',
+      params.userId,
+      params.type,
+      params.page,
+      params.limit,
+    ],
     queryFn: () => getConversationsApi(params),
-    enabled: !!params.staffId && !!params.type,
+    enabled: !!params.userId && !!params.type,
     staleTime: 30 * 1000, // 30 giây
     refetchInterval: 10 * 1000, // Refresh mỗi 10s để cập nhật danh sách
   });

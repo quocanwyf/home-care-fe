@@ -1,23 +1,29 @@
+import { useState } from 'react';
+
 import { TableProperties } from 'lucide-react';
 
 import ConfirmDialog from '@/components/common/float-display/ConfirmDialog';
+import OrderEvaluationModal from '@/components/common/float-display/OrderEvaluationModal';
+import ViewEvaluationModal from '@/components/common/float-display/ViewEvaluationModal';
 import TooltipInfo from '@/components/common/primitives/TooltipInfo';
 import { AppTable } from '@/components/table/app-table/AppTable';
 import { Button } from '@/components/ui/button';
 import {
   useCancelOrderDetail,
   useChangeRequestDetailStatus,
+  useChangeRequestDetailStatusWithEvaluation,
   useChangeRequestStatus,
 } from '@/hooks/api/useOrders.api';
 import { useAppNavigate } from '@/hooks/common/useAppNavigate';
 import { useConfirmation } from '@/hooks/common/useConfirmation';
 import { orderDetailColumns } from '@/types/table/column/order-column';
+import type { OrderEvaluation } from '@/types/table/objects/orders';
 import type { RequestDetail } from '@/types/table/objects/orders';
 
 interface OrderDetailInformationProps {
   requestDetails: RequestDetail[] | undefined;
   isLoading?: boolean;
-  onRefresh?: () => void; //callback to refresh the data afteer actions
+  onRefresh?: () => void;
   status?: string;
   requestId?: string;
 }
@@ -29,11 +35,40 @@ const OrderDetailInformation = ({
   status,
   requestId,
 }: OrderDetailInformationProps) => {
+  // Existing hooks
   const cancelDetailMutation = useCancelOrderDetail();
-  const changeStatusMutation = useChangeRequestDetailStatus(); //   Add status change hook
-  const changeRequestStatusMutation = useChangeRequestStatus(); //   Add payment mutation
+  const changeStatusMutation = useChangeRequestDetailStatus();
+  const changeRequestStatusMutation = useChangeRequestStatus();
+
+  // New evaluation hook
+  const changeStatusWithEvaluationMutation =
+    useChangeRequestDetailStatusWithEvaluation();
+
   const navigateTo = useAppNavigate();
 
+  // States for modals
+  const [evaluationModal, setEvaluationModal] = useState<{
+    isOpen: boolean;
+    detailId: string;
+    helperName: string;
+  }>({
+    isOpen: false,
+    detailId: '',
+    helperName: '',
+  });
+
+  // New state for view evaluation modal
+  const [viewEvaluationModal, setViewEvaluationModal] = useState<{
+    isOpen: boolean;
+    detailId: string;
+    helperName: string;
+  }>({
+    isOpen: false,
+    detailId: '',
+    helperName: '',
+  });
+
+  // Existing confirmations...
   const detailDeleteConfirmation = useConfirmation({
     deleteFunction: (requestDetailId: string) =>
       cancelDetailMutation.mutateAsync(requestDetailId),
@@ -54,17 +89,6 @@ const OrderDetailInformation = ({
     },
     successMessage: 'Work started successfully!',
     errorMessage: 'Failed to start work!',
-  });
-
-  const completeWorkConfirmation = useConfirmation({
-    deleteFunction: (detailId: string) =>
-      changeStatusMutation.mutateAsync({ detailId, status: 'completed' }),
-    entityName: 'Request Detail',
-    onDeleteSuccess: () => {
-      onRefresh?.();
-    },
-    successMessage: 'Work completed successfully!',
-    errorMessage: 'Failed to complete work!',
   });
 
   const paymentConfirmation = useConfirmation({
@@ -88,8 +112,8 @@ const OrderDetailInformation = ({
     errorMessage: 'Failed to process payment!',
   });
 
+  // Existing handlers...
   const handleDeleteDetail = (detailId: string) => {
-    // Find detail data để pass vào confirmation dialog
     const detail = requestDetails?.find((d) => d.detailId === detailId);
 
     if (detail) {
@@ -104,7 +128,6 @@ const OrderDetailInformation = ({
   };
 
   const handleStart = (detailId: string) => {
-    // Find detail data để pass vào confirmation dialog
     const detail = requestDetails?.find((d) => d.detailId === detailId);
 
     if (detail) {
@@ -119,16 +142,26 @@ const OrderDetailInformation = ({
   };
 
   const handleComplete = (detailId: string) => {
-    // Find detail data để pass vào confirmation dialog
     const detail = requestDetails?.find((d) => d.detailId === detailId);
 
     if (detail) {
-      completeWorkConfirmation.openDeleteConfirmation(detailId, {
-        workingDate: detail.workingDate,
-        startTime: detail.startTime,
-        endTime: detail.endTime,
-        helperName: detail.helper?.fullName || 'Has not assigned',
-        status: detail.status,
+      setEvaluationModal({
+        isOpen: true,
+        detailId,
+        helperName: detail.helper?.fullName || 'Unknown Helper',
+      });
+    }
+  };
+
+  // New handler for viewing evaluation
+  const handleViewEvaluation = (detailId: string) => {
+    const detail = requestDetails?.find((d) => d.detailId === detailId);
+
+    if (detail) {
+      setViewEvaluationModal({
+        isOpen: true,
+        detailId,
+        helperName: detail.helper?.fullName || 'Unknown Helper',
       });
     }
   };
@@ -145,11 +178,42 @@ const OrderDetailInformation = ({
     }
   };
 
-  //   Check if any action is loading
+  // Evaluation handlers...
+  const handleEvaluationSubmit = (evaluation: OrderEvaluation) => {
+    changeStatusWithEvaluationMutation.mutate(
+      {
+        detailId: evaluationModal.detailId,
+        status: 'completed',
+        comment: evaluation,
+      },
+      {
+        onSuccess: () => {
+          setEvaluationModal({ isOpen: false, detailId: '', helperName: '' });
+          onRefresh?.();
+        },
+      }
+    );
+  };
+
+  const handleEvaluationClose = () => {
+    setEvaluationModal({ isOpen: false, detailId: '', helperName: '' });
+  };
+
+  const handleViewEvaluationClose = () => {
+    setViewEvaluationModal({ isOpen: false, detailId: '', helperName: '' });
+  };
+
+  // Get current detail for view evaluation modal
+  const currentViewDetail = requestDetails?.find(
+    (d) => d.detailId === viewEvaluationModal.detailId
+  );
+
+  // Check if any action is loading
   const isAnyActionLoading =
     cancelDetailMutation.isPending ||
     changeStatusMutation.isPending ||
-    changeRequestStatusMutation.isPending;
+    changeRequestStatusMutation.isPending ||
+    changeStatusWithEvaluationMutation.isPending;
 
   return (
     <div className="bg-overlay-slider/8 shadow-around my-6 w-full rounded-md px-4 pb-4">
@@ -174,9 +238,10 @@ const OrderDetailInformation = ({
         <AppTable
           data={requestDetails || []}
           columns={orderDetailColumns(
-            handleDeleteDetail, // Pass cancel handler
+            handleDeleteDetail,
             handleStart,
             handleComplete,
+            handleViewEvaluation, // Thêm handler mới
             isAnyActionLoading
           )}
           isLoading={isLoading}
@@ -189,13 +254,15 @@ const OrderDetailInformation = ({
         />
         <div className="h-30"></div>
       </div>
+
+      {/* Existing Confirmation Dialogs... */}
       <ConfirmDialog
         open={detailDeleteConfirmation.isDialogOpen}
         onOpenChange={detailDeleteConfirmation.closeDeleteConfirmation}
         title="Cancel Request Detail"
         description={detailDeleteConfirmation
           .getDeleteDescription()
-          .replace('delete', 'cancel')} //   Change wording to "cancel"
+          .replace('delete', 'cancel')}
         icon={true}
         danger={true}
         confirmText="Cancel Detail"
@@ -204,6 +271,7 @@ const OrderDetailInformation = ({
       >
         <div />
       </ConfirmDialog>
+
       <ConfirmDialog
         open={startWorkConfirmation.isDialogOpen}
         onOpenChange={startWorkConfirmation.closeDeleteConfirmation}
@@ -216,18 +284,7 @@ const OrderDetailInformation = ({
       >
         <div />
       </ConfirmDialog>
-      <ConfirmDialog
-        open={completeWorkConfirmation.isDialogOpen}
-        onOpenChange={completeWorkConfirmation.closeDeleteConfirmation}
-        title="Complete Request Detail"
-        description={completeWorkConfirmation.getDeleteDescription()}
-        icon={true}
-        confirmText="Complete Detail"
-        cancelText="Don't Complete"
-        onConfirm={completeWorkConfirmation.handleDeleteConfirm}
-      >
-        <div />
-      </ConfirmDialog>
+
       <ConfirmDialog
         open={paymentConfirmation.isDialogOpen}
         onOpenChange={paymentConfirmation.closeDeleteConfirmation}
@@ -240,6 +297,26 @@ const OrderDetailInformation = ({
       >
         <div />
       </ConfirmDialog>
+
+      {/* Create Evaluation Modal */}
+      <OrderEvaluationModal
+        isOpen={evaluationModal.isOpen}
+        onClose={handleEvaluationClose}
+        onSubmit={handleEvaluationSubmit}
+        isLoading={changeStatusWithEvaluationMutation.isPending}
+        detailId={evaluationModal.detailId}
+        helperName={evaluationModal.helperName}
+      />
+
+      {/* View Evaluation Modal */}
+      {currentViewDetail?.comment && (
+        <ViewEvaluationModal
+          isOpen={viewEvaluationModal.isOpen}
+          onClose={handleViewEvaluationClose}
+          comment={currentViewDetail.comment}
+          helperName={viewEvaluationModal.helperName}
+        />
+      )}
     </div>
   );
 };

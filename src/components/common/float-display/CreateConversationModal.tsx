@@ -32,11 +32,14 @@ const CreateConversationModal: React.FC<CreateConversationModalProps> = ({
   const [selectedStaffId, setSelectedStaffId] = useState('');
   const { showSuccess, showError } = useToast();
 
+  const staffId = user._id || '';
+
   const {
     data: availableStaffData,
     isLoading,
     error,
-  } = useGetAvailableStaff(user.staff_id);
+  } = useGetAvailableStaff(staffId);
+
   const createConversationMutation = useCreateConversation();
 
   const handleClose = () => {

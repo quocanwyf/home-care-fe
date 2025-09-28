@@ -7,6 +7,7 @@ import { MessageCircle, Plus, Users } from 'lucide-react';
 import CreateConversationModal from '@/components/common/float-display/CreateConversationModal';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { useAuth } from '@/context/AuthContext';
 import { useGetConversations } from '@/hooks/api/useChat.api';
 import type { ChatConversation } from '@/types/table/objects/chat';
 
@@ -22,16 +23,19 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
   onSelectConversation,
 }) => {
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const { user } = useAuth();
+  const userId = user?._id || '';
+
+  console.log(userId);
 
   const { data: conversationsData, isLoading } = useGetConversations({
-    staffId,
+    userId,
     type: 'staff',
   });
 
-  console.log('Conversations Data:', conversationsData);
+  console.log('conversations', conversationsData);
 
   const conversations = conversationsData?.conversationData || [];
-
   const renderConversationItem = (conversation: ChatConversation) => {
     const otherParticipant = conversation.participants.find(
       (p) => p.id !== staffId

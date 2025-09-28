@@ -22,7 +22,7 @@ const ChatPage = () => {
 
         <ChatArea
           conversationId={selectedConversationId}
-          currentUserId={user?.staff_id || ''}
+          currentUserId={user?._id || ''}
         />
       </div>
     </div>

@@ -1,6 +1,6 @@
 import { Suspense, lazy, useEffect, useRef, useState } from 'react';
 
-import { Paperclip, Send, Smile } from 'lucide-react';
+import { Send, Smile } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -48,6 +48,12 @@ const MessageInput: React.FC<MessageInputProps> = ({
 
     try {
       setIsTyping(true);
+      console.log('Message payload sent:', {
+        conversationId,
+        senderId: currentUserId,
+        senderType: 'staff',
+        content: trimmedMessage,
+      });
       await sendMessageMutation.mutateAsync({
         conversationId,
         senderId: currentUserId,
@@ -73,11 +79,6 @@ const MessageInput: React.FC<MessageInputProps> = ({
       e.preventDefault();
       handleSend();
     }
-  };
-
-  const handleFileAttach = () => {
-    // Implement file attachment logic
-    console.log('File attachment clicked');
   };
 
   const handleEmojiSelect = (emojiData: any) => {

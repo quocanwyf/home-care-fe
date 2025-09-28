@@ -51,7 +51,8 @@ const MessageList: React.FC<MessageListProps> = ({
   const renderMessageStatus = (message: ChatMessage, isOwnMessage: boolean) => {
     if (!isOwnMessage) return null;
 
-    const iconClass = 'h-3 w-3';
+    const iconClass = 'h-3 w-3 ml-1 font-semibold';
+    console.log('message status', message, isOwnMessage);
 
     switch (message.status) {
       case 'sent':
@@ -59,7 +60,7 @@ const MessageList: React.FC<MessageListProps> = ({
       case 'delivered':
         return <CheckCheck className={`${iconClass} text-gray-400`} />;
       case 'read':
-        return <CheckCheck className={`${iconClass} text-blue-500`} />;
+        return <CheckCheck className={`${iconClass} text-blue-900`} />;
       default:
         return null;
     }

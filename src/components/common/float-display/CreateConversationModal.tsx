@@ -36,7 +36,7 @@ const CreateConversationModal: React.FC<CreateConversationModalProps> = ({
     data: availableStaffData,
     isLoading,
     error,
-  } = useGetAvailableStaff(user._id);
+  } = useGetAvailableStaff(user.staff_id);
   const createConversationMutation = useCreateConversation();
 
   const handleClose = () => {

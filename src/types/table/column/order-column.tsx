@@ -122,6 +122,20 @@ export const orderDetailColumns = (
     },
   },
   {
+    accessorKey: 'helper_cost',
+    header: 'Helper Cost',
+    cell: ({ row }) => {
+      const helperCost = row.original.helper_cost;
+      return (
+        <span className="font-medium">
+          {helperCost !== null && helperCost !== undefined
+            ? `${helperCost.toLocaleString()} đ`
+            : 'N/A'}
+        </span>
+      );
+    },
+  },
+  {
     accessorKey: 'status',
     header: 'Status',
     cell: ({ row }) => {

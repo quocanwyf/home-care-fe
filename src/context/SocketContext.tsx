@@ -64,10 +64,23 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
       }
     });
 
+    // Thêm listener cho helper working status changed
+    socketInstance.on('helper_workingStatus_changed', (data) => {
+      console.log('Helper working status changed:', data);
+      // Dispatch custom event để các components có thể listen
+      window.dispatchEvent(
+        new CustomEvent('helperStatusChanged', {
+          detail: data,
+        })
+      );
+    });
+
     setSocket(socketInstance);
 
     // Cleanup khi component unmount
     return () => {
+      socketInstance.off('new_request');
+      socketInstance.off('helper_workingStatus_changed');
       socketInstance.disconnect();
     };
   }, []);

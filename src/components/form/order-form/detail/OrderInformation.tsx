@@ -9,6 +9,7 @@ interface OrderInformationProps {
 }
 
 const OrderInformation = ({ orderData }: OrderInformationProps) => {
+  console.log('orderData', orderData);
   return (
     <div className="bg-overlay-slider/8 shadow-around my-6 w-full overflow-auto rounded-md px-4 pb-4">
       <div className="text-overlay-slider mx-2 mt-4 mb-4 flex flex-row items-center font-bold">

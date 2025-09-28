@@ -5,6 +5,7 @@ import { STATUS_HR } from '@/constants/dropdown/status-hr';
 // import { data } from '@/constants/mock-data/mock-data-maids';
 import { useGetHelpers } from '@/hooks/api/useHelpers.api';
 import { useAppNavigate } from '@/hooks/common/useAppNavigate';
+import { useHelperRealTime } from '@/hooks/common/useHelperRealTime';
 import { usePageSize } from '@/hooks/common/usePageSize';
 import { useSearchConfig } from '@/hooks/common/useSearchConfig';
 import { useStatusFilter } from '@/hooks/common/useStatusFilter';
@@ -31,6 +32,8 @@ const MaidsPage = () => {
   const { pageSize, handlePageSizeChange, resetPageSize } = usePageSize({
     initialPageSize: 10,
   });
+
+  useHelperRealTime();
 
   useSearchConfig({
     placeholder: 'By maids phone number or id...',
@@ -83,6 +86,8 @@ const MaidsPage = () => {
     // Update this based on your view requirements
     navigateTo(`/maids/detail/${row._id}`);
   };
+
+  console.log('Maids data:', maids); // Kiểm tra dữ liệu maids
 
   return (
     <AppTable

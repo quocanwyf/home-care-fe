@@ -49,7 +49,7 @@ export const customerColumn = (
     accessorKey: 'point',
     header: 'Points',
     cell: ({ row }) =>
-      new Intl.NumberFormat('vi-VN').format(row.original.point) + ' Ps',
+      new Intl.NumberFormat('vi-VN').format(row.original.points) + ' Ps',
   },
   // {
   //   accessorKey: 'status',

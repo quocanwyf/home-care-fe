@@ -215,6 +215,8 @@ const OrderDetailInformation = ({
     changeRequestStatusMutation.isPending ||
     changeStatusWithEvaluationMutation.isPending;
 
+  console.log(requestDetails);
+
   return (
     <div className="bg-overlay-slider/8 shadow-around my-6 w-full rounded-md px-4 pb-4">
       <div className="text-overlay-slider mx-2 mt-4 mb-4 flex flex-row items-center justify-between font-bold">

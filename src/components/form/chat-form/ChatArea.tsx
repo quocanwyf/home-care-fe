@@ -52,24 +52,24 @@ const ChatArea: React.FC<ChatAreaProps> = ({
     return (
       <div className="flex flex-1 items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100">
         <div className="max-w-md text-center">
-          <div className="mx-auto mb-6 flex h-24 w-24 items-center justify-center rounded-full bg-gradient-to-br from-blue-100 to-purple-100 shadow-lg">
-            <MessageCircle className="h-12 w-12 text-blue-500" />
+          <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-blue-100 to-purple-100 shadow-lg">
+            <MessageCircle className="h-8 w-8 text-blue-500" />
           </div>
-          <h3 className="mb-3 text-xl font-semibold text-gray-900">
+          <h3 className="mb-3 text-sm font-semibold text-gray-900">
             Choose a conversation
           </h3>
-          <p className="mb-6 text-gray-500">
+          <p className="mb-6 text-xs text-gray-500">
             Select a conversation from the list on the left to start messaging
             with staff colleagues
           </p>
           <div className="flex items-center justify-center space-x-6 text-sm text-gray-400">
             <div className="flex items-center">
               <Users className="mr-2 h-4 w-4" />
-              <span>Group chat</span>
+              <span className="text-xs">Group chat</span>
             </div>
             <div className="flex items-center">
               <MessageCircle className="mr-2 h-4 w-4" />
-              <span>Real-time messaging</span>
+              <span className="text-xs">Real-time messaging</span>
             </div>
           </div>
         </div>

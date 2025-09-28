@@ -28,3 +28,15 @@ export type OrdersWithStatus =
   | 'inProgress'
   | 'completed'
   | 'cancelled';
+
+export interface OrderEvaluation {
+  review: string;
+  loseThings: boolean;
+  breakThings: boolean;
+}
+
+export interface OrderComment {
+  review: string;
+  loseThings: boolean;
+  breakThings: boolean;
+}

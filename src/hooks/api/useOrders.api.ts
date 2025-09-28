@@ -2,6 +2,7 @@ import {
   addOrderApi,
   cancelOrderDetailApi,
   changeRequestDetailStatusApi,
+  changeRequestDetailStatusWithEvaluationApi,
   changeRequestStatusApi,
   deleteOrderApi,
   getCheckExistCustomerPhone,
@@ -17,7 +18,8 @@ import type {
   OrderFormData,
   OrderParams,
 } from '@/types/params/order-params';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { type OrderEvaluation } from '@/types/table/objects/orders';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { useToast } from '../common/useToast';
 
@@ -178,6 +180,49 @@ export const useChangeRequestStatus = () => {
         error.message === 'An error occurred while processing payment'
       ) {
         errorMessage = 'An error occurred while processing payment';
+      }
+
+      showError(errorMessage);
+    },
+  });
+};
+
+export const useChangeRequestDetailStatusWithEvaluation = () => {
+  const { showError, showSuccess } = useToast();
+  const queryClient = useQueryClient();
+
+  return useMutation<
+    { success: boolean; message: string },
+    Error,
+    {
+      detailId: string;
+      status: 'inProgress' | 'completed';
+      comment?: OrderEvaluation;
+    }
+  >({
+    mutationFn: ({ detailId, status, comment }) =>
+      changeRequestDetailStatusWithEvaluationApi(detailId, status, comment),
+
+    onSuccess: (data) => {
+      showSuccess(data.message || 'Status updated successfully');
+      // Invalidate related queries
+      queryClient.invalidateQueries({ queryKey: ['order-detail'] });
+      queryClient.invalidateQueries({ queryKey: ['orders'] });
+    },
+
+    onError: (error) => {
+      let errorMessage = 'An error occurred while updating status';
+
+      if (error.message === 'Request detail not found') {
+        errorMessage = 'Request detail not found';
+      } else if (
+        error.message === 'Cannot change status of this request detail'
+      ) {
+        errorMessage = 'Cannot change status of this request detail';
+      } else if (
+        error.message === 'An error occurred while fetching requests'
+      ) {
+        errorMessage = 'An error occurred while fetching requests';
       }
 
       showError(errorMessage);

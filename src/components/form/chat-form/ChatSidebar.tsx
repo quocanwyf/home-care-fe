@@ -38,7 +38,7 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
   const conversations = conversationsData?.conversationData || [];
   const renderConversationItem = (conversation: ChatConversation) => {
     const otherParticipant = conversation.participants.find(
-      (p) => p.id !== staffId
+      (p) => p.id !== user?._id
     );
     const isSelected = selectedConversationId === conversation._id;
 

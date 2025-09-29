@@ -17,8 +17,6 @@ export const useHelperRealTime = () => {
     ) => {
       const { helper_id, workingStatus } = event.detail;
 
-      console.log('Updating helper:', { helper_id, workingStatus });
-
       // Loop qua tất cả helpers queries và update
       queryClient
         .getQueryCache()
@@ -34,9 +32,6 @@ export const useHelperRealTime = () => {
                   ...oldData,
                   helpers: oldData.helpers.map((helper: any) => {
                     if (helper._id === helper_id) {
-                      console.log(
-                        `Updated helper ${helper._id} status to ${workingStatus}`
-                      );
                       return { ...helper, workingStatus };
                     }
                     return helper;
@@ -48,9 +43,6 @@ export const useHelperRealTime = () => {
               if (Array.isArray(oldData)) {
                 return oldData.map((helper: any) => {
                   if (helper._id === helper_id) {
-                    console.log(
-                      `Updated helper ${helper._id} status to ${workingStatus}`
-                    );
                     return { ...helper, workingStatus };
                   }
                   return helper;

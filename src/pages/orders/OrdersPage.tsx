@@ -12,6 +12,7 @@ import { useAppNavigate } from '@/hooks/common/useAppNavigate';
 import { useConfirmation } from '@/hooks/common/useConfirmation';
 import { useDateRangeConfig } from '@/hooks/common/useDateRangeConfig';
 import { usePageSize } from '@/hooks/common/usePageSize';
+import { useRequestRealTime } from '@/hooks/common/useRequestRealTime';
 import { useSearchConfig } from '@/hooks/common/useSearchConfig';
 import { useStatusFilter } from '@/hooks/common/useStatusFilter';
 import { useToast } from '@/hooks/common/useToast';
@@ -31,6 +32,8 @@ const OrdersPage = () => {
   } = useSocket();
 
   const deleteOrderMutation = useDeleteOrder();
+
+  useRequestRealTime();
 
   const orderDeleteConfirmation = useConfirmation({
     deleteFunction: (requestId: string) =>

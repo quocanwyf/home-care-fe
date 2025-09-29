@@ -75,12 +75,35 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
       );
     });
 
+    // Thêm listener cho request status changed
+    socketInstance.on('request_status_changed', (data) => {
+      console.log('Request status changed:', data);
+      // Dispatch custom event để các components có thể listen
+      window.dispatchEvent(
+        new CustomEvent('requestStatusChanged', {
+          detail: data,
+        })
+      );
+    });
+
+    // Thêm listener cho request detail status changed
+    socketInstance.on('request_detail_status_changed', (data) => {
+      console.log('Request detail status changed:', data);
+      window.dispatchEvent(
+        new CustomEvent('requestDetailStatusChanged', {
+          detail: data,
+        })
+      );
+    });
+
     setSocket(socketInstance);
 
     // Cleanup khi component unmount
     return () => {
       socketInstance.off('new_request');
       socketInstance.off('helper_workingStatus_changed');
+      socketInstance.off('request_status_changed');
+      socketInstance.off('request_detail_status_changed');
       socketInstance.disconnect();
     };
   }, []);

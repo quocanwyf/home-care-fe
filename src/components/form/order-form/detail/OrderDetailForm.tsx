@@ -6,11 +6,14 @@ import LoadingFallback from '@/components/fallback/LoadingFallback';
 import OrderDetailInformation from '@/components/form/order-form/detail/OrderDetailInformation';
 import OrderInformation from '@/components/form/order-form/detail/OrderInformation';
 import { useGetOrderDetail } from '@/hooks/api/useOrders.api';
+import { useRequestDetailRealTime } from '@/hooks/common/useRequestDetailRealTime';
 import { useToast } from '@/hooks/common/useToast';
 
 const OrderDetailForm = () => {
   const { id } = useParams<{ id: string }>();
   const { showError } = useToast();
+
+  useRequestDetailRealTime();
 
   const {
     data: orderDetailData,

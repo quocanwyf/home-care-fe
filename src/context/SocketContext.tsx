@@ -96,6 +96,26 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
       );
     });
 
+    // Thêm listener cho new message
+    socketInstance.on('new_message', (data) => {
+      console.log('New message received:', data);
+      window.dispatchEvent(
+        new CustomEvent('newMessage', {
+          detail: data,
+        })
+      );
+    });
+
+    // Thêm listener cho conversation updated
+    socketInstance.on('conversation_updated', (data) => {
+      console.log('Conversation updated:', data);
+      window.dispatchEvent(
+        new CustomEvent('conversationUpdated', {
+          detail: data,
+        })
+      );
+    });
+
     setSocket(socketInstance);
 
     // Cleanup khi component unmount
@@ -104,6 +124,8 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
       socketInstance.off('helper_workingStatus_changed');
       socketInstance.off('request_status_changed');
       socketInstance.off('request_detail_status_changed');
+      socketInstance.off('new_message');
+      socketInstance.off('conversation_updated');
       socketInstance.disconnect();
     };
   }, []);

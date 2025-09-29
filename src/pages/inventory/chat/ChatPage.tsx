@@ -3,6 +3,7 @@ import { useState } from 'react';
 import ChatArea from '@/components/form/chat-form/ChatArea';
 import ChatSidebar from '@/components/form/chat-form/ChatSidebar';
 import { useAuth } from '@/context/AuthContext';
+import { useChatRealTime } from '@/hooks/common/useChatRealTime';
 
 const ChatPage = () => {
   const { user } = useAuth();
@@ -10,6 +11,8 @@ const ChatPage = () => {
 
   const [selectedConversationId, setSelectedConversationId] =
     useState<string>('');
+
+  useChatRealTime();
 
   return (
     <div className="h-[calc(100vh-120px)] overflow-hidden rounded-xl border bg-white shadow-sm">

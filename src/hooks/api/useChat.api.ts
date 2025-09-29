@@ -56,7 +56,6 @@ export const useGetConversations = (params: GetConversationsRequest) => {
     queryFn: () => getConversationsApi(params),
     enabled: !!params.userId && !!params.type,
     staleTime: 30 * 1000, // 30 giây
-    refetchInterval: 10 * 1000, // Refresh mỗi 10s để cập nhật danh sách
   });
 };
 
@@ -77,7 +76,6 @@ export const useGetMessages = (conversationId: string) => {
     queryFn: () => getMessagesApi(conversationId),
     enabled: !!conversationId,
     staleTime: 0, // Luôn fetch fresh data
-    refetchInterval: 3 * 1000, // Refresh mỗi 3s để có cảm giác real-time
   });
 };
 

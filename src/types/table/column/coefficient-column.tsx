@@ -31,7 +31,7 @@ export const coefficientColumn = (
     accessorKey: 'value',
     header: 'Multiplier',
     cell: ({ row }) => (
-      <div className="text-center">
+      <div>
         <span className="text-overlay-slider inline-flex items-center rounded-full bg-blue-100 px-3 py-1 text-sm">
           ×{row.original.value}
         </span>

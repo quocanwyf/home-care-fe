@@ -30,7 +30,8 @@
   },
   "roles": {
     "Admin": "Administrator",
-    "Staff": "Staff"
+    "Staff": "Staff",
+    "Manager": "Manager"
   },
   "navigation": {
     "dashboard": "Dashboard Page",
